@@ -22,7 +22,7 @@ public class Vachana {
         }
         try {
             if (j != null) {
-                id = j.getInt("id");
+                id = Integer.parseInt(j.getString("id"));
                 text = j.getString("vachana");
             } else {
                 Log.e(className, "JSON Object is null!");

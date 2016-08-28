@@ -46,7 +46,7 @@ public class Kathru {
         while (iter.hasNext()) {
             String key = iter.next();
             try {
-                vachanas.add(new VachanaMini(key, vachanasObj.getString(key)));
+                vachanas.add(new VachanaMini(Integer.parseInt(key), vachanasObj.getString(key)));
             } catch (JSONException e) {
                 e.printStackTrace();
             }
@@ -54,4 +54,15 @@ public class Kathru {
         return vachanas;
     }
 
+    public int getId() {
+        return id;
+    }
+
+    public String getName() {
+        return name;
+    }
+
+    public ArrayList<VachanaMini> getVachanasId() {
+        return vachanasId;
+    }
 }

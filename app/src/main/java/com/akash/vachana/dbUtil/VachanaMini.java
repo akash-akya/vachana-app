@@ -4,14 +4,14 @@ package com.akash.vachana.dbUtil;
  * Created by akash on 8/28/16.
  */
 public class VachanaMini {
-    String id;
+    int id;
     String title;
-    public VachanaMini(String id, String title){
+    public VachanaMini(int id, String title){
         this.id = id;
         this.title = title;
     }
 
-    public String getId() {
+    public int getId() {
         return id;
     }
 
