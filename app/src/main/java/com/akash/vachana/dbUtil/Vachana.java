@@ -22,6 +22,10 @@ public class Vachana {
         }
         try {
             if (j != null) {
+
+                Log.d("test", "Vachana: "+j.getString("id"));
+
+
                 id = Integer.parseInt(j.getString("id"));
                 text = j.getString("vachana");
             } else {

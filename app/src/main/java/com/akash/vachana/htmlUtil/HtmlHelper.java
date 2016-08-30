@@ -13,9 +13,9 @@ public class HtmlHelper {
         return  HEADER+
                 "<body style=\""+ STYLE +"\">"+
                 "<h2>"+title+"</h2>" +
-                "<h5><i> "+
-                kathru +
-                "</i></h5>" +
+                "<h5>"  +
+                kathru  +
+                "</h5>" +
                 "<p>"+
                 body+
                 "</p>"+
