@@ -1,17 +1,22 @@
 package com.akash.vachana.activity;
 
 import android.content.Context;
+import android.graphics.Color;
+import android.os.Build;
 import android.support.v4.view.PagerAdapter;
 import android.support.v4.view.ViewPager;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
+import android.text.Html;
 import android.util.AttributeSet;
 import android.util.Log;
+import android.view.Gravity;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.webkit.WebView;
 import android.widget.ArrayAdapter;
+import android.widget.TextView;
 
 import com.akash.vachana.R;
 import com.akash.vachana.dbUtil.Kathru;
@@ -30,11 +35,34 @@ public class VachanaSliderActivity extends AppCompatActivity {
 
     private static final String TAG = "VachanaSliderActivity";
     private Kathru currentKathru;
-    private Vachana currentVachana;
+//    private Vachana currentVachana;
     private ViewPager viewPager;
     private MyViewPagerAdapter myViewPagerAdapter;
-    private WebView webview;
+    int paddingDp;
     private ArrayList<VachanaMini> vachanaIds;
+
+    private final int[] bgColors = {
+            R.color.color1,
+            R.color.color2,
+            R.color.color3,
+            R.color.color4,
+            R.color.color5,
+            R.color.color6,
+            R.color.color7,
+            R.color.color8,
+            R.color.color9,
+            R.color.color10,
+            R.color.color11,
+            R.color.color12,
+            R.color.color13,
+            R.color.color14,
+            R.color.color15,
+            R.color.color16,
+            R.color.color17,
+            R.color.color18,
+            R.color.color19
+    };
+    private TextView textView;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -44,13 +72,17 @@ public class VachanaSliderActivity extends AppCompatActivity {
         currentKathru = getKathruById(104);
         vachanaIds = currentKathru.getVachanasId();
 
-        currentVachana = getFirstVachana(currentKathru.getId(),
-                currentKathru.getVachanasId().get(0).getId());
+//        currentVachana = getFirstVachana(currentKathru.getId(),
+//                currentKathru.getVachanasId().get(0).getId());
 
         viewPager = (ViewPager) findViewById(R.id.view_pager);
         myViewPagerAdapter = new MyViewPagerAdapter();
         viewPager.setAdapter(myViewPagerAdapter);
         viewPager.addOnPageChangeListener(viewPagerPageChangeListener);
+
+        float density =  getResources().getDisplayMetrics().density;
+        int paddingPixel = 20;
+        paddingDp = (int)(paddingPixel * density);
     }
 
     private Kathru getKathruById(int id) {
@@ -70,10 +102,10 @@ public class VachanaSliderActivity extends AppCompatActivity {
         return getKathruById(kathruMini.getId());
     }
 
-    private Vachana getVachana(int karthuId, int vachanaId) {
+    private Vachana getVachana(int kathruId, int vachanaId) {
         Vachana vachana = null;
         try {
-            InputStream inputStream = getAssets().open(karthuId+"/"+vachanaId+".json");
+            InputStream inputStream = getAssets().open(kathruId+"/"+vachanaId+".json");
             vachana = new Vachana(FileHelper.getFileContent(inputStream));
             inputStream.close();
         } catch (IOException e) {
@@ -82,10 +114,10 @@ public class VachanaSliderActivity extends AppCompatActivity {
         return vachana;
     }
 
-    private Vachana getFirstVachana(int karthuId, int vachanaId) {
+    private Vachana getFirstVachana(int kathruId, int vachanaId) {
         Vachana vachana = null;
         try {
-            InputStream inputStream = getAssets().open(karthuId+"/"+vachanaId+".json");
+            InputStream inputStream = getAssets().open(kathruId+"/"+vachanaId+".json");
             vachana = new Vachana(FileHelper.getFileContent(inputStream));
             inputStream.close();
         } catch (IOException e) {
@@ -100,19 +132,6 @@ public class VachanaSliderActivity extends AppCompatActivity {
         @Override
         public void onPageSelected(final int position) {
             // changing the next button text 'NEXT' / 'GOT IT'
-            if (position <  vachanaIds.size()-1) {
-
-                new Thread(new Runnable() {
-                    @Override
-                    public void run() {
-                        currentVachana = getFirstVachana(currentKathru.getId(),
-                                currentKathru.getVachanasId().get(position).getId());
-                    }
-                }).start();
-
-//                Vachana currentVachana = getFirstVachana(currentKathru.getId(),
-//                        currentKathru.getVachanasId().get(position).getId());
-           }
         }
 
         @Override
@@ -131,21 +150,30 @@ public class VachanaSliderActivity extends AppCompatActivity {
         public MyViewPagerAdapter() {        }
 
         @Override
-        public Object instantiateItem(ViewGroup container, int position) {
+        public Object instantiateItem(ViewGroup container, int position)  {
             layoutInflater = (LayoutInflater) getSystemService(Context.LAYOUT_INFLATER_SERVICE);
 
-            webview = new WebView(container.getContext());
+            textView = new TextView(container.getContext());
+            textView.setGravity(Gravity.CENTER);
+            textView.setIncludeFontPadding(true);
+            textView.setVerticalScrollBarEnabled(true);
+            textView.setTextIsSelectable(true);
+            textView.setPadding(paddingDp, paddingDp,paddingDp,paddingDp);
+
+            Vachana vachana= getFirstVachana(currentKathru.getId(),
+                    vachanaIds.get(position).getId());
 
             String title =  "ವಚನಗಳು"; // vachanas.get(position).getId();
-            String vachanaText = currentVachana.getText();
+            String vachanaText = vachana.getText();
             String kathru = currentKathru.getName();
 
-            webview.loadData(HtmlHelper.getHtmlString(title, kathru, vachanaText),
-                    "text/html; charset=utf-8","UTF-8");
-
-            container.addView(webview);
-
-            return webview;
+            textView.setText(Html.fromHtml(HtmlHelper.getHtmlString(title, kathru, vachanaText)));
+            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.JELLY_BEAN) {
+                Log.d(TAG, "instantiateItem: "+position+" - "+ bgColors[position%bgColors.length]);
+                textView.setBackgroundResource(bgColors[position%bgColors.length]);
+            }
+            container.addView(textView);
+            return textView;
         }
 
         @Override
