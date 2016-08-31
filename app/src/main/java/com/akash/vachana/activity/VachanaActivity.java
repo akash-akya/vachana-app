@@ -50,7 +50,9 @@ public class VachanaActivity extends AppCompatActivity {
         String vachanaText = currentVachana.getText();
         String kathru = currentKathru.getName();
 
-        myWebView.loadData(HtmlHelper.getHtmlString(title, kathru, vachanaText),
+        getSupportActionBar().setTitle(title);
+
+        myWebView.loadData(HtmlHelper.getHtmlString(vachanaText),
                 "text/html; charset=utf-8","UTF-8");
     }
 
@@ -124,7 +126,7 @@ public class VachanaActivity extends AppCompatActivity {
         String vachanaText = currentVachana.getText();
         String kathru = currentKathru.getName();
 
-        myWebView.loadData(HtmlHelper.getHtmlString(title, kathru, vachanaText),
+        myWebView.loadData(HtmlHelper.getHtmlString(vachanaText),
                 "text/html; charset=utf-8","UTF-8");
     }
 }

@@ -9,13 +9,11 @@ public class HtmlHelper {
             "<html lang=\"en\">\n" + "<head> <meta http-equiv=\"Content-Type\" content=\"text/html; charset=UTF-8\"> \n </head>\n";
     private static final String FOOTER = "</html>";*/
 
-    public static String getHtmlString(String title, String kathru, String body) {
+    public static String getHtmlString(String body) {
         return "<body>"+
                 "<big>" +
-                "<big><b>"+title+"</b></big><br/>" +
-                "<small>"  +
-                kathru  +
-                "</small>" +
+//                "<big><b>"+title+"</b></big><br/>" +
+
                 "<p>"+
                 body+
                 "</p>"+

@@ -2,18 +2,23 @@ package com.akash.vachana.activity;
 
 import android.content.Context;
 import android.graphics.Color;
+import android.graphics.drawable.ColorDrawable;
 import android.os.Build;
 import android.support.v4.view.PagerAdapter;
 import android.support.v4.view.ViewPager;
+import android.support.v7.app.ActionBar;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.text.Html;
 import android.util.AttributeSet;
 import android.util.Log;
+import android.view.GestureDetector;
 import android.view.Gravity;
 import android.view.LayoutInflater;
+import android.view.MotionEvent;
 import android.view.View;
 import android.view.ViewGroup;
+import android.view.Window;
 import android.webkit.WebView;
 import android.widget.ArrayAdapter;
 import android.widget.TextView;
@@ -30,15 +35,15 @@ import com.akash.vachana.util.FileHelper;
 import java.io.IOException;
 import java.io.InputStream;
 import java.util.ArrayList;
+import java.util.Calendar;
 
 public class VachanaSliderActivity extends AppCompatActivity {
 
     private static final String TAG = "VachanaSliderActivity";
+
     private Kathru currentKathru;
-//    private Vachana currentVachana;
     private ViewPager viewPager;
     private MyViewPagerAdapter myViewPagerAdapter;
-    int paddingDp;
     private ArrayList<VachanaMini> vachanaIds;
 
     private final int[] bgColors = {
@@ -62,28 +67,31 @@ public class VachanaSliderActivity extends AppCompatActivity {
             R.color.color18,
             R.color.color19
     };
-    private TextView textView;
+    private ActionBar actionBar;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        getWindow().requestFeature(Window.FEATURE_ACTION_BAR_OVERLAY);
         setContentView(R.layout.activity_vachana_slider);
 
         currentKathru = getKathruById(104);
         vachanaIds = currentKathru.getVachanasId();
 
-//        currentVachana = getFirstVachana(currentKathru.getId(),
-//                currentKathru.getVachanasId().get(0).getId());
+        actionBar = getSupportActionBar();
+        if (actionBar!= null) {
+            actionBar.setElevation(0);
+            actionBar.setHomeButtonEnabled(true);
+            actionBar.setDisplayShowHomeEnabled(true);
+        }
 
         viewPager = (ViewPager) findViewById(R.id.view_pager);
         myViewPagerAdapter = new MyViewPagerAdapter();
         viewPager.setAdapter(myViewPagerAdapter);
         viewPager.addOnPageChangeListener(viewPagerPageChangeListener);
 
-        float density =  getResources().getDisplayMetrics().density;
-        int paddingPixel = 20;
-        paddingDp = (int)(paddingPixel * density);
     }
+
 
     private Kathru getKathruById(int id) {
         Kathru kathru = null;
@@ -153,27 +161,47 @@ public class VachanaSliderActivity extends AppCompatActivity {
         public Object instantiateItem(ViewGroup container, int position)  {
             layoutInflater = (LayoutInflater) getSystemService(Context.LAYOUT_INFLATER_SERVICE);
 
-            textView = new TextView(container.getContext());
-            textView.setGravity(Gravity.CENTER);
-            textView.setIncludeFontPadding(true);
-            textView.setVerticalScrollBarEnabled(true);
-            textView.setTextIsSelectable(true);
-            textView.setPadding(paddingDp, paddingDp,paddingDp,paddingDp);
+            View view = layoutInflater.inflate(R.layout.vachana_text_view, container, false);
+
+            actionBar.setBackgroundDrawable(new ColorDrawable(Color.parseColor("#cc333333")));
+
+            TextView vachana_tv = (TextView) view.findViewById(R.id.vachana_text);
+//            TextView vachana_id_tv = (TextView) view.findViewById(R.id.vachana_number);
+//            TextView vachana_kathru_tv= (TextView) view.findViewById(R.id.vachana_kathru);
 
             Vachana vachana= getFirstVachana(currentKathru.getId(),
                     vachanaIds.get(position).getId());
 
-            String title =  "ವಚನಗಳು"; // vachanas.get(position).getId();
             String vachanaText = vachana.getText();
-            String kathru = currentKathru.getName();
+            actionBar.setTitle(currentKathru.getName());
 
-            textView.setText(Html.fromHtml(HtmlHelper.getHtmlString(title, kathru, vachanaText)));
-            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.JELLY_BEAN) {
+            vachana_tv.setText(Html.fromHtml(HtmlHelper.getHtmlString(vachanaText)));
+
+/*            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.JELLY_BEAN) {
                 Log.d(TAG, "instantiateItem: "+position+" - "+ bgColors[position%bgColors.length]);
-                textView.setBackgroundResource(bgColors[position%bgColors.length]);
-            }
-            container.addView(textView);
-            return textView;
+                view.setBackgroundResource(bgColors[position%bgColors.length]);
+            }*/
+
+            vachana_tv.setOnTouchListener(new View.OnTouchListener() {
+                GestureDetector myG = new GestureDetector(getParent(), new GestureDetector.SimpleOnGestureListener() {
+                    @Override
+                    public boolean onSingleTapConfirmed(MotionEvent e) {
+                        if(actionBar.isShowing())
+                            actionBar.hide();
+                        else
+                            actionBar.show();
+                        Log.d(TAG, "onSingleTapUp: is called");
+                        return false;
+                    }
+                });
+
+                @Override
+                public boolean onTouch(View view, MotionEvent motionEvent) {
+                    return myG.onTouchEvent(motionEvent);
+                }
+            });
+            container.addView(view);
+            return view;
         }
 
         @Override
@@ -185,8 +213,7 @@ public class VachanaSliderActivity extends AppCompatActivity {
         public boolean isViewFromObject(View view, Object obj) {
             return view == obj;
         }
-
-
+        
         @Override
         public void destroyItem(ViewGroup container, int position, Object object) {
             View view = (View) object;
