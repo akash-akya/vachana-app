@@ -1,7 +1,6 @@
 package com.akash.vachana.activity;
 
-import android.app.Fragment;
-import android.app.FragmentManager;
+import android.support.v4.app.FragmentManager;
 import android.content.Context;
 import android.graphics.Color;
 import android.graphics.drawable.ColorDrawable;
@@ -9,7 +8,7 @@ import android.os.Bundle;
 import android.os.Parcelable;
 import android.support.design.widget.FloatingActionButton;
 import android.support.design.widget.Snackbar;
-//import android.support.v4.app.FragmentManager;
+import android.support.v4.app.Fragment;
 import android.support.v4.view.PagerAdapter;
 import android.support.v4.view.ViewPager;
 import android.support.v7.app.ActionBar;
@@ -30,12 +29,15 @@ import android.view.MenuItem;
 import android.view.ViewGroup;
 import android.view.Window;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.akash.vachana.R;
+import com.akash.vachana.activity.dummy.VachanaList;
 import com.akash.vachana.dbUtil.Kathru;
 import com.akash.vachana.dbUtil.KathruMini;
 import com.akash.vachana.dbUtil.Vachana;
 import com.akash.vachana.dbUtil.VachanaMini;
+import com.akash.vachana.fragment.KathruFragment;
 import com.akash.vachana.htmlUtil.HtmlHelper;
 import com.akash.vachana.util.FileHelper;
 
@@ -44,12 +46,14 @@ import java.io.InputStream;
 import java.util.ArrayList;
 
 public class MainActivity extends AppCompatActivity
-        implements NavigationView.OnNavigationItemSelectedListener {
+        implements NavigationView.OnNavigationItemSelectedListener, KathruFragment.OnListFragmentInteractionListener {
 
     private static final String TAG = "MainActivity";
 
     final String[] fragments ={
-            "com.akash.vachana.fragment.VachanaFragment"};
+            "com.akash.vachana.fragment.VachanaFragment",
+            "com.akash.vachana.fragment.KathruFragment"
+    };
 
     private ActionBar actionBar;
 
@@ -138,8 +142,8 @@ public class MainActivity extends AppCompatActivity
                 Log.e(TAG, "selectItem: Error, Wrong id");
         }
 
-        FragmentManager fragmentManager = getFragmentManager();
-        Fragment fragment = Fragment.instantiate(MainActivity.this, fragments[0]);
+        FragmentManager fragmentManager = getSupportFragmentManager();
+        Fragment fragment = Fragment.instantiate(MainActivity.this, fragments[1]);
         fragment.setArguments(bundle);
 
         fragmentManager.beginTransaction()
@@ -147,5 +151,22 @@ public class MainActivity extends AppCompatActivity
                     .commit();
     }
 
+    @Override
+    public void onListFragmentInteraction(VachanaList.VachanaItem item) {
+        Bundle bundle = new Bundle();
+        FragmentManager fragmentManager = getSupportFragmentManager();
+        Fragment fragment = Fragment.instantiate(MainActivity.this, fragments[0]);
 
+        ArrayList<Integer> ids = new ArrayList<>();
+        ids.add(item.id);
+        bundle.putIntegerArrayList("ids", ids);
+        bundle.putInt("kathru_id", item.kathruId);
+
+        fragment.setArguments(bundle);
+
+        fragmentManager.beginTransaction()
+                .replace(R.id.main_content, fragment)
+                .commit();
+//        Toast.makeText(MainActivity.this, item.content, Toast.LENGTH_SHORT).show();
+    }
 }

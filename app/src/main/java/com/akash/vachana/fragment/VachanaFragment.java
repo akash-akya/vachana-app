@@ -1,6 +1,5 @@
 package com.akash.vachana.fragment;
 
-import android.app.Fragment;
 import android.content.Context;
 import android.graphics.Color;
 import android.graphics.drawable.ColorDrawable;
@@ -10,6 +9,7 @@ import android.support.v4.view.ViewPager;
 import android.support.v7.app.ActionBar;
 import android.support.v7.app.ActionBarActivity;
 import android.support.v7.app.AppCompatActivity;
+import android.support.v4.app.Fragment;
 import android.text.Html;
 import android.util.Log;
 import android.view.GestureDetector;
@@ -42,7 +42,7 @@ public class VachanaFragment extends Fragment {
     private Kathru currentKathru;
     private ViewPager viewPager;
     private MyViewPagerAdapter myViewPagerAdapter;
-    private ArrayList<VachanaMini> vachanaIds;
+    private ArrayList<Integer> vachanaIds;
     private ActionBar actionBar;
     private static Context sContext;
 
@@ -67,15 +67,23 @@ public class VachanaFragment extends Fragment {
             R.color.color18,
             R.color.color19
     };
+    public VachanaFragment() {}
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         sContext = getActivity();
         ViewGroup root = (ViewGroup) inflater.inflate(R.layout.vachana_pager_layout, null);
 
-        int id = getArguments().getInt("id");
-        currentKathru = getKathruById(id);
-        vachanaIds = currentKathru.getVachanasId();
+//        ArrayList<Integer> id = getArguments().getIntegerArrayList("ids");
+//        currentKathru = getKathruById(id);
+        if (getArguments() != null) {
+
+            vachanaIds = getArguments().getIntegerArrayList("ids");
+            Log.d(TAG, "onCreateView: "+vachanaIds.size());
+            currentKathru = getKathruById(getArguments().getInt("kathru_id"));
+        } else {
+            Log.e(TAG, "onCreateView: No bundle!");
+        }
 
         viewPager = (ViewPager) root.findViewById(R.id.vachana_view_pager);
         myViewPagerAdapter = new MyViewPagerAdapter();
@@ -159,8 +167,8 @@ public class VachanaFragment extends Fragment {
 
             final TextView vachana_tv = (TextView) view.findViewById(R.id.vachana_text);
 
-            Vachana vachana= getFirstVachana(currentKathru.getId(),
-                    vachanaIds.get(position).getId());
+            Vachana vachana = getFirstVachana(currentKathru.getId(),
+                    vachanaIds.get(position));
 
             String vachanaText = vachana.getText();
 

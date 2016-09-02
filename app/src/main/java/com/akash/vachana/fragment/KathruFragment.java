@@ -1,93 +1,78 @@
 package com.akash.vachana.fragment;
 
-import android.app.Fragment;
 import android.content.Context;
-import android.graphics.Color;
-import android.graphics.drawable.ColorDrawable;
 import android.os.Bundle;
-import android.support.v4.view.PagerAdapter;
-import android.support.v4.view.ViewPager;
-import android.support.v7.app.ActionBar;
-import android.support.v7.app.AppCompatActivity;
-import android.text.Html;
-import android.util.Log;
-import android.view.GestureDetector;
+import android.support.v4.app.Fragment;
+import android.support.v7.widget.GridLayoutManager;
+import android.support.v7.widget.LinearLayoutManager;
+import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
-import android.view.MotionEvent;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.TextView;
+import android.widget.Toast;
 
 import com.akash.vachana.R;
+import com.akash.vachana.activity.dummy.VachanaList;
 import com.akash.vachana.dbUtil.Kathru;
 import com.akash.vachana.dbUtil.KathruMini;
-import com.akash.vachana.dbUtil.Vachana;
 import com.akash.vachana.dbUtil.VachanaMini;
-import com.akash.vachana.htmlUtil.HtmlHelper;
 import com.akash.vachana.util.FileHelper;
 
 import java.io.IOException;
 import java.io.InputStream;
 import java.util.ArrayList;
 
+
 /**
- * Created by akash on 9/2/16.
+ * A fragment representing a list of Items.
+ * <p/>
+ * Activities containing this fragment MUST implement the {@link OnListFragmentInteractionListener}
+ * interface.
  */
 public class KathruFragment extends Fragment {
 
-    private static final String TAG = "KathruFragment";
-
+    // TODO: Customize parameter argument names
+    private static final String ARG_COLUMN_COUNT = "column-count";
+    // TODO: Customize parameters
+    private int mColumnCount = 1;
+    private OnListFragmentInteractionListener mListener;
     private Kathru currentKathru;
-    private ViewPager viewPager;
-    private MyViewPagerAdapter myViewPagerAdapter;
     private ArrayList<VachanaMini> vachanaIds;
-    private ActionBar actionBar;
-    private static Context sContext;
 
-    private final int[] bgColors = {
-            R.color.color1,
-            R.color.color2,
-            R.color.color3,
-            R.color.color4,
-            R.color.color5,
-            R.color.color6,
-            R.color.color7,
-            R.color.color8,
-            R.color.color9,
-            R.color.color10,
-            R.color.color11,
-            R.color.color12,
-            R.color.color13,
-            R.color.color14,
-            R.color.color15,
-            R.color.color16,
-            R.color.color17,
-            R.color.color18,
-            R.color.color19
-    };
+    /**
+     * Mandatory empty constructor for the fragment manager to instantiate the
+     * fragment (e.g. upon screen orientation changes).
+     */
+    public KathruFragment() {
+    }
+
+    // TODO: Customize parameter initialization
+    @SuppressWarnings("unused")
+    public static KathruFragment newInstance(int columnCount) {
+        KathruFragment fragment = new KathruFragment();
+        Bundle args = new Bundle();
+        args.putInt(ARG_COLUMN_COUNT, columnCount);
+        fragment.setArguments(args);
+        return fragment;
+    }
 
     @Override
-    public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
-        sContext = getActivity();
-        ViewGroup root = (ViewGroup) inflater.inflate(R.layout.vachana_pager_layout, null);
+    public void onCreate(Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
+
+        if (getArguments() != null) {
+            mColumnCount = getArguments().getInt(ARG_COLUMN_COUNT);
+        }
 
         int id = getArguments().getInt("id");
         currentKathru = getKathruById(id);
         vachanaIds = currentKathru.getVachanasId();
-
-        viewPager = (ViewPager) root.findViewById(R.id.vachana_view_pager);
-        myViewPagerAdapter = new MyViewPagerAdapter();
-        viewPager.setAdapter(myViewPagerAdapter);
-        viewPager.addOnPageChangeListener(viewPagerPageChangeListener);
-        actionBar = ((AppCompatActivity)getActivity()).getSupportActionBar();
-        return root;
     }
 
     private Kathru getKathruById(int id) {
         Kathru kathru = null;
-
         try {
-            InputStream inputStream = sContext.getAssets().open(id+"/details.json");
+            InputStream inputStream = getActivity().getAssets().open(id+"/details.json");
             kathru = new Kathru(FileHelper.getFileContent(inputStream));
             inputStream.close();
         } catch (IOException e) {
@@ -96,111 +81,56 @@ public class KathruFragment extends Fragment {
         return kathru;
     }
 
-    private Kathru getKathru(KathruMini kathruMini) {
-        return getKathruById(kathruMini.getId());
+    @Override
+    public View onCreateView(LayoutInflater inflater, ViewGroup container,
+                             Bundle savedInstanceState) {
+        View view = inflater.inflate(R.layout.fragment_kathru_list, container, false);
+        mListener = (OnListFragmentInteractionListener) getActivity();
+        // Set the adapter
+        if (view instanceof RecyclerView) {
+            Context context = view.getContext();
+            RecyclerView recyclerView = (RecyclerView) view;
+            if (mColumnCount <= 1) {
+                recyclerView.setLayoutManager(new LinearLayoutManager(context));
+            } else {
+                recyclerView.setLayoutManager(new GridLayoutManager(context, mColumnCount));
+            }
+            VachanaList vachanaList = new VachanaList(vachanaIds);
+            recyclerView.setAdapter(new MyKathruRecyclerViewAdapter(vachanaList.getVachanaList(), (OnListFragmentInteractionListener) getActivity()));
+        }
+        return view;
     }
 
-    private Vachana getVachana(int kathruId, int vachanaId) {
-        Vachana vachana = null;
-        try {
-            InputStream inputStream = sContext.getAssets().open(kathruId+"/"+vachanaId+".json");
-            vachana = new Vachana(FileHelper.getFileContent(inputStream));
-            inputStream.close();
-        } catch (IOException e) {
-            e.printStackTrace();
+    @Override
+    public void onAttach(Context context) {
+        super.onAttach(context);
+        if (context instanceof OnListFragmentInteractionListener) {
+            mListener = (OnListFragmentInteractionListener) context;
+        } else {
+            throw new RuntimeException(context.toString()
+                    + " must implement OnListFragmentInteractionListener");
         }
-        return vachana;
     }
 
-    private Vachana getFirstVachana(int kathruId, int vachanaId) {
-        Vachana vachana = null;
-        try {
-            InputStream inputStream = sContext.getAssets().open(kathruId+"/"+vachanaId+".json");
-            vachana = new Vachana(FileHelper.getFileContent(inputStream));
-            inputStream.close();
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
-        return vachana;
+    @Override
+    public void onDetach() {
+        super.onDetach();
+        mListener = null;
     }
+
 
     /**
-     * viewpager change listener
+     * This interface must be implemented by activities that contain this
+     * fragment to allow an interaction in this fragment to be communicated
+     * to the activity and potentially other fragments contained in that
+     * activity.
+     * <p/>
+     * See the Android Training lesson <a href=
+     * "http://developer.android.com/training/basics/fragments/communicating.html"
+     * >Communicating with Other Fragments</a> for more information.
      */
-    ViewPager.OnPageChangeListener viewPagerPageChangeListener = new ViewPager.OnPageChangeListener() {
-
-        @Override
-        public void onPageSelected(final int position) { }
-
-        @Override
-        public void onPageScrolled(int arg0, float arg1, int arg2) { }
-
-        @Override
-        public void onPageScrollStateChanged(int arg0) { }
-    };
-
-    /**
-     * View pager adapter
-     */
-    public class MyViewPagerAdapter extends PagerAdapter {
-        private LayoutInflater layoutInflater;
-
-        public MyViewPagerAdapter() {        }
-
-        @Override
-        public Object instantiateItem(final ViewGroup container, int position)  {
-            layoutInflater = (LayoutInflater) sContext.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
-
-            View view = layoutInflater.inflate(R.layout.vachana_text_view, container, false);
-
-            actionBar.setBackgroundDrawable(new ColorDrawable(Color.parseColor("#cc333333")));
-
-            final TextView vachana_tv = (TextView) view.findViewById(R.id.vachana_text);
-
-            Vachana vachana= getFirstVachana(currentKathru.getId(),
-                    vachanaIds.get(position).getId());
-
-            String vachanaText = vachana.getText();
-
-            vachana_tv.setText(Html.fromHtml(HtmlHelper.getHtmlString(vachanaText)));
-
-            vachana_tv.setOnTouchListener(new View.OnTouchListener() {
-                GestureDetector myG = new GestureDetector(sContext, new GestureDetector.SimpleOnGestureListener() {
-                    @Override
-                    public boolean onSingleTapConfirmed(MotionEvent e) {
-                        if(actionBar.isShowing())
-                            actionBar.hide();
-                        else
-                            actionBar.show();
-                        Log.d(TAG, "onSingleTapUp: is called");
-                        return false;
-                    }
-                });
-
-                @Override
-                public boolean onTouch(View view, MotionEvent motionEvent) {
-                    return myG.onTouchEvent(motionEvent);
-                }
-            });
-            container.addView(view);
-            return view;
-        }
-
-        @Override
-        public int getCount() {
-            return vachanaIds.size();
-        }
-
-        @Override
-        public boolean isViewFromObject(View view, Object obj) {
-            return view == obj;
-        }
-
-        @Override
-        public void destroyItem(ViewGroup container, int position, Object object) {
-            View view = (View) object;
-            container.removeView(view);
-        }
+    public interface OnListFragmentInteractionListener {
+        // TODO: Update argument type and name
+        void onListFragmentInteraction(VachanaList.VachanaItem item);
     }
-
 }

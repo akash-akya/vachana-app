@@ -46,7 +46,7 @@ public class Kathru {
         while (iter.hasNext()) {
             String key = iter.next();
             try {
-                vachanas.add(new VachanaMini(Integer.parseInt(key), vachanasObj.getString(key)));
+                vachanas.add(new VachanaMini(Integer.parseInt(key), id, vachanasObj.getString(key)));
             } catch (JSONException e) {
                 e.printStackTrace();
             }
