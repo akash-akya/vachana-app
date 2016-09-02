@@ -1,11 +1,15 @@
 package com.akash.vachana.activity;
 
+import android.app.Fragment;
+import android.app.FragmentManager;
 import android.content.Context;
 import android.graphics.Color;
 import android.graphics.drawable.ColorDrawable;
 import android.os.Bundle;
+import android.os.Parcelable;
 import android.support.design.widget.FloatingActionButton;
 import android.support.design.widget.Snackbar;
+//import android.support.v4.app.FragmentManager;
 import android.support.v4.view.PagerAdapter;
 import android.support.v4.view.ViewPager;
 import android.support.v7.app.ActionBar;
@@ -44,33 +48,10 @@ public class MainActivity extends AppCompatActivity
 
     private static final String TAG = "MainActivity";
 
-    private Kathru currentKathru;
-    private ViewPager viewPager;
-    private MyViewPagerAdapter myViewPagerAdapter;
-    private ArrayList<VachanaMini> vachanaIds;
-    private ActionBar actionBar;
+    final String[] fragments ={
+            "com.akash.vachana.fragment.VachanaFragment"};
 
-    private final int[] bgColors = {
-            R.color.color1,
-            R.color.color2,
-            R.color.color3,
-            R.color.color4,
-            R.color.color5,
-            R.color.color6,
-            R.color.color7,
-            R.color.color8,
-            R.color.color9,
-            R.color.color10,
-            R.color.color11,
-            R.color.color12,
-            R.color.color13,
-            R.color.color14,
-            R.color.color15,
-            R.color.color16,
-            R.color.color17,
-            R.color.color18,
-            R.color.color19
-    };
+    private ActionBar actionBar;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -79,9 +60,6 @@ public class MainActivity extends AppCompatActivity
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
 
-        currentKathru = getKathruById(104);
-        vachanaIds = currentKathru.getVachanasId();
-
         actionBar = getSupportActionBar();
         if (actionBar!= null) {
             actionBar.setElevation(0);
@@ -89,16 +67,13 @@ public class MainActivity extends AppCompatActivity
             actionBar.setDisplayShowHomeEnabled(true);
         }
 
-        viewPager = (ViewPager) findViewById(R.id.vachana_view_pager);
-        myViewPagerAdapter = new MyViewPagerAdapter();
-        viewPager.setAdapter(myViewPagerAdapter);
-        viewPager.addOnPageChangeListener(viewPagerPageChangeListener);
-
         DrawerLayout drawer = (DrawerLayout) findViewById(R.id.drawer_layout);
         ActionBarDrawerToggle toggle = new ActionBarDrawerToggle(
                 this, drawer, toolbar, R.string.navigation_drawer_open, R.string.navigation_drawer_close);
         drawer.setDrawerListener(toggle);
         toggle.syncState();
+
+        selectItem(R.id.nav_vachana);
 
         NavigationView navigationView = (NavigationView) findViewById(R.id.nav_view);
         navigationView.setNavigationItemSelectedListener(this);
@@ -141,151 +116,36 @@ public class MainActivity extends AppCompatActivity
     public boolean onNavigationItemSelected(MenuItem item) {
         // Handle navigation view item clicks here.
         int id = item.getItemId();
-
-        if (id == R.id.nav_camera) {
-            // Handle the camera action
-        } else if (id == R.id.nav_gallery) {
-
-        } else if (id == R.id.nav_slideshow) {
-
-        } else if (id == R.id.nav_manage) {
-
-        } else if (id == R.id.nav_share) {
-
-        } else if (id == R.id.nav_send) {
-
-        }
+        selectItem(id);
 
         DrawerLayout drawer = (DrawerLayout) findViewById(R.id.drawer_layout);
         drawer.closeDrawer(GravityCompat.START);
         return true;
     }
 
-    private Kathru getKathruById(int id) {
-        Kathru kathru = null;
-
-        try {
-            InputStream inputStream = getAssets().open(id+"/details.json");
-            kathru = new Kathru(FileHelper.getFileContent(inputStream));
-            inputStream.close();
-        } catch (IOException e) {
-            e.printStackTrace();
+    /** Swaps fragments in the main content view */
+    private void selectItem(int itemId) {
+        // Insert the fragment by replacing any existing fragment
+        Bundle bundle = new Bundle();
+        switch (itemId){
+            case R.id.nav_vachana:
+                bundle.putInt("id", 104);
+                break;
+            case R.id.nav_kathru:
+                bundle.putInt("id", 112);
+                break;
+            default:
+                Log.e(TAG, "selectItem: Error, Wrong id");
         }
-        return kathru;
+
+        FragmentManager fragmentManager = getFragmentManager();
+        Fragment fragment = Fragment.instantiate(MainActivity.this, fragments[0]);
+        fragment.setArguments(bundle);
+
+        fragmentManager.beginTransaction()
+                    .replace(R.id.main_content, fragment)
+                    .commit();
     }
 
-    private Kathru getKathru(KathruMini kathruMini) {
-        return getKathruById(kathruMini.getId());
-    }
 
-    private Vachana getVachana(int kathruId, int vachanaId) {
-        Vachana vachana = null;
-        try {
-            InputStream inputStream = getAssets().open(kathruId+"/"+vachanaId+".json");
-            vachana = new Vachana(FileHelper.getFileContent(inputStream));
-            inputStream.close();
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
-        return vachana;
-    }
-
-    private Vachana getFirstVachana(int kathruId, int vachanaId) {
-        Vachana vachana = null;
-        try {
-            InputStream inputStream = getAssets().open(kathruId+"/"+vachanaId+".json");
-            vachana = new Vachana(FileHelper.getFileContent(inputStream));
-            inputStream.close();
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
-        return vachana;
-    }
-
-    /**
-     * viewpager change listener
-     */
-    ViewPager.OnPageChangeListener viewPagerPageChangeListener = new ViewPager.OnPageChangeListener() {
-
-        @Override
-        public void onPageSelected(final int position) { }
-
-        @Override
-        public void onPageScrolled(int arg0, float arg1, int arg2) { }
-
-        @Override
-        public void onPageScrollStateChanged(int arg0) { }
-    };
-
-    /**
-     * View pager adapter
-     */
-    public class MyViewPagerAdapter extends PagerAdapter {
-        private LayoutInflater layoutInflater;
-
-        public MyViewPagerAdapter() {        }
-
-        @Override
-        public Object instantiateItem(ViewGroup container, int position)  {
-            layoutInflater = (LayoutInflater) getSystemService(Context.LAYOUT_INFLATER_SERVICE);
-
-            View view = layoutInflater.inflate(R.layout.vachana_text_view, container, false);
-
-            actionBar.setBackgroundDrawable(new ColorDrawable(Color.parseColor("#cc333333")));
-
-            TextView vachana_tv = (TextView) view.findViewById(R.id.vachana_text);
-//            TextView vachana_id_tv = (TextView) view.findViewById(R.id.vachana_number);
-//            TextView vachana_kathru_tv= (TextView) view.findViewById(R.id.vachana_kathru);
-
-            Vachana vachana= getFirstVachana(currentKathru.getId(),
-                    vachanaIds.get(position).getId());
-
-            String vachanaText = vachana.getText();
-            actionBar.setTitle(currentKathru.getName());
-
-            vachana_tv.setText(Html.fromHtml(HtmlHelper.getHtmlString(vachanaText)));
-
-/*            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.JELLY_BEAN) {
-                Log.d(TAG, "instantiateItem: "+position+" - "+ bgColors[position%bgColors.length]);
-                view.setBackgroundResource(bgColors[position%bgColors.length]);
-            }*/
-
-            vachana_tv.setOnTouchListener(new View.OnTouchListener() {
-                GestureDetector myG = new GestureDetector(getParent(), new GestureDetector.SimpleOnGestureListener() {
-                    @Override
-                    public boolean onSingleTapConfirmed(MotionEvent e) {
-                        if(actionBar.isShowing())
-                            actionBar.hide();
-                        else
-                            actionBar.show();
-                        Log.d(TAG, "onSingleTapUp: is called");
-                        return false;
-                    }
-                });
-
-                @Override
-                public boolean onTouch(View view, MotionEvent motionEvent) {
-                    return myG.onTouchEvent(motionEvent);
-                }
-            });
-            container.addView(view);
-            return view;
-        }
-
-        @Override
-        public int getCount() {
-            return vachanaIds.size();
-        }
-
-        @Override
-        public boolean isViewFromObject(View view, Object obj) {
-            return view == obj;
-        }
-
-        @Override
-        public void destroyItem(ViewGroup container, int position, Object object) {
-            View view = (View) object;
-            container.removeView(view);
-        }
-    }
 }
