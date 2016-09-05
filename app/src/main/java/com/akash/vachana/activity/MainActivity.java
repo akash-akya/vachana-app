@@ -1,23 +1,10 @@
 package com.akash.vachana.activity;
 
 import android.support.v4.app.FragmentManager;
-import android.content.Context;
-import android.graphics.Color;
-import android.graphics.drawable.ColorDrawable;
 import android.os.Bundle;
-import android.os.Parcelable;
-import android.support.design.widget.FloatingActionButton;
-import android.support.design.widget.Snackbar;
 import android.support.v4.app.Fragment;
-import android.support.v4.view.PagerAdapter;
-import android.support.v4.view.ViewPager;
 import android.support.v7.app.ActionBar;
-import android.text.Html;
 import android.util.Log;
-import android.view.GestureDetector;
-import android.view.LayoutInflater;
-import android.view.MotionEvent;
-import android.view.View;
 import android.support.design.widget.NavigationView;
 import android.support.v4.view.GravityCompat;
 import android.support.v4.widget.DrawerLayout;
@@ -26,19 +13,14 @@ import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.view.Menu;
 import android.view.MenuItem;
-import android.view.ViewGroup;
-import android.view.Window;
-import android.widget.TextView;
-import android.widget.Toast;
 
 import com.akash.vachana.R;
-import com.akash.vachana.activity.dummy.VachanaList;
+import com.akash.vachana.ListViewHelper.VachanaList;
 import com.akash.vachana.dbUtil.Kathru;
 import com.akash.vachana.dbUtil.KathruMini;
-import com.akash.vachana.dbUtil.Vachana;
 import com.akash.vachana.dbUtil.VachanaMini;
-import com.akash.vachana.fragment.KathruFragment;
-import com.akash.vachana.htmlUtil.HtmlHelper;
+import com.akash.vachana.fragment.KathruListFragment;
+import com.akash.vachana.fragment.VachanaListFragment;
 import com.akash.vachana.util.FileHelper;
 
 import java.io.IOException;
@@ -46,13 +28,15 @@ import java.io.InputStream;
 import java.util.ArrayList;
 
 public class MainActivity extends AppCompatActivity
-        implements NavigationView.OnNavigationItemSelectedListener, KathruFragment.OnListFragmentInteractionListener {
+        implements NavigationView.OnNavigationItemSelectedListener, VachanaListFragment.OnListFragmentInteractionListener,
+        KathruListFragment.OnKathruListFragmentInteractionListener {
 
     private static final String TAG = "MainActivity";
 
     final String[] fragments ={
             "com.akash.vachana.fragment.VachanaFragment",
-            "com.akash.vachana.fragment.KathruFragment"
+            "com.akash.vachana.fragment.VachanaListFragment",
+            "com.akash.vachana.fragment.KathruListFragment",
     };
 
     private ActionBar actionBar;
@@ -130,21 +114,30 @@ public class MainActivity extends AppCompatActivity
     /** Swaps fragments in the main content view */
     private void selectItem(int itemId) {
         // Insert the fragment by replacing any existing fragment
+        FragmentManager fragmentManager = getSupportFragmentManager();
+        Fragment fragment = null;
+
         Bundle bundle = new Bundle();
         switch (itemId){
             case R.id.nav_vachana:
+                // For vachanas list view
                 bundle.putInt("id", 104);
+                fragment = Fragment.instantiate(MainActivity.this, fragments[1]);
                 break;
             case R.id.nav_kathru:
-                bundle.putInt("id", 112);
+                // For kathru list view
+//                bundle.putInt("id", 112);
+                fragment = Fragment.instantiate(MainActivity.this, fragments[2]);
                 break;
             default:
                 Log.e(TAG, "selectItem: Error, Wrong id");
         }
 
-        FragmentManager fragmentManager = getSupportFragmentManager();
-        Fragment fragment = Fragment.instantiate(MainActivity.this, fragments[1]);
-        fragment.setArguments(bundle);
+        try {
+            fragment.setArguments(bundle);
+        } catch (NullPointerException e){
+            Log.d(TAG, "selectItem: Fragment is null!!");
+        }
 
         fragmentManager.beginTransaction()
                     .replace(R.id.main_content, fragment)
@@ -167,6 +160,30 @@ public class MainActivity extends AppCompatActivity
         fragmentManager.beginTransaction()
                 .replace(R.id.main_content, fragment)
                 .commit();
-//        Toast.makeText(MainActivity.this, item.content, Toast.LENGTH_SHORT).show();
+    }
+
+    private Kathru getKathruById(int id) {
+        Kathru kathru = null;
+        try {
+            InputStream inputStream = getAssets().open(id+"/details.json");
+            kathru = new Kathru(FileHelper.getFileContent(inputStream));
+            inputStream.close();
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+        return kathru;
+    }
+
+    @Override
+    public void onListFragmentInteraction(KathruMini item) {
+        Bundle bundle = new Bundle();
+        FragmentManager fragmentManager = getSupportFragmentManager();
+        Fragment fragment = Fragment.instantiate(MainActivity.this, fragments[1]);
+        bundle.putInt("id", item.getId());
+
+        fragment.setArguments(bundle);
+        fragmentManager.beginTransaction()
+                .replace(R.id.main_content, fragment)
+                .commit();
     }
 }

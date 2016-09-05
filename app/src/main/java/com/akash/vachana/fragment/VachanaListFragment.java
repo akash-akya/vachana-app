@@ -9,12 +9,10 @@ import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.Toast;
 
 import com.akash.vachana.R;
-import com.akash.vachana.activity.dummy.VachanaList;
+import com.akash.vachana.ListViewHelper.VachanaList;
 import com.akash.vachana.dbUtil.Kathru;
-import com.akash.vachana.dbUtil.KathruMini;
 import com.akash.vachana.dbUtil.VachanaMini;
 import com.akash.vachana.util.FileHelper;
 
@@ -29,7 +27,7 @@ import java.util.ArrayList;
  * Activities containing this fragment MUST implement the {@link OnListFragmentInteractionListener}
  * interface.
  */
-public class KathruFragment extends Fragment {
+public class VachanaListFragment extends Fragment {
 
     // TODO: Customize parameter argument names
     private static final String ARG_COLUMN_COUNT = "column-count";
@@ -43,13 +41,13 @@ public class KathruFragment extends Fragment {
      * Mandatory empty constructor for the fragment manager to instantiate the
      * fragment (e.g. upon screen orientation changes).
      */
-    public KathruFragment() {
+    public VachanaListFragment() {
     }
 
     // TODO: Customize parameter initialization
     @SuppressWarnings("unused")
-    public static KathruFragment newInstance(int columnCount) {
-        KathruFragment fragment = new KathruFragment();
+    public static VachanaListFragment newInstance(int columnCount) {
+        VachanaListFragment fragment = new VachanaListFragment();
         Bundle args = new Bundle();
         args.putInt(ARG_COLUMN_COUNT, columnCount);
         fragment.setArguments(args);
@@ -96,7 +94,7 @@ public class KathruFragment extends Fragment {
                 recyclerView.setLayoutManager(new GridLayoutManager(context, mColumnCount));
             }
             VachanaList vachanaList = new VachanaList(vachanaIds);
-            recyclerView.setAdapter(new MyKathruRecyclerViewAdapter(vachanaList.getVachanaList(), (OnListFragmentInteractionListener) getActivity()));
+            recyclerView.setAdapter(new MyVachanaListRecyclerViewAdapter(vachanaList.getVachanaList(), (OnListFragmentInteractionListener) getActivity()));
         }
         return view;
     }

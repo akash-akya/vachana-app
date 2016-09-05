@@ -7,17 +7,17 @@ import android.view.ViewGroup;
 import android.widget.TextView;
 
 import com.akash.vachana.R;
-import com.akash.vachana.fragment.KathruFragment.OnListFragmentInteractionListener;
-import com.akash.vachana.activity.dummy.VachanaList.VachanaItem;
+import com.akash.vachana.fragment.VachanaListFragment.OnListFragmentInteractionListener;
+import com.akash.vachana.ListViewHelper.VachanaList.VachanaItem;
 
 import java.util.List;
 
-public class MyKathruRecyclerViewAdapter extends RecyclerView.Adapter<MyKathruRecyclerViewAdapter.ViewHolder> {
+public class MyVachanaListRecyclerViewAdapter extends RecyclerView.Adapter<MyVachanaListRecyclerViewAdapter.ViewHolder> {
 
     private final List<VachanaItem> mValues;
     private final OnListFragmentInteractionListener mListener;
 
-    public MyKathruRecyclerViewAdapter(List<VachanaItem> items, OnListFragmentInteractionListener listener) {
+    public MyVachanaListRecyclerViewAdapter(List<VachanaItem> items, OnListFragmentInteractionListener listener) {
         mValues = items;
         mListener = listener;
     }
