@@ -68,7 +68,7 @@ public class VachanaListFragment extends Fragment {
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
-        View view = inflater.inflate(R.layout.fragment_kathru_list, container, false);
+        View view = inflater.inflate(R.layout.fragment_vachana_list, container, false);
         mListener = (OnListFragmentInteractionListener) getActivity();
         // Set the adapter
         if (view instanceof RecyclerView) {

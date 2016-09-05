@@ -1,13 +1,11 @@
 package com.akash.vachana.fragment;
 
 import android.support.v7.widget.RecyclerView;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.TextView;
 
-import com.akash.vachana.ListViewHelper.VachanaList.VachanaItem;
 import com.akash.vachana.R;
 import com.akash.vachana.dbUtil.KathruMini;
 import com.akash.vachana.fragment.KathruListFragment.OnKathruListFragmentInteractionListener;
@@ -28,7 +26,7 @@ public class MyKathruListRecyclerViewAdapter extends RecyclerView.Adapter<MyKath
     @Override
     public ViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
         View view = LayoutInflater.from(parent.getContext())
-                .inflate(R.layout.fragment_kathru, parent, false);
+                .inflate(R.layout.fragment_kathru_list_item, parent, false);
         return new ViewHolder(view);
     }
 
@@ -59,13 +57,16 @@ public class MyKathruListRecyclerViewAdapter extends RecyclerView.Adapter<MyKath
         public final View mView;
         public final TextView mIdView;
         public final TextView mContentView;
+        public final TextView mCount;
+
         public KathruMini mItem;
 
         public ViewHolder(View view) {
             super(view);
             mView = view;
-            mIdView = (TextView) view.findViewById(R.id.id);
-            mContentView = (TextView) view.findViewById(R.id.content);
+            mIdView = (TextView) view.findViewById(R.id.tv_kathru_ankitha);
+            mContentView = (TextView) view.findViewById(R.id.tv_kathru_name);
+            mCount = (TextView) view.findViewById(R.id.tv_kathru_name);
         }
 
         @Override

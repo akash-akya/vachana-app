@@ -17,7 +17,7 @@ public class Kathru {
     public static final String className = "Katru";
     int id;
     String name;
-    String ankithanama;
+    KathruDetails details;
     ArrayList<VachanaMini> vachanasId;
 
     public Kathru (String src){
@@ -31,6 +31,7 @@ public class Kathru {
             if (j != null) {
                 id = j.getInt("id");
                 name = j.getString("name");
+                details = new KathruDetails(j.getJSONObject("details"));
                 vachanasId = getVachanas(j.getJSONObject("vachana"));
             } else {
                 Log.e(className, "JSON Object is null!");

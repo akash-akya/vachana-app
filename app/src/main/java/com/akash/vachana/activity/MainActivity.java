@@ -148,7 +148,8 @@ public class MainActivity extends AppCompatActivity
             case R.id.nav_vachana:
                 // For vachanas list view
                 Random r = new Random();
-                bundle.putInt("id", r.nextInt(247));
+                ArrayList<KathruMini> k = getAllKathru();
+                bundle.putInt("id", k.get(r.nextInt(247)).getId());
                 fragment = Fragment.instantiate(MainActivity.this, fragments[1]);
                 break;
             case R.id.nav_kathru:
