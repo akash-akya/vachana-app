@@ -16,14 +16,13 @@ import java.util.List;
 
 public class MyKathruListRecyclerViewAdapter extends RecyclerView.Adapter<MyKathruListRecyclerViewAdapter.ViewHolder> {
 
-    private static final String TAG = "MyKathruListRecycler";
+    private static final String TAG = "MyKathruListRecyclerViewAdapter";
     private final List<KathruMini> mValues;
     private final OnKathruListFragmentInteractionListener mListener;
 
     public MyKathruListRecyclerViewAdapter(List<KathruMini> items, OnKathruListFragmentInteractionListener listener) {
         mValues = items;
         mListener = listener;
-        Log.d(TAG, "Items: "+items.size());
     }
 
     @Override
@@ -36,7 +35,6 @@ public class MyKathruListRecyclerViewAdapter extends RecyclerView.Adapter<MyKath
     @Override
     public void onBindViewHolder(final ViewHolder holder, int position) {
         holder.mItem = mValues.get(position);
-        Log.d(TAG, "onBindViewHolder: position: "+ position +" value: "+mValues.get(position).getId());
         holder.mIdView.setText(""+mValues.get(position).getId());
         holder.mContentView.setText(mValues.get(position).getName());
 

@@ -6,12 +6,14 @@ import android.support.v4.app.Fragment;
 import android.support.v7.widget.GridLayoutManager;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 
 import com.akash.vachana.R;
 import com.akash.vachana.ListViewHelper.VachanaList;
+import com.akash.vachana.activity.MainActivity;
 import com.akash.vachana.dbUtil.Kathru;
 import com.akash.vachana.dbUtil.VachanaMini;
 import com.akash.vachana.util.FileHelper;
@@ -19,6 +21,7 @@ import com.akash.vachana.util.FileHelper;
 import java.io.IOException;
 import java.io.InputStream;
 import java.util.ArrayList;
+import java.util.concurrent.ExecutionException;
 
 
 /**
@@ -31,27 +34,15 @@ public class VachanaListFragment extends Fragment {
 
     // TODO: Customize parameter argument names
     private static final String ARG_COLUMN_COUNT = "column-count";
-    // TODO: Customize parameters
+    private static final String TAG = "VachanaListFragment";
+
     private int mColumnCount = 1;
     private OnListFragmentInteractionListener mListener;
     private Kathru currentKathru;
     private ArrayList<VachanaMini> vachanaIds;
+    private MainActivity mainActivity;
 
-    /**
-     * Mandatory empty constructor for the fragment manager to instantiate the
-     * fragment (e.g. upon screen orientation changes).
-     */
     public VachanaListFragment() {
-    }
-
-    // TODO: Customize parameter initialization
-    @SuppressWarnings("unused")
-    public static VachanaListFragment newInstance(int columnCount) {
-        VachanaListFragment fragment = new VachanaListFragment();
-        Bundle args = new Bundle();
-        args.putInt(ARG_COLUMN_COUNT, columnCount);
-        fragment.setArguments(args);
-        return fragment;
     }
 
     @Override
@@ -63,20 +54,15 @@ public class VachanaListFragment extends Fragment {
         }
 
         int id = getArguments().getInt("id");
-        currentKathru = getKathruById(id);
-        vachanaIds = currentKathru.getVachanasId();
-    }
-
-    private Kathru getKathruById(int id) {
-        Kathru kathru = null;
+        mainActivity = (MainActivity) getContext();
+        currentKathru = mainActivity.getKathruById(id);
         try {
-            InputStream inputStream = getActivity().getAssets().open(id+"/details.json");
-            kathru = new Kathru(FileHelper.getFileContent(inputStream));
-            inputStream.close();
-        } catch (IOException e) {
-            e.printStackTrace();
+            mainActivity.getSupportActionBar().setTitle(currentKathru.getName());
+        } catch (NullPointerException e){
+            Log.d(  TAG, "onCreate: Actionbar not found");
         }
-        return kathru;
+
+        vachanaIds = currentKathru.getVachanasId();
     }
 
     @Override

@@ -17,6 +17,7 @@ public class Kathru {
     public static final String className = "Katru";
     int id;
     String name;
+    String ankithanama;
     ArrayList<VachanaMini> vachanasId;
 
     public Kathru (String src){

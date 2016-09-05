@@ -1,5 +1,6 @@
 package com.akash.vachana.activity;
 
+import android.content.Context;
 import android.support.v4.app.FragmentManager;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
@@ -17,7 +18,9 @@ import android.view.MenuItem;
 import com.akash.vachana.R;
 import com.akash.vachana.ListViewHelper.VachanaList;
 import com.akash.vachana.dbUtil.Kathru;
+import com.akash.vachana.dbUtil.KathruMap;
 import com.akash.vachana.dbUtil.KathruMini;
+import com.akash.vachana.dbUtil.Vachana;
 import com.akash.vachana.dbUtil.VachanaMini;
 import com.akash.vachana.fragment.KathruListFragment;
 import com.akash.vachana.fragment.VachanaListFragment;
@@ -26,12 +29,14 @@ import com.akash.vachana.util.FileHelper;
 import java.io.IOException;
 import java.io.InputStream;
 import java.util.ArrayList;
+import java.util.Random;
 
 public class MainActivity extends AppCompatActivity
         implements NavigationView.OnNavigationItemSelectedListener, VachanaListFragment.OnListFragmentInteractionListener,
         KathruListFragment.OnKathruListFragmentInteractionListener {
 
     private static final String TAG = "MainActivity";
+    public final Context context = this;
 
     final String[] fragments ={
             "com.akash.vachana.fragment.VachanaFragment",
@@ -39,6 +44,27 @@ public class MainActivity extends AppCompatActivity
             "com.akash.vachana.fragment.KathruListFragment",
     };
 
+    private final int[] bgColors = {
+            R.color.color1,
+            R.color.color2,
+            R.color.color3,
+            R.color.color4,
+            R.color.color5,
+            R.color.color6,
+            R.color.color7,
+            R.color.color8,
+            R.color.color9,
+            R.color.color10,
+            R.color.color11,
+            R.color.color12,
+            R.color.color13,
+            R.color.color14,
+            R.color.color15,
+            R.color.color16,
+            R.color.color17,
+            R.color.color18,
+            R.color.color19
+    };
     private ActionBar actionBar;
 
     @Override
@@ -121,7 +147,8 @@ public class MainActivity extends AppCompatActivity
         switch (itemId){
             case R.id.nav_vachana:
                 // For vachanas list view
-                bundle.putInt("id", 104);
+                Random r = new Random();
+                bundle.putInt("id", r.nextInt(247));
                 fragment = Fragment.instantiate(MainActivity.this, fragments[1]);
                 break;
             case R.id.nav_kathru:
@@ -162,18 +189,6 @@ public class MainActivity extends AppCompatActivity
                 .commit();
     }
 
-    private Kathru getKathruById(int id) {
-        Kathru kathru = null;
-        try {
-            InputStream inputStream = getAssets().open(id+"/details.json");
-            kathru = new Kathru(FileHelper.getFileContent(inputStream));
-            inputStream.close();
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
-        return kathru;
-    }
-
     @Override
     public void onListFragmentInteraction(KathruMini item) {
         Bundle bundle = new Bundle();
@@ -186,4 +201,58 @@ public class MainActivity extends AppCompatActivity
                 .replace(R.id.main_content, fragment)
                 .commit();
     }
+
+
+    public Kathru getKathruById(int id) {
+        Kathru kathru = null;
+        try {
+            InputStream inputStream = getAssets().open(id+"/details.json");
+            kathru = new Kathru(FileHelper.getFileContent(inputStream));
+            inputStream.close();
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+        return kathru;
+    }
+
+    public Kathru getKathru(KathruMini kathruMini) {
+        return getKathruById(kathruMini.getId());
+    }
+
+    public Vachana getVachana(int kathruId, int vachanaId) {
+        Vachana vachana = null;
+        try {
+            InputStream inputStream = getAssets().open(kathruId+"/"+vachanaId+".json");
+            vachana = new Vachana(FileHelper.getFileContent(inputStream));
+            inputStream.close();
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+        return vachana;
+    }
+
+    public Vachana getFirstVachana(int kathruId, int vachanaId) {
+        Vachana vachana = null;
+        try {
+            InputStream inputStream = getAssets().open(kathruId+"/"+vachanaId+".json");
+            vachana = new Vachana(FileHelper.getFileContent(inputStream));
+            inputStream.close();
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+        return vachana;
+    }
+
+    public ArrayList<KathruMini>  getAllKathru() {
+        ArrayList<KathruMini> kathruMap = null;
+        try {
+            InputStream inputStream = getAssets().open("map.json");
+            kathruMap = KathruMap.getKathruMap(FileHelper.getFileContent(inputStream));
+            inputStream.close();
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+        return kathruMap;
+    }
+
 }
