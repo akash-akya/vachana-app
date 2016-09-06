@@ -39,15 +39,18 @@ public class KathruListFragment extends Fragment {
         }
 
         mainActivity = (MainActivity) getActivity();
+        kathruMinis = mainActivity.getAllKathru();
+    }
 
+    @Override
+    public void onResume() {
+        super.onResume();
         try {
             mainActivity.getSupportActionBar().setTitle("ವಚನಕಾರರು");
         } catch (NullPointerException e){
             Log.d(TAG, "onCreate: Actionbar not found");
         }
-        kathruMinis = mainActivity.getAllKathru();
     }
-
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,

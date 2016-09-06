@@ -3,15 +3,19 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent">
 
-    <TextView
+    <android.support.v4.widget.NestedScrollView
         android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:gravity="center_horizontal"
-        android:textSize="13sp"
-        android:lineSpacingExtra="5dp"
-        android:padding="15dp"
-        android:textIsSelectable="true"
-        android:scrollbars="vertical"
-        android:id="@+id/vachana_text"/>
+        android:layout_height="match_parent">
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:gravity="center_horizontal"
+            android:textSize="13sp"
+            android:lineSpacingExtra="5dp"
+            android:padding="15dp"
+            android:textIsSelectable="true"
+            android:scrollbars="vertical"
+            android:id="@+id/vachana_text"/>
+    </android.support.v4.widget.NestedScrollView>
 
 </RelativeLayout>

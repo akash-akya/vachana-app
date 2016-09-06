@@ -56,13 +56,17 @@ public class VachanaListFragment extends Fragment {
         int id = getArguments().getInt("id");
         mainActivity = (MainActivity) getContext();
         currentKathru = mainActivity.getKathruById(id);
+        vachanaMinis = currentKathru.getVachanasId();
+    }
+
+    @Override
+    public void onResume() {
+        super.onResume();
         try {
             mainActivity.getSupportActionBar().setTitle(currentKathru.getName());
         } catch (NullPointerException e){
             Log.d(  TAG, "onCreate: Actionbar not found");
         }
-
-        vachanaMinis = currentKathru.getVachanasId();
     }
 
     @Override

@@ -183,8 +183,10 @@ public class MainActivity extends AppCompatActivity
         bundle.putInt("kathru_id", item.getKathruId());
 
         fragment.setArguments(bundle);
+        fragmentManager.popBackStack("vachana_list", FragmentManager.POP_BACK_STACK_INCLUSIVE);
         fragmentManager.beginTransaction()
                 .replace(R.id.main_content, fragment)
+                .addToBackStack( "vachana_list" )
                 .commit();
     }
 
@@ -196,11 +198,12 @@ public class MainActivity extends AppCompatActivity
         bundle.putInt("id", item.getId());
 
         fragment.setArguments(bundle);
+        fragmentManager.popBackStack(null, FragmentManager.POP_BACK_STACK_INCLUSIVE);
         fragmentManager.beginTransaction()
                 .replace(R.id.main_content, fragment)
+                .addToBackStack( "kathru_list" )
                 .commit();
     }
-
 
     public Kathru getKathruById(int id) {
         Kathru kathru = null;
@@ -253,5 +256,4 @@ public class MainActivity extends AppCompatActivity
         }
         return kathruMap;
     }
-
 }

@@ -31,14 +31,12 @@ import java.util.ArrayList;
  */
 public class VachanaFragment extends Fragment {
 
-    public static final String VACHANA_ARRAY = "ARRAY";
     private static final String TAG = "VachanaFragment";
 
     private Kathru currentKathru;
     private ViewPager viewPager;
     private MyViewPagerAdapter myViewPagerAdapter;
     private ArrayList<Integer> vachanaIds;
-    private ActionBar actionBar;
     private static Context sContext;
     private MainActivity mainActivity;
 
@@ -61,7 +59,6 @@ public class VachanaFragment extends Fragment {
         myViewPagerAdapter = new MyViewPagerAdapter();
         viewPager.setAdapter(myViewPagerAdapter);
         viewPager.addOnPageChangeListener(viewPagerPageChangeListener);
-        actionBar = ((AppCompatActivity)getActivity()).getSupportActionBar();
         return root;
     }
 
@@ -81,6 +78,16 @@ public class VachanaFragment extends Fragment {
         public void onPageScrollStateChanged(int arg0) { }
     };
 
+    @Override
+    public void onResume() {
+        super.onResume();
+        try {
+            mainActivity.getSupportActionBar().setTitle(currentKathru.getName());
+        } catch (NullPointerException e){
+            Log.d(  TAG, "onCreate: Actionbar not found");
+        }
+    }
+
     /**
      * View pager adapter
      */
@@ -94,36 +101,13 @@ public class VachanaFragment extends Fragment {
             layoutInflater = (LayoutInflater) sContext.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
 
             View view = layoutInflater.inflate(R.layout.vachana_text_view, container, false);
-
-//            actionBar.setBackgroundDrawable(new ColorDrawable(Color.parseColor("#cc333333")));
-
             final TextView vachana_tv = (TextView) view.findViewById(R.id.vachana_text);
-
             Vachana vachana = mainActivity.getFirstVachana(currentKathru.getId(),
                     vachanaIds.get(position));
 
             String vachanaText = vachana.getText();
-
             vachana_tv.setText(Html.fromHtml(HtmlHelper.getHtmlString(vachanaText)));
 
-            vachana_tv.setOnTouchListener(new View.OnTouchListener() {
-                GestureDetector myG = new GestureDetector(sContext, new GestureDetector.SimpleOnGestureListener() {
-                    @Override
-                    public boolean onSingleTapConfirmed(MotionEvent e) {
-                        if(actionBar.isShowing())
-                            actionBar.hide();
-                        else
-                            actionBar.show();
-                        Log.d(TAG, "onSingleTapUp: is called");
-                        return false;
-                    }
-                });
-
-                @Override
-                public boolean onTouch(View view, MotionEvent motionEvent) {
-                    return myG.onTouchEvent(motionEvent);
-                }
-            });
             container.addView(view);
             return view;
         }
