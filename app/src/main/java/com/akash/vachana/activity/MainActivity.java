@@ -14,6 +14,7 @@ import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.view.Menu;
 import android.view.MenuItem;
+import android.widget.ShareActionProvider;
 
 import com.akash.vachana.R;
 import com.akash.vachana.ListViewHelper.VachanaList;
@@ -65,6 +66,7 @@ public class MainActivity extends AppCompatActivity
             R.color.color19
     };
     private ActionBar actionBar;
+    private ShareActionProvider mShareActionProvider;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -116,9 +118,9 @@ public class MainActivity extends AppCompatActivity
         // as you specify a parent activity in AndroidManifest.xml.
         int id = item.getItemId();
 
-        //noinspection SimplifiableIfStatement
-        if (id == R.id.action_settings) {
-            return true;
+        switch (id) {
+            case R.id.action_settings:
+                return true;
         }
 
         return super.onOptionsItemSelected(item);

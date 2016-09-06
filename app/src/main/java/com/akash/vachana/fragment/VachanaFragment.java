@@ -1,6 +1,7 @@
 package com.akash.vachana.fragment;
 
 import android.content.Context;
+import android.content.Intent;
 import android.graphics.Color;
 import android.graphics.drawable.ColorDrawable;
 import android.os.Bundle;
@@ -13,6 +14,9 @@ import android.text.Html;
 import android.util.Log;
 import android.view.GestureDetector;
 import android.view.LayoutInflater;
+import android.view.Menu;
+import android.view.MenuInflater;
+import android.view.MenuItem;
 import android.view.MotionEvent;
 import android.view.View;
 import android.view.ViewGroup;
@@ -39,11 +43,14 @@ public class VachanaFragment extends Fragment {
     private ArrayList<Integer> vachanaIds;
     private static Context sContext;
     private MainActivity mainActivity;
+    private Vachana currentVachana;
 
     public VachanaFragment() {}
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
+        setHasOptionsMenu(true);
+
         sContext = getActivity();
         mainActivity = (MainActivity) getActivity();
         ViewGroup root = (ViewGroup) inflater.inflate(R.layout.vachana_pager_layout, null);
@@ -60,6 +67,36 @@ public class VachanaFragment extends Fragment {
         viewPager.setAdapter(myViewPagerAdapter);
         viewPager.addOnPageChangeListener(viewPagerPageChangeListener);
         return root;
+    }
+
+    @Override
+    public void onCreateOptionsMenu(Menu menu, MenuInflater inflater) {
+        menu.clear();
+        inflater.inflate(R.menu.vachana, menu);
+        super.onCreateOptionsMenu(menu, inflater);
+    }
+
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+        int id = item.getItemId();
+
+        switch (id) {
+            case R.id.action_share:
+                Intent sharingIntent = new Intent(android.content.Intent.ACTION_SEND);
+                sharingIntent.setType("text/plain");
+                String shareBody =  null;
+                try {
+                    shareBody = ((TextView) getView().findViewById(R.id.vachana_text)).getText().toString();
+                } catch (NullPointerException e){
+                    e.printStackTrace();
+                    Log.d(TAG, "onOptionsItemSelected: TextView not found") ;
+                }
+                sharingIntent.putExtra(android.content.Intent.EXTRA_SUBJECT,currentKathru.getName());
+                sharingIntent.putExtra(android.content.Intent.EXTRA_TEXT, shareBody);
+                startActivity(Intent.createChooser(sharingIntent, "Share via"));
+                return true;
+        }
+        return super.onOptionsItemSelected(item);
     }
 
 
@@ -102,10 +139,10 @@ public class VachanaFragment extends Fragment {
 
             View view = layoutInflater.inflate(R.layout.vachana_text_view, container, false);
             final TextView vachana_tv = (TextView) view.findViewById(R.id.vachana_text);
-            Vachana vachana = mainActivity.getFirstVachana(currentKathru.getId(),
+            currentVachana = mainActivity.getFirstVachana(currentKathru.getId(),
                     vachanaIds.get(position));
 
-            String vachanaText = vachana.getText();
+            String vachanaText = currentVachana.getText();
             vachana_tv.setText(Html.fromHtml(HtmlHelper.getHtmlString(vachanaText)));
 
             container.addView(view);
