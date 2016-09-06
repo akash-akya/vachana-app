@@ -14,7 +14,8 @@ public class HtmlHelper {
                 "<big>" +
 //                "<big><b>"+title+"</b></big><br/>" +
 
-                "<p>"+
+                "<br/><br/><br/>"+ //for actionbar padding
+                "<p>" +
                 body+
                 "</p>"+
                 "</big>"+

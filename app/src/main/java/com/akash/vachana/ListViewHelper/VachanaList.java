@@ -14,20 +14,13 @@ import java.util.List;
 public class VachanaList {
 
     private List<VachanaItem> ITEMS = new ArrayList<>();
-//    private Map<String, VachanaItem> ITEM_MAP = new HashMap<String, VachanaItem>();
     private int COUNT = 25;
 
-//    static {
-//        // Add some sample items.
-//        for (int i = 1; i <= COUNT; i++) {
-//            addItem(createDummyItem(i));
-//        }
-//    }
     public VachanaList(ArrayList<VachanaMini> vachanaMinis)
     {
         for (int i=0; i<vachanaMinis.size(); i++) {
             int id = vachanaMinis.get(i).getId();
-            int kathruId = vachanaMinis.get(i).getKathru();
+            int kathruId = vachanaMinis.get(i).getKathruId();
             String title = vachanaMinis.get(i).getTitle();
             addItem(new VachanaItem(id, kathruId, title, ""));
         }
@@ -56,9 +49,6 @@ public class VachanaList {
         return (ArrayList<VachanaItem>) ITEMS;
     }
 
-    /**
-     * A dummy item representing a piece of content.
-     */
     public static class VachanaItem {
         public final int id;
         public final int kathruId;

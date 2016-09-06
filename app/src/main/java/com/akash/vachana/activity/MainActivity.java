@@ -36,7 +36,6 @@ public class MainActivity extends AppCompatActivity
         KathruListFragment.OnKathruListFragmentInteractionListener {
 
     private static final String TAG = "MainActivity";
-    public final Context context = this;
 
     final String[] fragments ={
             "com.akash.vachana.fragment.VachanaFragment",
@@ -173,18 +172,17 @@ public class MainActivity extends AppCompatActivity
     }
 
     @Override
-    public void onListFragmentInteraction(VachanaList.VachanaItem item) {
+    public void onListFragmentInteraction(VachanaMini item) {
         Bundle bundle = new Bundle();
         FragmentManager fragmentManager = getSupportFragmentManager();
         Fragment fragment = Fragment.instantiate(MainActivity.this, fragments[0]);
 
         ArrayList<Integer> ids = new ArrayList<>();
-        ids.add(item.id);
+        ids.add(item.getId());
         bundle.putIntegerArrayList("ids", ids);
-        bundle.putInt("kathru_id", item.kathruId);
+        bundle.putInt("kathru_id", item.getKathruId());
 
         fragment.setArguments(bundle);
-
         fragmentManager.beginTransaction()
                 .replace(R.id.main_content, fragment)
                 .commit();
@@ -224,7 +222,7 @@ public class MainActivity extends AppCompatActivity
         Vachana vachana = null;
         try {
             InputStream inputStream = getAssets().open(kathruId+"/"+vachanaId+".json");
-            vachana = new Vachana(FileHelper.getFileContent(inputStream));
+            vachana = new Vachana(FileHelper.getFileContent(inputStream), getKathruById(kathruId).getName());
             inputStream.close();
         } catch (IOException e) {
             e.printStackTrace();
@@ -236,7 +234,7 @@ public class MainActivity extends AppCompatActivity
         Vachana vachana = null;
         try {
             InputStream inputStream = getAssets().open(kathruId+"/"+vachanaId+".json");
-            vachana = new Vachana(FileHelper.getFileContent(inputStream));
+            vachana = new Vachana(FileHelper.getFileContent(inputStream), getKathruById(kathruId).getName());
             inputStream.close();
         } catch (IOException e) {
             e.printStackTrace();

@@ -37,12 +37,14 @@
                     android:layout_alignParentRight="true"
                     android:gravity="right"
                     android:singleLine="true"
-                    android:background="#dddddd"
-                    android:text="3523"
+                    android:background="#f0f0f0"
                     android:layout_marginTop="5dp"
                     android:layout_marginRight="10dp"
                     android:textColor="#555555"
-                    android:padding="3dp"
+                    android:paddingLeft="5dp"
+                    android:paddingRight="5dp"
+                    android:paddingTop="2dp"
+                    android:paddingBottom="2dp"
                     android:textSize="12sp"
                     android:textAppearance="?attr/textAppearanceListItem"
                     android:focusableInTouchMode="false" />
@@ -56,7 +58,7 @@
                 android:singleLine="true"
                 android:ellipsize="marquee"
                 android:layout_marginTop="5dp"
-                android:textSize="14sp" />
+                android:textSize="13sp" />
 
 
         </LinearLayout>

@@ -35,7 +35,9 @@ public class KathruMap {
                 int id =Integer.parseInt(obj.getString("id"));
 
                 kathruMinis.add(new KathruMini(id,
-                        obj.getString("name")));
+                        obj.getString("name"),
+                        obj.getString("ankitha"),
+                        obj.getInt("count")));
             }
         } catch (JSONException e) {
             e.printStackTrace();

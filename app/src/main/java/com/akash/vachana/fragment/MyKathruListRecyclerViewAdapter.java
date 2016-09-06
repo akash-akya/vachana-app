@@ -33,8 +33,9 @@ public class MyKathruListRecyclerViewAdapter extends RecyclerView.Adapter<MyKath
     @Override
     public void onBindViewHolder(final ViewHolder holder, int position) {
         holder.mItem = mValues.get(position);
-        holder.mIdView.setText(""+mValues.get(position).getId());
-        holder.mContentView.setText(mValues.get(position).getName());
+        holder.mAnkitha.setText(mValues.get(position).getAnkitha());
+        holder.mName.setText(mValues.get(position).getName());
+        holder.mVachanaCount.setText(String.format("%d", mValues.get(position).getCount()));
 
         holder.mView.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -55,23 +56,23 @@ public class MyKathruListRecyclerViewAdapter extends RecyclerView.Adapter<MyKath
 
     public class ViewHolder extends RecyclerView.ViewHolder {
         public final View mView;
-        public final TextView mIdView;
-        public final TextView mContentView;
-        public final TextView mCount;
+        public final TextView mAnkitha;
+        public final TextView mName;
+        public final TextView mVachanaCount;
 
         public KathruMini mItem;
 
         public ViewHolder(View view) {
             super(view);
             mView = view;
-            mIdView = (TextView) view.findViewById(R.id.tv_kathru_ankitha);
-            mContentView = (TextView) view.findViewById(R.id.tv_kathru_name);
-            mCount = (TextView) view.findViewById(R.id.tv_kathru_name);
+            mName = (TextView) view.findViewById(R.id.tv_kathru_name);
+            mAnkitha = (TextView) view.findViewById(R.id.tv_kathru_ankitha);
+            mVachanaCount = (TextView) view.findViewById(R.id.tv_kathru_count);
         }
 
         @Override
         public String toString() {
-            return super.toString() + " '" + mContentView.getText() + "'";
+            return super.toString() + " '" + mName.getText() + "'";
         }
     }
 }

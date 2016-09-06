@@ -39,7 +39,7 @@ public class VachanaListFragment extends Fragment {
     private int mColumnCount = 1;
     private OnListFragmentInteractionListener mListener;
     private Kathru currentKathru;
-    private ArrayList<VachanaMini> vachanaIds;
+    private ArrayList<VachanaMini> vachanaMinis;
     private MainActivity mainActivity;
 
     public VachanaListFragment() {
@@ -62,7 +62,7 @@ public class VachanaListFragment extends Fragment {
             Log.d(  TAG, "onCreate: Actionbar not found");
         }
 
-        vachanaIds = currentKathru.getVachanasId();
+        vachanaMinis = currentKathru.getVachanasId();
     }
 
     @Override
@@ -79,8 +79,8 @@ public class VachanaListFragment extends Fragment {
             } else {
                 recyclerView.setLayoutManager(new GridLayoutManager(context, mColumnCount));
             }
-            VachanaList vachanaList = new VachanaList(vachanaIds);
-            recyclerView.setAdapter(new MyVachanaListRecyclerViewAdapter(vachanaList.getVachanaList(), (OnListFragmentInteractionListener) getActivity()));
+            recyclerView.setAdapter(new MyVachanaListRecyclerViewAdapter(vachanaMinis,
+                    (OnListFragmentInteractionListener) getActivity()));
         }
         return view;
     }
@@ -115,6 +115,6 @@ public class VachanaListFragment extends Fragment {
      */
     public interface OnListFragmentInteractionListener {
         // TODO: Update argument type and name
-        void onListFragmentInteraction(VachanaList.VachanaItem item);
+        void onListFragmentInteraction(VachanaMini item);
     }
 }

@@ -112,7 +112,7 @@ public class VachanaSliderActivity extends AppCompatActivity {
         Vachana vachana = null;
         try {
             InputStream inputStream = getAssets().open(kathruId+"/"+vachanaId+".json");
-            vachana = new Vachana(FileHelper.getFileContent(inputStream));
+            vachana = new Vachana(FileHelper.getFileContent(inputStream), getKathruById(kathruId).getName());
             inputStream.close();
         } catch (IOException e) {
             e.printStackTrace();
@@ -124,7 +124,7 @@ public class VachanaSliderActivity extends AppCompatActivity {
         Vachana vachana = null;
         try {
             InputStream inputStream = getAssets().open(kathruId+"/"+vachanaId+".json");
-            vachana = new Vachana(FileHelper.getFileContent(inputStream));
+            vachana = new Vachana(FileHelper.getFileContent(inputStream), getKathruById(kathruId).getName());
             inputStream.close();
         } catch (IOException e) {
             e.printStackTrace();
@@ -161,7 +161,7 @@ public class VachanaSliderActivity extends AppCompatActivity {
 
             View view = layoutInflater.inflate(R.layout.vachana_text_view, container, false);
 
-            actionBar.setBackgroundDrawable(new ColorDrawable(Color.parseColor("#cc333333")));
+//            actionBar.setBackgroundDrawable(new ColorDrawable(Color.parseColor("#cc333333")));
 
             TextView vachana_tv = (TextView) view.findViewById(R.id.vachana_text);
 //            TextView vachana_id_tv = (TextView) view.findViewById(R.id.vachana_number);

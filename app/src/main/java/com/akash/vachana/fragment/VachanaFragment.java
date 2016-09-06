@@ -95,7 +95,7 @@ public class VachanaFragment extends Fragment {
 
             View view = layoutInflater.inflate(R.layout.vachana_text_view, container, false);
 
-            actionBar.setBackgroundDrawable(new ColorDrawable(Color.parseColor("#cc333333")));
+//            actionBar.setBackgroundDrawable(new ColorDrawable(Color.parseColor("#cc333333")));
 
             final TextView vachana_tv = (TextView) view.findViewById(R.id.vachana_text);
 

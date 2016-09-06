@@ -10,10 +10,12 @@ import org.json.JSONObject;
  */
 public class Vachana {
     final public String className = "Vachana";
-    int id;
-    String text;
+    private int id;
+    private String text;
+    private String kathru;
 
-    public Vachana(String src) {
+    public Vachana(String src, String kathru) {
+        this.kathru = kathru;
         JSONObject j = null;
         try {
             j = new JSONObject(src);
@@ -30,6 +32,10 @@ public class Vachana {
         } catch (JSONException e) {
             e.printStackTrace();
         }
+    }
+
+    public String getKathru() {
+        return kathru;
     }
 
     public int getId() {

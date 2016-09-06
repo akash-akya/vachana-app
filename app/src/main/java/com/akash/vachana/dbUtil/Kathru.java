@@ -15,10 +15,11 @@ import java.util.Map;
  */
 public class Kathru {
     public static final String className = "Katru";
-    int id;
-    String name;
-    KathruDetails details;
-    ArrayList<VachanaMini> vachanasId;
+
+    private int id;
+    private String name;
+    private KathruDetails details;
+    private ArrayList<VachanaMini> vachanasId;
 
     public Kathru (String src){
         JSONObject j = null;
@@ -48,7 +49,7 @@ public class Kathru {
         while (iter.hasNext()) {
             String key = iter.next();
             try {
-                vachanas.add(new VachanaMini(Integer.parseInt(key), id, vachanasObj.getString(key)));
+                vachanas.add(new VachanaMini(Integer.parseInt(key), id, name, vachanasObj.getString(key)));
             } catch (JSONException e) {
                 e.printStackTrace();
             }

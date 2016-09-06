@@ -5,13 +5,19 @@ package com.akash.vachana.dbUtil;
  */
 public class VachanaMini {
     private int id;
-    private int kathru;
+    private int kathruId;
+    private String kathruName;
     private String title;
 
-    public VachanaMini(int id, int kathru, String title){
+    public VachanaMini(int id, int kathruId, String kathruName, String title){
         this.id = id;
-        this.kathru = kathru;
+        this.kathruId = kathruId;
         this.title = title;
+        this.kathruName = kathruName;
+    }
+
+    public String getKathruName() {
+        return kathruName;
     }
 
     public int getId() {
@@ -22,7 +28,7 @@ public class VachanaMini {
         return title;
     }
 
-    public int getKathru() {
-        return kathru;
+    public int getKathruId() {
+        return kathruId;
     }
 }

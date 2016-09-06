@@ -70,11 +70,11 @@ public class VachanaActivity extends AppCompatActivity {
         return kathru;
     }
 
-    private Vachana getFirstVachana(int karthuId, int vachanaId) {
+    private Vachana getFirstVachana(int kathruId, int vachanaId) {
         Vachana vachana = null;
         try {
-            InputStream inputStream = getAssets().open(karthuId+"/"+vachanaId+".json");
-            vachana = new Vachana(FileHelper.getFileContent(inputStream));
+            InputStream inputStream = getAssets().open(kathruId+"/"+vachanaId+".json");
+            vachana = new Vachana(FileHelper.getFileContent(inputStream), getKathruById(kathruId).getName());
             inputStream.close();
         } catch (IOException e) {
             e.printStackTrace();
@@ -129,4 +129,16 @@ public class VachanaActivity extends AppCompatActivity {
         myWebView.loadData(HtmlHelper.getHtmlString(vachanaText),
                 "text/html; charset=utf-8","UTF-8");
     }
+    public Kathru getKathruById(int id) {
+        Kathru kathru = null;
+        try {
+            InputStream inputStream = getAssets().open(id+"/details.json");
+            kathru = new Kathru(FileHelper.getFileContent(inputStream));
+            inputStream.close();
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+        return kathru;
+    }
+
 }

@@ -7,6 +7,7 @@ import android.view.ViewGroup;
 import android.widget.TextView;
 
 import com.akash.vachana.R;
+import com.akash.vachana.dbUtil.VachanaMini;
 import com.akash.vachana.fragment.VachanaListFragment.OnListFragmentInteractionListener;
 import com.akash.vachana.ListViewHelper.VachanaList.VachanaItem;
 
@@ -14,10 +15,10 @@ import java.util.List;
 
 public class MyVachanaListRecyclerViewAdapter extends RecyclerView.Adapter<MyVachanaListRecyclerViewAdapter.ViewHolder> {
 
-    private final List<VachanaItem> mValues;
+    private final List<VachanaMini> mValues;
     private final OnListFragmentInteractionListener mListener;
 
-    public MyVachanaListRecyclerViewAdapter(List<VachanaItem> items, OnListFragmentInteractionListener listener) {
+    public MyVachanaListRecyclerViewAdapter(List<VachanaMini> items, OnListFragmentInteractionListener listener) {
         mValues = items;
         mListener = listener;
     }
@@ -32,8 +33,8 @@ public class MyVachanaListRecyclerViewAdapter extends RecyclerView.Adapter<MyVac
     @Override
     public void onBindViewHolder(final ViewHolder holder, int position) {
         holder.mItem = mValues.get(position);
-        holder.mIdView.setText(""+mValues.get(position).id);
-        holder.mContentView.setText(mValues.get(position).content);
+        holder.mTitle.setText(holder.mItem.getTitle());
+        holder.mKathru.setText(holder.mItem.getKathruName());
 
         holder.mView.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -54,20 +55,20 @@ public class MyVachanaListRecyclerViewAdapter extends RecyclerView.Adapter<MyVac
 
     public class ViewHolder extends RecyclerView.ViewHolder {
         public final View mView;
-        public final TextView mIdView;
-        public final TextView mContentView;
-        public VachanaItem mItem;
+        public final TextView mTitle;
+        public final TextView mKathru;
+        public VachanaMini mItem;
 
         public ViewHolder(View view) {
             super(view);
             mView = view;
-            mIdView = (TextView) view.findViewById(R.id.id);
-            mContentView = (TextView) view.findViewById(R.id.content);
+            mTitle = (TextView) view.findViewById(R.id.tv_vachana_title);
+            mKathru = (TextView) view.findViewById(R.id.tv_vachana_kathru);
         }
 
         @Override
         public String toString() {
-            return super.toString() + " '" + mContentView.getText() + "'";
+            return super.toString() + " '" + mTitle.getText() + "'";
         }
     }
 }
