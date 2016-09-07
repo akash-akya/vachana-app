@@ -127,6 +127,6 @@ public class VachanaListFragment extends Fragment {
      */
     public interface OnListFragmentInteractionListener {
         // TODO: Update argument type and name
-        void onListFragmentInteraction(VachanaMini item);
+        void onListFragmentInteraction(ArrayList<VachanaMini> item, int position);
     }
 }

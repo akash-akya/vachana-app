@@ -174,15 +174,22 @@ public class MainActivity extends AppCompatActivity
     }
 
     @Override
-    public void onListFragmentInteraction(VachanaMini item) {
+    public void onListFragmentInteraction(ArrayList<VachanaMini> vachanaMinis, int posistion) {
         Bundle bundle = new Bundle();
         FragmentManager fragmentManager = getSupportFragmentManager();
         Fragment fragment = Fragment.instantiate(MainActivity.this, fragments[0]);
 
-        ArrayList<Integer> ids = new ArrayList<>();
-        ids.add(item.getId());
-        bundle.putIntegerArrayList("ids", ids);
-        bundle.putInt("kathru_id", item.getKathruId());
+//        ArrayList<Integer> ids = new ArrayList<>();
+//        ArrayList<String>  kathrus= new ArrayList<>();
+//        for (VachanaMini v: vachanaMinis) {
+//            ids.add(v.getId());
+//            kathrus.add(v.getKathruName());
+//        }
+
+//        bundle.putIntegerArrayList("ids", ids);
+//        bundle.putInt("kathru_id", vachanaMinis.getKathruId());
+        getIntent().putExtra("vachanas", vachanaMinis);
+        getIntent().putExtra("current_position", posistion);
 
         fragment.setArguments(bundle);
         fragmentManager.popBackStack("vachana_list", FragmentManager.POP_BACK_STACK_INCLUSIVE);

@@ -28,6 +28,7 @@ import com.akash.vachana.R;
 import com.akash.vachana.activity.MainActivity;
 import com.akash.vachana.dbUtil.Kathru;
 import com.akash.vachana.dbUtil.Vachana;
+import com.akash.vachana.dbUtil.VachanaMini;
 import com.akash.vachana.htmlUtil.HtmlHelper;
 
 import java.util.ArrayList;
@@ -39,13 +40,14 @@ public class VachanaFragment extends Fragment {
 
     private static final String TAG = "VachanaFragment";
 
-    private Kathru currentKathru;
+//    private Kathru currentKathru;
     private ViewPager viewPager;
     private MyViewPagerAdapter myViewPagerAdapter;
-    private ArrayList<Integer> vachanaIds;
+    private ArrayList<VachanaMini> vachanaMinis;
     private static Context sContext;
     private MainActivity mainActivity;
     private Vachana currentVachana;
+    private int current_position;
 
     public VachanaFragment() {}
 
@@ -57,17 +59,15 @@ public class VachanaFragment extends Fragment {
         mainActivity = (MainActivity) getActivity();
         ViewGroup root = (ViewGroup) inflater.inflate(R.layout.vachana_pager_layout, null);
 
-        if (getArguments() != null) {
-            vachanaIds = getArguments().getIntegerArrayList("ids");
-            currentKathru = mainActivity.getKathruById(getArguments().getInt("kathru_id"));
-        } else {
-            Log.e(TAG, "onCreateView: No bundle!");
-        }
+        Intent i = getActivity().getIntent();
+        vachanaMinis = (ArrayList<VachanaMini>) i.getSerializableExtra("vachanas");
+        current_position = (int) i.getSerializableExtra("current_position");
 
         viewPager = (ViewPager) root.findViewById(R.id.vachana_view_pager);
         myViewPagerAdapter = new MyViewPagerAdapter();
         viewPager.setAdapter(myViewPagerAdapter);
         viewPager.addOnPageChangeListener(viewPagerPageChangeListener);
+
         return root;
     }
 
@@ -93,7 +93,7 @@ public class VachanaFragment extends Fragment {
                     e.printStackTrace();
                     Log.d(TAG, "onOptionsItemSelected: TextView not found") ;
                 }
-                sharingIntent.putExtra(android.content.Intent.EXTRA_SUBJECT,currentKathru.getName());
+                sharingIntent.putExtra(android.content.Intent.EXTRA_SUBJECT,currentVachana.getKathru());
                 sharingIntent.putExtra(android.content.Intent.EXTRA_TEXT, shareBody);
                 startActivity(Intent.createChooser(sharingIntent, "Share via"));
                 return true;
@@ -125,10 +125,12 @@ public class VachanaFragment extends Fragment {
         appBarLayout.setExpanded(true, true);
 
         try {
-            mainActivity.getSupportActionBar().setTitle(currentKathru.getName());
+            mainActivity.getSupportActionBar().setTitle(currentVachana.getKathru());
         } catch (NullPointerException e){
             Log.d(  TAG, "onCreate: Actionbar not found");
         }
+
+        viewPager.setCurrentItem(current_position, true);
     }
 
     /**
@@ -145,8 +147,8 @@ public class VachanaFragment extends Fragment {
 
             View view = layoutInflater.inflate(R.layout.vachana_text_view, container, false);
             final TextView vachana_tv = (TextView) view.findViewById(R.id.vachana_text);
-            currentVachana = mainActivity.getFirstVachana(currentKathru.getId(),
-                    vachanaIds.get(position));
+            currentVachana = mainActivity.getFirstVachana(vachanaMinis.get(position).getKathruId(),
+                    vachanaMinis.get(position).getId());
 
             String vachanaText = currentVachana.getText();
             vachana_tv.setText(Html.fromHtml(HtmlHelper.getHtmlString(vachanaText)));
@@ -157,7 +159,7 @@ public class VachanaFragment extends Fragment {
 
         @Override
         public int getCount() {
-            return vachanaIds.size();
+            return vachanaMinis.size();
         }
 
         @Override
