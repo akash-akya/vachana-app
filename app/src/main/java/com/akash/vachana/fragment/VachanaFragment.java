@@ -5,11 +5,13 @@ import android.content.Intent;
 import android.graphics.Color;
 import android.graphics.drawable.ColorDrawable;
 import android.os.Bundle;
+import android.support.design.widget.AppBarLayout;
 import android.support.v4.view.PagerAdapter;
 import android.support.v4.view.ViewPager;
 import android.support.v7.app.ActionBar;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v4.app.Fragment;
+import android.support.v7.widget.Toolbar;
 import android.text.Html;
 import android.util.Log;
 import android.view.GestureDetector;
@@ -118,6 +120,10 @@ public class VachanaFragment extends Fragment {
     @Override
     public void onResume() {
         super.onResume();
+
+        AppBarLayout appBarLayout = (AppBarLayout)getActivity().findViewById(R.id.app_bar);
+        appBarLayout.setExpanded(true, true);
+
         try {
             mainActivity.getSupportActionBar().setTitle(currentKathru.getName());
         } catch (NullPointerException e){

@@ -2,10 +2,14 @@ package com.akash.vachana.fragment;
 
 import android.content.Context;
 import android.os.Bundle;
+import android.support.design.widget.AppBarLayout;
 import android.support.v4.app.Fragment;
+import android.support.v7.app.ActionBarActivity;
+import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.GridLayoutManager;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
+import android.support.v7.widget.Toolbar;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -62,6 +66,10 @@ public class VachanaListFragment extends Fragment {
     @Override
     public void onResume() {
         super.onResume();
+
+        AppBarLayout appBarLayout = (AppBarLayout)getActivity().findViewById(R.id.app_bar);
+        appBarLayout.setExpanded(true, true);
+
         try {
             mainActivity.getSupportActionBar().setTitle(currentKathru.getName());
         } catch (NullPointerException e){
