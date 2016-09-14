@@ -1,6 +1,5 @@
 package com.akash.vachana.activity;
 
-import android.content.Context;
 import android.support.v4.app.FragmentManager;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
@@ -17,10 +16,10 @@ import android.view.MenuItem;
 import android.widget.ShareActionProvider;
 
 import com.akash.vachana.R;
-import com.akash.vachana.ListViewHelper.VachanaList;
 import com.akash.vachana.dbUtil.Kathru;
 import com.akash.vachana.dbUtil.KathruMap;
 import com.akash.vachana.dbUtil.KathruMini;
+import com.akash.vachana.dbUtil.MainDbHelper;
 import com.akash.vachana.dbUtil.Vachana;
 import com.akash.vachana.dbUtil.VachanaMini;
 import com.akash.vachana.fragment.KathruListFragment;
@@ -37,6 +36,7 @@ public class MainActivity extends AppCompatActivity
         KathruListFragment.OnKathruListFragmentInteractionListener {
 
     private static final String TAG = "MainActivity";
+    public static final String DB_NAME = "raw/main.db";
 
     final String[] fragments ={
             "com.akash.vachana.fragment.VachanaFragment",
@@ -67,6 +67,7 @@ public class MainActivity extends AppCompatActivity
     };
     private ActionBar actionBar;
     private ShareActionProvider mShareActionProvider;
+    public MainDbHelper db;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -81,6 +82,18 @@ public class MainActivity extends AppCompatActivity
             actionBar.setHomeButtonEnabled(true);
             actionBar.setDisplayShowHomeEnabled(true);
         }
+
+        // dbHandler class instance
+        db = new MainDbHelper(this);
+        try {
+
+            db.createDataBase();
+            Log.d(TAG, "onCreate: Database Created\n");
+
+        } catch (IOException ioe) {
+            //throw new Error("Unable to create database");
+        }
+
 
         DrawerLayout drawer = (DrawerLayout) findViewById(R.id.drawer_layout);
         ActionBarDrawerToggle toggle = new ActionBarDrawerToggle(
@@ -149,7 +162,7 @@ public class MainActivity extends AppCompatActivity
             case R.id.nav_vachana:
                 // For vachanas list view
                 Random r = new Random();
-                ArrayList<KathruMini> k = getAllKathru();
+                ArrayList<KathruMini> k = db.getAllKathruMinis();
                 bundle.putInt("id", k.get(r.nextInt(247)).getId());
                 fragment = Fragment.instantiate(MainActivity.this, fragments[1]);
                 break;
@@ -214,7 +227,7 @@ public class MainActivity extends AppCompatActivity
                 .commit();
     }
 
-    public Kathru getKathruById(int id) {
+    /*public Kathru getKathruById(int id) {
         Kathru kathru = null;
         try {
             InputStream inputStream = getAssets().open(id+"/details.json");
@@ -264,5 +277,5 @@ public class MainActivity extends AppCompatActivity
             e.printStackTrace();
         }
         return kathruMap;
-    }
+    }*/
 }

@@ -41,7 +41,7 @@ public class KathruListFragment extends Fragment {
         }
 
         mainActivity = (MainActivity) getActivity();
-        kathruMinis = mainActivity.getAllKathru();
+        kathruMinis = mainActivity.db.getAllKathruMinis();
     }
 
     @Override

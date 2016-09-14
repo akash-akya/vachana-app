@@ -147,8 +147,7 @@ public class VachanaFragment extends Fragment {
 
             View view = layoutInflater.inflate(R.layout.vachana_text_view, container, false);
             final TextView vachana_tv = (TextView) view.findViewById(R.id.vachana_text);
-            currentVachana = mainActivity.getFirstVachana(vachanaMinis.get(position).getKathruId(),
-                    vachanaMinis.get(position).getId());
+            currentVachana = mainActivity.db.getFirstVachana(vachanaMinis.get(position).getKathruId());
 
             String vachanaText = currentVachana.getText();
             vachana_tv.setText(Html.fromHtml(HtmlHelper.getHtmlString(vachanaText)));

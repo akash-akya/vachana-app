@@ -14,7 +14,14 @@ public class Vachana {
     private String text;
     private String kathru;
 
-    public Vachana(String src, String kathru) {
+    public Vachana(int id, String text, String kathru)
+    {
+        this.id = id;
+        this.text = text;
+        this.kathru= kathru;
+    }
+
+/*    public Vachana(String src, String kathru) {
         this.kathru = kathru;
         JSONObject j = null;
         try {
@@ -32,7 +39,7 @@ public class Vachana {
         } catch (JSONException e) {
             e.printStackTrace();
         }
-    }
+    }*/
 
     public String getKathru() {
         return kathru;

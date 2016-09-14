@@ -59,8 +59,8 @@ public class VachanaListFragment extends Fragment {
 
         int id = getArguments().getInt("id");
         mainActivity = (MainActivity) getContext();
-        currentKathru = mainActivity.getKathruById(id);
-        vachanaMinis = currentKathru.getVachanasId();
+        currentKathru = mainActivity.db.getKathruById(id);
+        vachanaMinis = mainActivity.db.getVachanaMinisByKathruId(currentKathru.getId());
     }
 
     @Override

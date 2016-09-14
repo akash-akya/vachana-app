@@ -15,6 +15,8 @@ public class KathruMap {
 
     private static final String TAG = "KathruMap";
 
+    private KathruMap() {}
+/*
     public static ArrayList<KathruMini> getKathruMap(String src) {
         JSONArray j = null;
         ArrayList<KathruMini> kathruMinis = new ArrayList<>();
@@ -43,6 +45,6 @@ public class KathruMap {
             e.printStackTrace();
         }
         return kathruMinis;
-    }
+    }*/
 
 }
