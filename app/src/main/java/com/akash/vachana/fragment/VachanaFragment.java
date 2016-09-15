@@ -4,6 +4,7 @@ import android.content.Context;
 import android.content.Intent;
 import android.graphics.Color;
 import android.graphics.drawable.ColorDrawable;
+import android.os.AsyncTask;
 import android.os.Bundle;
 import android.support.design.widget.AppBarLayout;
 import android.support.v4.view.PagerAdapter;
@@ -22,6 +23,7 @@ import android.view.MenuItem;
 import android.view.MotionEvent;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.ProgressBar;
 import android.widget.TextView;
 
 import com.akash.vachana.R;
@@ -63,8 +65,10 @@ public class VachanaFragment extends Fragment {
         vachanaMinis = (ArrayList<VachanaMini>) i.getSerializableExtra("vachanas");
         current_position = (int) i.getSerializableExtra("current_position");
 
+        Log.d(TAG, "onCreateView: "+vachanaMinis.size());
         viewPager = (ViewPager) root.findViewById(R.id.vachana_view_pager);
         myViewPagerAdapter = new MyViewPagerAdapter();
+        viewPager.setOffscreenPageLimit(2);
         viewPager.setAdapter(myViewPagerAdapter);
         viewPager.addOnPageChangeListener(viewPagerPageChangeListener);
 
@@ -145,12 +149,11 @@ public class VachanaFragment extends Fragment {
         public Object instantiateItem(final ViewGroup container, int position)  {
             layoutInflater = (LayoutInflater) sContext.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
 
-            View view = layoutInflater.inflate(R.layout.vachana_text_view, container, false);
+            final View view = layoutInflater.inflate(R.layout.vachana_text_view, container, false);
             final TextView vachana_tv = (TextView) view.findViewById(R.id.vachana_text);
-            currentVachana = mainActivity.db.getFirstVachana(vachanaMinis.get(position).getKathruId());
+            final ProgressBar progressView = (ProgressBar) view.findViewById(R.id.progressBar);
 
-            String vachanaText = currentVachana.getText();
-            vachana_tv.setText(Html.fromHtml(HtmlHelper.getHtmlString(vachanaText)));
+            new GetVachanaFromDb(progressView, vachana_tv).execute(position);
 
             container.addView(view);
             return view;
@@ -170,6 +173,31 @@ public class VachanaFragment extends Fragment {
         public void destroyItem(ViewGroup container, int position, Object object) {
             View view = (View) object;
             container.removeView(view);
+        }
+
+        private class GetVachanaFromDb extends AsyncTask {
+            private ProgressBar progressBar;
+            private TextView tv;
+
+            public GetVachanaFromDb(ProgressBar progressBar, TextView tv) {
+                this.progressBar = progressBar;
+                this.tv = tv;
+            }
+
+            @Override
+            protected String doInBackground(Object[] objects) {
+                currentVachana = mainActivity.db.getVachana(vachanaMinis.get((int)objects[0]).getId());
+                return currentVachana.getText();
+            }
+
+            @Override
+            protected void onPostExecute(Object o) {
+                super.onPostExecute(o);
+                progressBar.setVisibility(View.GONE);
+                tv.setText(Html.fromHtml(HtmlHelper.getHtmlString((String) o)));
+                tv.setVisibility(View.VISIBLE);
+            }
+
         }
     }
 

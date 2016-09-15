@@ -93,9 +93,8 @@ public class MainDbHelper extends SQLiteOpenHelper {
     //Check that the database exists here: /data/data/your package/databases/Da Name
     private boolean checkDataBase() {
         File dbFile = new File(DB_PATH + DATABASE_NAME);
-        //Log.v("dbFile", dbFile + "   "+ dbFile.exists());
-//        return dbFile.exists();
-        return false;
+//        Log.v("dbFile", dbFile + "   "+ dbFile.exists());
+        return dbFile.exists();
     }
 
 
@@ -208,26 +207,8 @@ public class MainDbHelper extends SQLiteOpenHelper {
 
         SQLiteDatabase db = this.getReadableDatabase();
 
-/*
-        Cursor cursor = db.query(TABLE_VACHANA, new String[] { KEY_VACHANA_ID,
-                        KEY_TEXT, FOREIGN_KEY_KATHRU_ID}, KEY_VACHANA_ID+ "=?",
-                new String[] { String.valueOf(kathruId) }, null, null, null, null);
-        if (cursor != null)
-            cursor.moveToFirst();
-
-        int id = cursor.getInt(0);
-        VachanaMini contact = new VachanaMini(id, kathruId, kathruName, "");
-        return vachanaMinis;
-*/
-
         Cursor cursor = db.query(TABLE_VACHANA, new String[] { KEY_VACHANA_ID, KEY_TITLE}, FOREIGN_KEY_KATHRU_ID + "=?",
-                new String[] { String.valueOf(kathruId) }, null, null, null, null);
-
-/*
-        String selectQuery = "SELECT "+ KEY_VACHANA_ID + " FROM " + TABLE_VACHANA + " WHERE "
-                + KEY_KATHRU_ID +  " = "  + String.valueOf(kathruId);
-        Cursor cursor = db.rawQuery(selectQuery, null);
-*/
+                new String[] { String.valueOf(kathruId) }, null, null, KEY_TITLE, null);
 
         if (cursor.moveToFirst()) {
             do {
@@ -257,6 +238,20 @@ public class MainDbHelper extends SQLiteOpenHelper {
 
         int id = Integer.parseInt(cursor.getString(0));
         String text = cursor.getString(1);
+        Vachana vachana = new Vachana(id, text, getKathruNameById(kathruId));
+        return  vachana;
+    }
+
+    public Vachana getVachana(int id) {
+        SQLiteDatabase db = this.getReadableDatabase();
+        Cursor cursor = db.query(TABLE_VACHANA, new String[] { KEY_VACHANA_ID, KEY_TEXT, FOREIGN_KEY_KATHRU_ID},
+                KEY_VACHANA_ID+ "=?",
+                new String[] { String.valueOf(id) }, null, null, null, null);
+        if (cursor != null)
+            cursor.moveToFirst();
+
+        String text = cursor.getString(1);
+        int kathruId = Integer.parseInt(cursor.getString(2));
         Vachana vachana = new Vachana(id, text, getKathruNameById(kathruId));
         return  vachana;
     }
