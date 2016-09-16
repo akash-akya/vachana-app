@@ -10,12 +10,14 @@ public class VachanaMini implements Serializable{
     private int kathruId;
     private String kathruName;
     private String title;
+    private int favorite;
 
-    public VachanaMini(int id, int kathruId, String kathruName, String title){
+    public VachanaMini(int id, int kathruId, String kathruName, String title, int favorite){
         this.id = id;
         this.kathruId = kathruId;
         this.title = title;
         this.kathruName = kathruName;
+        this.favorite = favorite;
     }
 
     public String getKathruName() {
@@ -32,5 +34,16 @@ public class VachanaMini implements Serializable{
 
     public int getKathruId() {
         return kathruId;
+    }
+
+    public int getFavorite() {
+        return favorite;
+    }
+
+    public void setFavorite(boolean favorite) {
+        if (favorite)
+            this.favorite = 1;
+        else
+            this.favorite = 0;
     }
 }

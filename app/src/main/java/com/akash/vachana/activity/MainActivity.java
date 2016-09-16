@@ -1,5 +1,6 @@
 package com.akash.vachana.activity;
 
+import android.os.AsyncTask;
 import android.support.v4.app.FragmentManager;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
@@ -16,18 +17,13 @@ import android.view.MenuItem;
 import android.widget.ShareActionProvider;
 
 import com.akash.vachana.R;
-import com.akash.vachana.dbUtil.Kathru;
-import com.akash.vachana.dbUtil.KathruMap;
 import com.akash.vachana.dbUtil.KathruMini;
 import com.akash.vachana.dbUtil.MainDbHelper;
-import com.akash.vachana.dbUtil.Vachana;
 import com.akash.vachana.dbUtil.VachanaMini;
 import com.akash.vachana.fragment.KathruListFragment;
 import com.akash.vachana.fragment.VachanaListFragment;
-import com.akash.vachana.util.FileHelper;
 
 import java.io.IOException;
-import java.io.InputStream;
 import java.util.ArrayList;
 import java.util.Random;
 
@@ -210,6 +206,22 @@ public class MainActivity extends AppCompatActivity
                 .replace(R.id.main_content, fragment)
                 .addToBackStack( "vachana_list" )
                 .commit();
+    }
+
+    private class UpdateVachanaFavorite extends AsyncTask {
+        @Override
+        protected Void doInBackground(Object[] objects) {
+            if ((boolean)objects[1])
+                db.addVachanaToFavorite((int)objects[0]);
+            else
+                db.removeVachanaToFavorite((int)objects[0]);
+            return null;
+        }
+    }
+
+    @Override
+    public void onFavoriteButton(int vachanaId, boolean checked) {
+        new UpdateVachanaFavorite().execute(vachanaId, checked);
     }
 
     @Override

@@ -1,5 +1,6 @@
 package com.akash.vachana.dbUtil;
 
+import android.content.ContentValues;
 import android.content.Context;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
@@ -44,6 +45,7 @@ public class MainDbHelper extends SQLiteOpenHelper {
     private static final String KEY_TEXT = "Txt";
     private static final String KEY_TITLE = "Title";
     private static final String FOREIGN_KEY_KATHRU_ID = "KathruId";
+    private static final String KEY_FAVORITE = "Favorite";
 
     private static Context mContext;
     private static SQLiteDatabase mDataBase;
@@ -196,10 +198,9 @@ public class MainDbHelper extends SQLiteOpenHelper {
 
         String name = cursor.getString(1);
         ArrayList<VachanaMini> vachanaMinis = getVachanaMinisByKathruId(id, name);
-        Kathru kathru = new Kathru(Integer.parseInt(cursor.getString(0)),
-                name, cursor.getString(2), cursor.getInt(3), vachanaMinis);
 
-        return kathru;
+        return new Kathru(Integer.parseInt(cursor.getString(0)),
+                name, cursor.getString(2), cursor.getInt(3), vachanaMinis);
     }
 
     public ArrayList<VachanaMini> getVachanaMinisByKathruId (int kathruId, String kathruName) {
@@ -207,14 +208,15 @@ public class MainDbHelper extends SQLiteOpenHelper {
 
         SQLiteDatabase db = this.getReadableDatabase();
 
-        Cursor cursor = db.query(TABLE_VACHANA, new String[] { KEY_VACHANA_ID, KEY_TITLE}, FOREIGN_KEY_KATHRU_ID + "=?",
+        Cursor cursor = db.query(TABLE_VACHANA, new String[] { KEY_VACHANA_ID, KEY_TITLE, KEY_FAVORITE},
+                FOREIGN_KEY_KATHRU_ID + "=?",
                 new String[] { String.valueOf(kathruId) }, null, null, KEY_TITLE, null);
 
         if (cursor.moveToFirst()) {
             do {
                 int id = Integer.parseInt(cursor.getString(0));
                 String title = cursor.getString(1);
-                VachanaMini vachanaMini = new VachanaMini(id, kathruId, kathruName, title);
+                VachanaMini vachanaMini = new VachanaMini(id, kathruId, kathruName, title, cursor.getInt(2));
                 vachanaMinis.add(vachanaMini);
             } while (cursor.moveToNext());
         }
@@ -230,7 +232,7 @@ public class MainDbHelper extends SQLiteOpenHelper {
 
     public Vachana getFirstVachana(int kathruId) {
         SQLiteDatabase db = this.getReadableDatabase();
-        Cursor cursor = db.query(TABLE_VACHANA, new String[] { KEY_VACHANA_ID, KEY_TEXT },
+        Cursor cursor = db.query(TABLE_VACHANA, new String[] { KEY_VACHANA_ID, KEY_TEXT},
                 FOREIGN_KEY_KATHRU_ID + "=?",
                 new String[] { String.valueOf(kathruId) }, null, null, null, null);
         if (cursor != null)
@@ -238,8 +240,7 @@ public class MainDbHelper extends SQLiteOpenHelper {
 
         int id = Integer.parseInt(cursor.getString(0));
         String text = cursor.getString(1);
-        Vachana vachana = new Vachana(id, text, getKathruNameById(kathruId));
-        return  vachana;
+        return new Vachana(id, text, getKathruNameById(kathruId));
     }
 
     public Vachana getVachana(int id) {
@@ -252,7 +253,38 @@ public class MainDbHelper extends SQLiteOpenHelper {
 
         String text = cursor.getString(1);
         int kathruId = Integer.parseInt(cursor.getString(2));
-        Vachana vachana = new Vachana(id, text, getKathruNameById(kathruId));
-        return  vachana;
+        return new Vachana(id, text, getKathruNameById(kathruId));
+    }
+
+    public void addVachanaToFavorite(int vachanaId){
+        SQLiteDatabase db = this.getReadableDatabase();
+
+        ContentValues newValues = new ContentValues();
+        newValues.put(KEY_FAVORITE, 1);
+
+        String[] args = new String[]{String.valueOf(vachanaId)};
+        db.update(TABLE_VACHANA, newValues, KEY_VACHANA_ID+"=?", args);
+    }
+
+    public void removeVachanaToFavorite(int vachanaId){
+        SQLiteDatabase db = this.getReadableDatabase();
+
+        ContentValues newValues = new ContentValues();
+        newValues.put(KEY_FAVORITE, 0);
+
+        String[] args = new String[]{String.valueOf(vachanaId)};
+        db.update(TABLE_VACHANA, newValues, KEY_VACHANA_ID+"=?", args);
+    }
+
+    public int getVachanaFavorite(int vachanaId){
+        SQLiteDatabase db = this.getReadableDatabase();
+
+        Cursor cursor = db.query(TABLE_VACHANA, new String[] { KEY_FAVORITE},
+                KEY_VACHANA_ID+ "=?",
+                new String[] { String.valueOf(vachanaId) }, null, null, null, null);
+        if (cursor != null)
+            cursor.moveToFirst();
+
+        return Integer.parseInt(cursor.getString(0));
     }
 }

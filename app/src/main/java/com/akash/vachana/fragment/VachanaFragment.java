@@ -2,25 +2,17 @@ package com.akash.vachana.fragment;
 
 import android.content.Context;
 import android.content.Intent;
-import android.graphics.Color;
-import android.graphics.drawable.ColorDrawable;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.support.design.widget.AppBarLayout;
 import android.support.v4.view.PagerAdapter;
 import android.support.v4.view.ViewPager;
-import android.support.v7.app.ActionBar;
-import android.support.v7.app.AppCompatActivity;
 import android.support.v4.app.Fragment;
-import android.support.v7.widget.Toolbar;
-import android.text.Html;
 import android.util.Log;
-import android.view.GestureDetector;
 import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
-import android.view.MotionEvent;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ProgressBar;
@@ -28,10 +20,8 @@ import android.widget.TextView;
 
 import com.akash.vachana.R;
 import com.akash.vachana.activity.MainActivity;
-import com.akash.vachana.dbUtil.Kathru;
 import com.akash.vachana.dbUtil.Vachana;
 import com.akash.vachana.dbUtil.VachanaMini;
-import com.akash.vachana.htmlUtil.HtmlHelper;
 
 import java.util.ArrayList;
 
@@ -194,7 +184,7 @@ public class VachanaFragment extends Fragment {
             protected void onPostExecute(Object o) {
                 super.onPostExecute(o);
                 progressBar.setVisibility(View.GONE);
-                tv.setText(Html.fromHtml(HtmlHelper.getHtmlString((String) o)));
+                tv.setText((String) o);
                 tv.setVisibility(View.VISIBLE);
             }
 

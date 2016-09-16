@@ -128,5 +128,6 @@ public class VachanaListFragment extends Fragment {
     public interface OnListFragmentInteractionListener {
         // TODO: Update argument type and name
         void onListFragmentInteraction(ArrayList<VachanaMini> item, int position);
+        void onFavoriteButton(int vachanaId, boolean checked);
     }
 }

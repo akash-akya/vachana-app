@@ -1,12 +1,21 @@
 package com.akash.vachana.fragment;
 
+import android.os.AsyncTask;
+import android.support.v7.util.AsyncListUtil;
 import android.support.v7.widget.RecyclerView;
+import android.util.Log;
 import android.view.LayoutInflater;
+import android.view.MotionEvent;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.CheckBox;
+import android.widget.ImageButton;
+import android.widget.ProgressBar;
 import android.widget.TextView;
+import android.widget.ToggleButton;
 
 import com.akash.vachana.R;
+import com.akash.vachana.dbUtil.Vachana;
 import com.akash.vachana.dbUtil.VachanaMini;
 import com.akash.vachana.fragment.VachanaListFragment.OnListFragmentInteractionListener;
 import com.akash.vachana.ListViewHelper.VachanaList.VachanaItem;
@@ -37,6 +46,22 @@ public class MyVachanaListRecyclerViewAdapter extends RecyclerView.Adapter<MyVac
         holder.mTitle.setText(holder.mItem.getTitle());
         holder.mKathru.setText(holder.mItem.getKathruName());
 
+        if(holder.mItem.getFavorite() == 1)
+            holder.mFavorite.setChecked(true);
+        else
+            holder.mFavorite.setChecked(false);
+
+        holder.mFavorite.setOnClickListener(new View.OnClickListener () {
+            public static final String TAG = "onBindViewHolder";
+
+            @Override
+            public void onClick(View view) {
+                mListener.onFavoriteButton(holder.mItem.getId(), !holder.mFavorite.isChecked());
+                holder.mItem.setFavorite(holder.mFavorite.isChecked());
+                Log.d(TAG, "onTouch: "+holder.mFavorite.isChecked());
+            }
+        });
+
         holder.mView.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -58,12 +83,14 @@ public class MyVachanaListRecyclerViewAdapter extends RecyclerView.Adapter<MyVac
         public final View mView;
         public final TextView mTitle;
         public final TextView mKathru;
+        public final CheckBox mFavorite;
         public VachanaMini mItem;
 
         public ViewHolder(View view) {
             super(view);
             mView = view;
             mTitle = (TextView) view.findViewById(R.id.tv_vachana_title);
+            mFavorite = (CheckBox) view.findViewById(R.id.favorite);
             mKathru = (TextView) view.findViewById(R.id.tv_vachana_kathru);
         }
 
