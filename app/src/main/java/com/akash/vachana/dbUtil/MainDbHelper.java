@@ -199,8 +199,8 @@ public class MainDbHelper extends SQLiteOpenHelper {
         String name = cursor.getString(1);
         ArrayList<VachanaMini> vachanaMinis = getVachanaMinisByKathruId(id, name);
 
-        return new Kathru(Integer.parseInt(cursor.getString(0)),
-                name, cursor.getString(2), cursor.getInt(3), vachanaMinis);
+        return new Kathru(Integer.parseInt(cursor.getString(0)), name, cursor.getString(2),
+                cursor.getInt(3), vachanaMinis);
     }
 
     public ArrayList<VachanaMini> getVachanaMinisByKathruId (int kathruId, String kathruName) {
@@ -286,5 +286,28 @@ public class MainDbHelper extends SQLiteOpenHelper {
             cursor.moveToFirst();
 
         return Integer.parseInt(cursor.getString(0));
+    }
+
+    public ArrayList<VachanaMini> getFavoriteVachanaMinis() {
+        ArrayList<VachanaMini> vachanaMinis = new ArrayList<>();
+
+        SQLiteDatabase db = this.getReadableDatabase();
+
+        Cursor cursor = db.query(TABLE_VACHANA, new String[] { KEY_VACHANA_ID, KEY_TITLE, FOREIGN_KEY_KATHRU_ID},
+                KEY_FAVORITE + "=?",
+                new String[] { String.valueOf(1) }, null, null, KEY_TITLE, null);
+
+        if (cursor.moveToFirst()) {
+            do {
+                int id = Integer.parseInt(cursor.getString(0));
+                String title = cursor.getString(1);
+                int kathruId = cursor.getInt(2);
+                VachanaMini vachanaMini = new VachanaMini(id, kathruId, getKathruNameById(kathruId),
+                        title, 1);
+                vachanaMinis.add(vachanaMini);
+            } while (cursor.moveToNext());
+        }
+
+        return vachanaMinis;
     }
 }

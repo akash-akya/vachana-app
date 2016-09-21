@@ -20,6 +20,7 @@ import com.akash.vachana.R;
 import com.akash.vachana.dbUtil.KathruMini;
 import com.akash.vachana.dbUtil.MainDbHelper;
 import com.akash.vachana.dbUtil.VachanaMini;
+import com.akash.vachana.fragment.FavoriteListFragment;
 import com.akash.vachana.fragment.KathruListFragment;
 import com.akash.vachana.fragment.VachanaListFragment;
 
@@ -29,7 +30,7 @@ import java.util.Random;
 
 public class MainActivity extends AppCompatActivity
         implements NavigationView.OnNavigationItemSelectedListener, VachanaListFragment.OnListFragmentInteractionListener,
-        KathruListFragment.OnKathruListFragmentInteractionListener {
+        KathruListFragment.OnKathruListFragmentInteractionListener, FavoriteListFragment.OnListFavoriteInteractionListener {
 
     private static final String TAG = "MainActivity";
     public static final String DB_NAME = "raw/main.db";
@@ -38,6 +39,7 @@ public class MainActivity extends AppCompatActivity
             "com.akash.vachana.fragment.VachanaFragment",
             "com.akash.vachana.fragment.VachanaListFragment",
             "com.akash.vachana.fragment.KathruListFragment",
+            "com.akash.vachana.fragment.FavoriteListFragment"
     };
 
     private final int[] bgColors = {
@@ -159,6 +161,10 @@ public class MainActivity extends AppCompatActivity
                 fragment = Fragment.instantiate(MainActivity.this, fragments[2]);
                 break;
             case R.id.nav_favorite:
+                r = new Random();
+//                k = db.getAllFavorite();
+//                bundle.putInt("id", k.get(r.nextInt(247)).getId());
+                fragment = Fragment.instantiate(MainActivity.this, fragments[3]);
                 break;
             case R.id.nav_settings:
                 break;
