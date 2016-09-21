@@ -10,14 +10,16 @@
             android:id="@+id/nav_kathru"
             android:icon="@drawable/ic_menu_gallery"
             android:title="ವಚನಕಾರರು" />
-        <!--<item
-            android:id="@+id/nav_slideshow"
-            android:icon="@drawable/ic_menu_slideshow"
-            android:title="Slideshow" />
+
         <item
-            android:id="@+id/nav_manage"
+            android:id="@+id/nav_favorite"
+            android:icon="@drawable/ic_menu_slideshow"
+            android:title="ನೆಚ್ಚಿನ ವಚನಗಳು" />
+
+        <item
+            android:id="@+id/nav_settings"
             android:icon="@drawable/ic_menu_manage"
-            android:title="Tools" />-->
+            android:title="ಅಳವಡಿಕೆಗಳು" />
     </group>
 
     <item android:title="Communicate">

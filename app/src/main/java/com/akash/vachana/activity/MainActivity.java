@@ -79,7 +79,6 @@ public class MainActivity extends AppCompatActivity
             actionBar.setDisplayShowHomeEnabled(true);
         }
 
-        // dbHandler class instance
         db = new MainDbHelper(this);
         try {
 
@@ -115,16 +114,12 @@ public class MainActivity extends AppCompatActivity
 
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
-        // Inflate the menu; this adds items to the action bar if it is present.
         getMenuInflater().inflate(R.menu.main, menu);
         return true;
     }
 
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
-        // Handle action bar item clicks here. The action bar will
-        // automatically handle clicks on the Home/Up button, so long
-        // as you specify a parent activity in AndroidManifest.xml.
         int id = item.getItemId();
 
         switch (id) {
@@ -138,7 +133,6 @@ public class MainActivity extends AppCompatActivity
     @SuppressWarnings("StatementWithEmptyBody")
     @Override
     public boolean onNavigationItemSelected(MenuItem item) {
-        // Handle navigation view item clicks here.
         int id = item.getItemId();
         selectItem(id);
 
@@ -156,16 +150,17 @@ public class MainActivity extends AppCompatActivity
         Bundle bundle = new Bundle();
         switch (itemId){
             case R.id.nav_vachana:
-                // For vachanas list view
                 Random r = new Random();
                 ArrayList<KathruMini> k = db.getAllKathruMinis();
                 bundle.putInt("id", k.get(r.nextInt(247)).getId());
                 fragment = Fragment.instantiate(MainActivity.this, fragments[1]);
                 break;
             case R.id.nav_kathru:
-                // For kathru list view
-//                bundle.putInt("id", 112);
                 fragment = Fragment.instantiate(MainActivity.this, fragments[2]);
+                break;
+            case R.id.nav_favorite:
+                break;
+            case R.id.nav_settings:
                 break;
             default:
                 Log.e(TAG, "selectItem: Error, Wrong id");
@@ -188,15 +183,6 @@ public class MainActivity extends AppCompatActivity
         FragmentManager fragmentManager = getSupportFragmentManager();
         Fragment fragment = Fragment.instantiate(MainActivity.this, fragments[0]);
 
-//        ArrayList<Integer> ids = new ArrayList<>();
-//        ArrayList<String>  kathrus= new ArrayList<>();
-//        for (VachanaMini v: vachanaMinis) {
-//            ids.add(v.getId());
-//            kathrus.add(v.getKathruName());
-//        }
-
-//        bundle.putIntegerArrayList("ids", ids);
-//        bundle.putInt("kathru_id", vachanaMinis.getKathruId());
         getIntent().putExtra("vachanas", vachanaMinis);
         getIntent().putExtra("current_position", posistion);
 
@@ -238,56 +224,4 @@ public class MainActivity extends AppCompatActivity
                 .addToBackStack( "kathru_list" )
                 .commit();
     }
-
-    /*public Kathru getKathruById(int id) {
-        Kathru kathru = null;
-        try {
-            InputStream inputStream = getAssets().open(id+"/details.json");
-            kathru = new Kathru(FileHelper.getFileContent(inputStream));
-            inputStream.close();
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
-        return kathru;
-    }
-
-    public Kathru getKathru(KathruMini kathruMini) {
-        return getKathruById(kathruMini.getId());
-    }
-
-    public Vachana getVachana(int kathruId, int vachanaId) {
-        Vachana vachana = null;
-        try {
-            InputStream inputStream = getAssets().open(kathruId+"/"+vachanaId+".json");
-            vachana = new Vachana(FileHelper.getFileContent(inputStream), getKathruById(kathruId).getName());
-            inputStream.close();
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
-        return vachana;
-    }
-
-    public Vachana getFirstVachana(int kathruId, int vachanaId) {
-        Vachana vachana = null;
-        try {
-            InputStream inputStream = getAssets().open(kathruId+"/"+vachanaId+".json");
-            vachana = new Vachana(FileHelper.getFileContent(inputStream), getKathruById(kathruId).getName());
-            inputStream.close();
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
-        return vachana;
-    }
-
-    public ArrayList<KathruMini>  getAllKathru() {
-        ArrayList<KathruMini> kathruMap = null;
-        try {
-            InputStream inputStream = getAssets().open("map.json");
-            kathruMap = KathruMap.getKathruMap(FileHelper.getFileContent(inputStream));
-            inputStream.close();
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
-        return kathruMap;
-    }*/
 }
