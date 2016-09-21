@@ -9,6 +9,7 @@ import android.view.MotionEvent;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.CheckBox;
+import android.widget.CompoundButton;
 import android.widget.ImageButton;
 import android.widget.ProgressBar;
 import android.widget.TextView;
@@ -22,6 +23,8 @@ import com.akash.vachana.ListViewHelper.VachanaList.VachanaItem;
 
 import java.util.ArrayList;
 import java.util.List;
+
+import static android.widget.CompoundButton.*;
 
 public class MyVachanaListRecyclerViewAdapter extends RecyclerView.Adapter<MyVachanaListRecyclerViewAdapter.ViewHolder> {
 
@@ -51,27 +54,30 @@ public class MyVachanaListRecyclerViewAdapter extends RecyclerView.Adapter<MyVac
         else
             holder.mFavorite.setChecked(false);
 
-        holder.mFavorite.setOnClickListener(new View.OnClickListener () {
-            public static final String TAG = "onBindViewHolder";
-
-            @Override
-            public void onClick(View view) {
-                mListener.onFavoriteButton(holder.mItem.getId(), !holder.mFavorite.isChecked());
-                holder.mItem.setFavorite(holder.mFavorite.isChecked());
-                Log.d(TAG, "onTouch: "+holder.mFavorite.isChecked());
-            }
-        });
-
-        holder.mView.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                if (null != mListener) {
-                    // Notify the active callbacks interface (the activity, if the
-                    // fragment is attached to one) that an item has been selected.
-                    mListener.onListFragmentInteraction((ArrayList<VachanaMini>) mValues, position);
+        if (!holder.mFavorite.hasOnClickListeners()) {
+            holder.mFavorite.setOnCheckedChangeListener(new OnCheckedChangeListener() {
+                public static final String TAG = "onBindViewHolder";
+                @Override
+                public void onCheckedChanged(CompoundButton compoundButton, boolean b) {
+                    mListener.onFavoriteButton(holder.mItem.getId(), b);
+                    holder.mItem.setFavorite(b);
+                    Log.d(TAG, "onCheckedChanged: "+compoundButton.isChecked());
                 }
-            }
-        });
+            });
+        }
+
+        if (!holder.mView.hasOnClickListeners()) {
+            holder.mView.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    if (null != mListener) {
+                        // Notify the active callbacks interface (the activity, if the
+                        // fragment is attached to one) that an item has been selected.
+                        mListener.onListFragmentInteraction((ArrayList<VachanaMini>) mValues, position);
+                    }
+                }
+            });
+        }
     }
 
     @Override
