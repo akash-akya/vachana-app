@@ -34,7 +34,6 @@ public class FavoriteListFragment extends Fragment {
 
     private int mColumnCount = 1;
     private OnListFavoriteInteractionListener mListener;
-//    private Kathru currentKathru;
     private ArrayList<VachanaMini> vachanaMinis;
     private MainActivity mainActivity;
 
@@ -49,9 +48,7 @@ public class FavoriteListFragment extends Fragment {
             mColumnCount = getArguments().getInt(ARG_COLUMN_COUNT);
         }
 
-//        int id = getArguments().getInt("id");
         mainActivity = (MainActivity) getContext();
-//        currentKathru = mainActivity.db.getKathruById(id);
         vachanaMinis = mainActivity.db.getFavoriteVachanaMinis();
     }
 
@@ -62,11 +59,11 @@ public class FavoriteListFragment extends Fragment {
         AppBarLayout appBarLayout = (AppBarLayout)getActivity().findViewById(R.id.app_bar);
         appBarLayout.setExpanded(true, true);
 
-//        try {
-//            mainActivity.getSupportActionBar().setTitle(currentKathru.getName());
-//        } catch (NullPointerException e){
-//            Log.d(  TAG, "onCreate: Actionbar not found");
-//        }
+        try {
+            mainActivity.getSupportActionBar().setTitle("ನೆಚ್ಚಿನ ವಚನಗಳು");
+        } catch (NullPointerException e){
+            Log.d(  TAG, "onCreate: Actionbar not found");
+        }
     }
 
     @Override
@@ -74,7 +71,7 @@ public class FavoriteListFragment extends Fragment {
                              Bundle savedInstanceState) {
         View view = inflater.inflate(R.layout.fragment_vachana_list, container, false);
         mListener = (OnListFavoriteInteractionListener ) getActivity();
-        // Set the adapter
+
         if (view instanceof RecyclerView) {
             Context context = view.getContext();
             RecyclerView recyclerView = (RecyclerView) view;

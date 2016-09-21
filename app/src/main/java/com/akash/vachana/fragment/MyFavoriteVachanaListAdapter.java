@@ -54,6 +54,8 @@ public class MyFavoriteVachanaListAdapter extends RecyclerView.Adapter<MyFavorit
                 public void onCheckedChanged(CompoundButton compoundButton, boolean b) {
                     mListener.onFavoriteButton(holder.mItem.getId(), b);
                     holder.mItem.setFavorite(b);
+                    mValues.remove(position);
+                    notifyDataSetChanged();
                     Log.d(TAG, "onCheckedChanged: "+compoundButton.isChecked());
                 }
             });
