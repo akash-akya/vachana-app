@@ -161,9 +161,6 @@ public class MainActivity extends AppCompatActivity
                 fragment = Fragment.instantiate(MainActivity.this, fragments[2]);
                 break;
             case R.id.nav_favorite:
-                r = new Random();
-//                k = db.getAllFavorite();
-//                bundle.putInt("id", k.get(r.nextInt(247)).getId());
                 fragment = Fragment.instantiate(MainActivity.this, fragments[3]);
                 break;
             case R.id.nav_settings:
@@ -200,7 +197,7 @@ public class MainActivity extends AppCompatActivity
                 .commit();
     }
 
-    private class UpdateVachanaFavorite extends AsyncTask {
+    public class UpdateVachanaFavorite extends AsyncTask {
         @Override
         protected Void doInBackground(Object[] objects) {
             if ((boolean)objects[1])

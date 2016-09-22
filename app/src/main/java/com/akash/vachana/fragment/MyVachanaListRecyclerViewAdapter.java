@@ -56,12 +56,10 @@ public class MyVachanaListRecyclerViewAdapter extends RecyclerView.Adapter<MyVac
 
         if (!holder.mFavorite.hasOnClickListeners()) {
             holder.mFavorite.setOnCheckedChangeListener(new OnCheckedChangeListener() {
-                public static final String TAG = "onBindViewHolder";
                 @Override
                 public void onCheckedChanged(CompoundButton compoundButton, boolean b) {
                     mListener.onFavoriteButton(holder.mItem.getId(), b);
                     holder.mItem.setFavorite(b);
-                    Log.d(TAG, "onCheckedChanged: "+compoundButton.isChecked());
                 }
             });
         }

@@ -10,15 +10,17 @@ import org.json.JSONObject;
  */
 public class Vachana {
     final public String className = "Vachana";
+    private boolean favorite;
     private int id;
     private String text;
     private String kathru;
 
-    public Vachana(int id, String text, String kathru)
+    public Vachana(int id, String text, String kathru, boolean favorite)
     {
         this.id = id;
         this.text = text;
         this.kathru= kathru;
+        this.favorite = favorite;
     }
 
 /*    public Vachana(String src, String kathru) {
@@ -47,6 +49,14 @@ public class Vachana {
 
     public int getId() {
         return id;
+    }
+
+    public boolean getFavorite() {
+        return favorite;
+    }
+
+    public void setFavorite(boolean v) {
+        favorite = v;
     }
 
     public String getText() {

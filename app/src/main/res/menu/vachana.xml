@@ -8,6 +8,12 @@
         android:icon="@drawable/ic_share_white_24dp"
         app:showAsAction="ifRoom" />
     <item
+        android:id="@+id/action_favorite"
+        android:orderInCategory="100"
+        android:title="Favorite"
+        android:icon="@drawable/ic_star_outline_20dp"
+        app:showAsAction="always" />
+    <item
         android:id="@+id/action_settings"
         android:orderInCategory="100"
         android:title="@string/action_settings"

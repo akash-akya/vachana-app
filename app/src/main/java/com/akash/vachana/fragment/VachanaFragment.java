@@ -40,6 +40,7 @@ public class VachanaFragment extends Fragment {
     private MainActivity mainActivity;
     private Vachana currentVachana;
     private int current_position;
+    private Menu menu;
 
     public VachanaFragment() {}
 
@@ -68,6 +69,7 @@ public class VachanaFragment extends Fragment {
     @Override
     public void onCreateOptionsMenu(Menu menu, MenuInflater inflater) {
         menu.clear();
+        this.menu = menu;
         inflater.inflate(R.menu.vachana, menu);
         super.onCreateOptionsMenu(menu, inflater);
     }
@@ -91,10 +93,29 @@ public class VachanaFragment extends Fragment {
                 sharingIntent.putExtra(android.content.Intent.EXTRA_TEXT, shareBody);
                 startActivity(Intent.createChooser(sharingIntent, "Share via"));
                 return true;
+            case R.id.action_favorite:
+                boolean new_state = !currentVachana.getFavorite();
+                currentVachana.setFavorite(new_state);
+                if (new_state)
+                    item.setIcon(R.drawable.ic_star_20dp);
+                else
+                    item.setIcon(R.drawable.ic_star_outline_20dp);
+                new UpdateVachanaFavorite().execute(currentVachana.getId(), new_state);
+                break;
         }
         return super.onOptionsItemSelected(item);
     }
 
+    public class UpdateVachanaFavorite extends AsyncTask {
+        @Override
+        protected Void doInBackground(Object[] objects) {
+            if ((boolean)objects[1])
+                mainActivity.db.addVachanaToFavorite((int)objects[0]);
+            else
+                mainActivity.db.removeVachanaToFavorite((int)objects[0]);
+            return null;
+        }
+    }
 
     /**
      * viewpager change listener
@@ -183,6 +204,15 @@ public class VachanaFragment extends Fragment {
             @Override
             protected void onPostExecute(Object o) {
                 super.onPostExecute(o);
+                MenuItem item = menu.findItem(R.id.action_favorite);
+                if (item != null){
+                    if (currentVachana.getFavorite()) {
+                        menu.findItem(R.id.action_favorite).setIcon(R.drawable.ic_star_20dp);
+                    }
+                    else {
+                        menu.findItem(R.id.action_favorite).setIcon(R.drawable.ic_star_outline_20dp);
+                    }
+                }
                 progressBar.setVisibility(View.GONE);
                 tv.setText((String) o);
                 tv.setVisibility(View.VISIBLE);

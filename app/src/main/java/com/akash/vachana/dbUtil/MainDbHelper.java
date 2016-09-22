@@ -232,7 +232,7 @@ public class MainDbHelper extends SQLiteOpenHelper {
 
     public Vachana getFirstVachana(int kathruId) {
         SQLiteDatabase db = this.getReadableDatabase();
-        Cursor cursor = db.query(TABLE_VACHANA, new String[] { KEY_VACHANA_ID, KEY_TEXT},
+        Cursor cursor = db.query(TABLE_VACHANA, new String[] { KEY_VACHANA_ID, KEY_TEXT, KEY_FAVORITE},
                 FOREIGN_KEY_KATHRU_ID + "=?",
                 new String[] { String.valueOf(kathruId) }, null, null, null, null);
         if (cursor != null)
@@ -240,12 +240,13 @@ public class MainDbHelper extends SQLiteOpenHelper {
 
         int id = Integer.parseInt(cursor.getString(0));
         String text = cursor.getString(1);
-        return new Vachana(id, text, getKathruNameById(kathruId));
+        return new Vachana(id, text, getKathruNameById(kathruId), cursor.getInt(2)==1? true : false);
     }
 
     public Vachana getVachana(int id) {
         SQLiteDatabase db = this.getReadableDatabase();
-        Cursor cursor = db.query(TABLE_VACHANA, new String[] { KEY_VACHANA_ID, KEY_TEXT, FOREIGN_KEY_KATHRU_ID},
+        Cursor cursor = db.query(TABLE_VACHANA, new String[] { KEY_VACHANA_ID, KEY_TEXT, FOREIGN_KEY_KATHRU_ID,
+                KEY_FAVORITE},
                 KEY_VACHANA_ID+ "=?",
                 new String[] { String.valueOf(id) }, null, null, null, null);
         if (cursor != null)
@@ -253,7 +254,7 @@ public class MainDbHelper extends SQLiteOpenHelper {
 
         String text = cursor.getString(1);
         int kathruId = Integer.parseInt(cursor.getString(2));
-        return new Vachana(id, text, getKathruNameById(kathruId));
+        return new Vachana(id, text, getKathruNameById(kathruId), cursor.getInt(3)==1? true : false);
     }
 
     public void addVachanaToFavorite(int vachanaId){
@@ -276,7 +277,7 @@ public class MainDbHelper extends SQLiteOpenHelper {
         db.update(TABLE_VACHANA, newValues, KEY_VACHANA_ID+"=?", args);
     }
 
-    public int getVachanaFavorite(int vachanaId){
+    public boolean getVachanaFavorite(int vachanaId){
         SQLiteDatabase db = this.getReadableDatabase();
 
         Cursor cursor = db.query(TABLE_VACHANA, new String[] { KEY_FAVORITE},
@@ -285,7 +286,7 @@ public class MainDbHelper extends SQLiteOpenHelper {
         if (cursor != null)
             cursor.moveToFirst();
 
-        return Integer.parseInt(cursor.getString(0));
+        return Integer.parseInt(cursor.getString(0)) == 1? true : false;
     }
 
     public ArrayList<VachanaMini> getFavoriteVachanaMinis() {
