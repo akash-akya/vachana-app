@@ -185,14 +185,14 @@ public class MainActivity extends AppCompatActivity
 
     @Override
     public void onListFragmentInteraction(ArrayList<VachanaMini> vachanaMinis, int posistion) {
-        Bundle bundle = new Bundle();
+//        Bundle bundle = new Bundle();
         FragmentManager fragmentManager = getSupportFragmentManager();
         Fragment fragment = Fragment.instantiate(MainActivity.this, fragments[0]);
 
         getIntent().putExtra("vachanas", vachanaMinis);
         getIntent().putExtra("current_position", posistion);
 
-        fragment.setArguments(bundle);
+//        fragment.setArguments(bundle);
         fragmentManager.popBackStack("vachana_list", FragmentManager.POP_BACK_STACK_INCLUSIVE);
         fragmentManager.beginTransaction()
                 .replace(R.id.main_content, fragment)
