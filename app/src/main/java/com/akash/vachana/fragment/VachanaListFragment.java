@@ -74,6 +74,7 @@ public class VachanaListFragment extends Fragment {
         @Override
         protected void onPostExecute(Object o) {
             super.onPostExecute(o);
+            mainActivity.getSupportActionBar().setTitle(currentKathru.getName());
             recyclerView.setAdapter(new MyVachanaListRecyclerViewAdapter(vachanaMinis,
                     (OnListFragmentInteractionListener) getActivity()));
             progressBar.setVisibility(View.INVISIBLE);
@@ -93,12 +94,6 @@ public class VachanaListFragment extends Fragment {
 
         AppBarLayout appBarLayout = (AppBarLayout)getActivity().findViewById(R.id.app_bar);
         appBarLayout.setExpanded(true, true);
-
-        try {
-            mainActivity.getSupportActionBar().setTitle(currentKathru.getName());
-        } catch (NullPointerException e){
-            Log.d(  TAG, "onCreate: Actionbar not found");
-        }
     }
 
     @Override

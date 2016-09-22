@@ -1,5 +1,6 @@
 package com.akash.vachana.fragment;
 
+import android.os.Handler;
 import android.support.v7.widget.RecyclerView;
 import android.util.Log;
 import android.view.LayoutInflater;
@@ -15,6 +16,7 @@ import com.akash.vachana.fragment.VachanaListFragment.OnListFragmentInteractionL
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.logging.LogRecord;
 
 import static android.widget.CompoundButton.OnCheckedChangeListener;
 import static android.view.View.OnClickListener;
@@ -54,8 +56,7 @@ public class MyFavoriteVachanaListAdapter extends RecyclerView.Adapter<MyFavorit
                 public void onCheckedChanged(CompoundButton compoundButton, boolean b) {
                     mListener.onFavoriteButton(holder.mItem.getId(), b);
                     holder.mItem.setFavorite(b);
-                    mValues.remove(position);
-                    notifyDataSetChanged();
+//                    mValues.remove(position);
                     Log.d(TAG, "onCheckedChanged: "+compoundButton.isChecked());
                 }
             });
