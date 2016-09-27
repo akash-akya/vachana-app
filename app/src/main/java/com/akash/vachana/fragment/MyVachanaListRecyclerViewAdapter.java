@@ -54,28 +54,24 @@ public class MyVachanaListRecyclerViewAdapter extends RecyclerView.Adapter<MyVac
         else
             holder.mFavorite.setChecked(false);
 
-        if (!holder.mFavorite.hasOnClickListeners()) {
-            holder.mFavorite.setOnCheckedChangeListener(new OnCheckedChangeListener() {
-                @Override
-                public void onCheckedChanged(CompoundButton compoundButton, boolean b) {
-                    mListener.onFavoriteButton(holder.mItem.getId(), b);
-                    holder.mItem.setFavorite(b);
-                }
-            });
-        }
+        holder.mFavorite.setOnCheckedChangeListener(new OnCheckedChangeListener() {
+            @Override
+            public void onCheckedChanged(CompoundButton compoundButton, boolean b) {
+                mListener.onFavoriteButton(holder.mItem.getId(), b);
+                holder.mItem.setFavorite(b);
+            }
+        });
 
-        if (!holder.mView.hasOnClickListeners()) {
-            holder.mView.setOnClickListener(new View.OnClickListener() {
-                @Override
-                public void onClick(View v) {
-                    if (null != mListener) {
-                        // Notify the active callbacks interface (the activity, if the
-                        // fragment is attached to one) that an item has been selected.
-                        mListener.onListFragmentInteraction((ArrayList<VachanaMini>) mValues, position);
-                    }
+        holder.mView.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                if (null != mListener) {
+                    // Notify the active callbacks interface (the activity, if the
+                    // fragment is attached to one) that an item has been selected.
+                    mListener.onListFragmentInteraction((ArrayList<VachanaMini>) mValues, position);
                 }
-            });
-        }
+            }
+        });
     }
 
     @Override

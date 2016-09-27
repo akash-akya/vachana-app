@@ -181,13 +181,14 @@ public class MainActivity extends AppCompatActivity
     }
 
     @Override
-    public void onListFragmentInteraction(ArrayList<VachanaMini> vachanaMinis, int posistion) {
+    public void onListFragmentInteraction(ArrayList<VachanaMini> vachanaMinis, int position) {
 //        Bundle bundle = new Bundle();
         FragmentManager fragmentManager = getSupportFragmentManager();
         Fragment fragment = Fragment.instantiate(MainActivity.this, fragments[0]);
 
         getIntent().putExtra("vachanas", vachanaMinis);
-        getIntent().putExtra("current_position", posistion);
+        getIntent().putExtra("current_position", position);
+        fragment.setArguments(getIntent().getExtras());
 
 //        fragment.setArguments(bundle);
         fragmentManager.popBackStack("vachana_list", FragmentManager.POP_BACK_STACK_INCLUSIVE);
@@ -206,6 +207,23 @@ public class MainActivity extends AppCompatActivity
                 db.removeVachanaToFavorite((int)objects[0]);
             return null;
         }
+    }
+
+    @Override
+    public void onFavoriteListFragmentInteraction(ArrayList<VachanaMini> vachanaMinis, int position) {
+        FragmentManager fragmentManager = getSupportFragmentManager();
+        Fragment fragment = Fragment.instantiate(MainActivity.this, fragments[0]);
+
+        getIntent().putExtra("vachanas", vachanaMinis);
+        getIntent().putExtra("current_position", position);
+        fragment.setArguments(getIntent().getExtras());
+
+//        fragment.setArguments(bundle);
+        fragmentManager.popBackStack("favorite_vachana_list", FragmentManager.POP_BACK_STACK_INCLUSIVE);
+        fragmentManager.beginTransaction()
+                .replace(R.id.main_content, fragment)
+                .addToBackStack( "favorite_vachana_list" )
+                .commit();
     }
 
     @Override

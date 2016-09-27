@@ -45,7 +45,6 @@ public class VachanaListFragment extends Fragment {
     private MainActivity mainActivity;
     private int kathruId = 0;
     private RecyclerView recyclerView;
-    private ProgressBar progressBar;
 
     public VachanaListFragment() {
     }
@@ -63,8 +62,7 @@ public class VachanaListFragment extends Fragment {
         protected void onPreExecute() {
             super.onPreExecute();
             ProgressBar progressBar = (ProgressBar) getActivity().findViewById(R.id.vachana_list_progressBar);
-            RecyclerView recyclerView = (RecyclerView) getActivity().findViewById(R.id.list);
-
+            recyclerView = (RecyclerView) getActivity().findViewById(R.id.list);
             progressBar.setVisibility(View.VISIBLE);
             recyclerView.setVisibility(View.INVISIBLE);
         }
@@ -80,8 +78,6 @@ public class VachanaListFragment extends Fragment {
         protected void onPostExecute(Object o) {
             super.onPostExecute(o);
             ProgressBar progressBar = (ProgressBar) getActivity().findViewById(R.id.vachana_list_progressBar);
-            RecyclerView recyclerView = (RecyclerView) getActivity().findViewById(R.id.list);
-
             if (progressBar != null && recyclerView != null) {
                 recyclerView.setAdapter(new MyVachanaListRecyclerViewAdapter(vachanaMinis,
                         (OnListFragmentInteractionListener) getActivity()));
@@ -96,12 +92,12 @@ public class VachanaListFragment extends Fragment {
     public void onResume() {
         super.onResume();
 
-        if (kathruId != getArguments().getInt("id")){
+        ProgressBar progressBar = (ProgressBar) getActivity().findViewById(R.id.vachana_list_progressBar);
+        if (vachanaMinis == null){
             kathruId = getArguments().getInt("id");
+            progressBar.setVisibility(View.VISIBLE);
             new VachanaListTask().execute(kathruId);
         } else {
-            if (progressBar == null)
-                progressBar = (ProgressBar) getActivity().findViewById(R.id.vachana_list_progressBar);
             recyclerView.setAdapter(new MyVachanaListRecyclerViewAdapter(vachanaMinis,
                     (OnListFragmentInteractionListener) getActivity()));
             progressBar.setVisibility(View.INVISIBLE);
@@ -109,7 +105,6 @@ public class VachanaListFragment extends Fragment {
             mainActivity.getSupportActionBar().setTitle(currentKathru.getName());
         }
 
-        Log.d(TAG, "onResume: ");
         AppBarLayout appBarLayout = (AppBarLayout)getActivity().findViewById(R.id.app_bar);
         appBarLayout.setExpanded(true, true);
     }
@@ -120,7 +115,6 @@ public class VachanaListFragment extends Fragment {
         View view = inflater.inflate(R.layout.fragment_vachana_list, container, false);
 
         recyclerView = (RecyclerView) view.findViewById(R.id.list);
-        progressBar = (ProgressBar) view.findViewById(R.id.vachana_list_progressBar);
         recyclerView.setLayoutManager(new LinearLayoutManager(view.getContext()));
 
         return view;

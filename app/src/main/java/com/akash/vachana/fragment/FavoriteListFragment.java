@@ -36,6 +36,7 @@ public class FavoriteListFragment extends Fragment {
 
     private ArrayList<VachanaMini> vachanaMinis = null;
     private MainActivity mainActivity;
+    private RecyclerView recyclerView;
 
     public FavoriteListFragment() { }
 
@@ -46,12 +47,14 @@ public class FavoriteListFragment extends Fragment {
     }
 
     private class VachanaFavoriteListTask extends AsyncTask {
-        ProgressBar progressBar = (ProgressBar) getActivity().findViewById(R.id.vachana_list_progressBar);
-        RecyclerView recyclerView = (RecyclerView) getActivity().findViewById(R.id.list);
+        ProgressBar progressBar;
+        RecyclerView recyclerView;
 
         @Override
         protected void onPreExecute() {
             super.onPreExecute();
+            progressBar = (ProgressBar) getActivity().findViewById(R.id.fav_vachana_list_progressBar);
+            recyclerView = (RecyclerView) getActivity().findViewById(R.id.fav_list);
             progressBar.setVisibility(View.VISIBLE);
             recyclerView.setVisibility(View.INVISIBLE);
         }
@@ -76,10 +79,17 @@ public class FavoriteListFragment extends Fragment {
     public void onResume() {
         super.onResume();
 
-        if (vachanaMinis == null)
+        ProgressBar progressBar = (ProgressBar) getActivity().findViewById(R.id.fav_vachana_list_progressBar);
+        if (vachanaMinis == null){
+            progressBar.setVisibility(View.VISIBLE);
             new VachanaFavoriteListTask().execute();
-        else
-            new VachanaFavoriteListTask().onPostExecute(null);
+        } else {
+            RecyclerView recyclerView = (RecyclerView) getActivity().findViewById(R.id.fav_list);
+            recyclerView.setAdapter(new MyFavoriteVachanaListAdapter(vachanaMinis,
+                    (OnListFavoriteInteractionListener) getActivity()));
+            progressBar.setVisibility(View.INVISIBLE);
+            recyclerView.setVisibility(View.VISIBLE);
+        }
 
         AppBarLayout appBarLayout = (AppBarLayout)getActivity().findViewById(R.id.app_bar);
         appBarLayout.setExpanded(true, true);
@@ -94,9 +104,9 @@ public class FavoriteListFragment extends Fragment {
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
-        View view = inflater.inflate(R.layout.fragment_vachana_list, container, false);
+        View view = inflater.inflate(R.layout.fragment_fav_vachana_list, container, false);
 
-        RecyclerView recyclerView = (RecyclerView) view.findViewById(R.id.list);
+        RecyclerView recyclerView = (RecyclerView) view.findViewById(R.id.fav_list);
         recyclerView.setLayoutManager(new LinearLayoutManager(view.getContext()));
 
         return view;
@@ -114,7 +124,7 @@ public class FavoriteListFragment extends Fragment {
 
     public interface OnListFavoriteInteractionListener {
         // TODO: Update argument type and name
-        void onListFragmentInteraction(ArrayList<VachanaMini> item, int position);
+        void onFavoriteListFragmentInteraction(ArrayList<VachanaMini> item, int position);
         void onFavoriteButton(int vachanaId, boolean checked);
     }
 }

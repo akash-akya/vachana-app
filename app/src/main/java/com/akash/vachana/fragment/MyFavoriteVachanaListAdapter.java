@@ -34,7 +34,7 @@ public class MyFavoriteVachanaListAdapter extends RecyclerView.Adapter<MyFavorit
     @Override
     public ViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
         View view = LayoutInflater.from(parent.getContext())
-                .inflate(R.layout.fragment_vachana_list_item, parent, false);
+                .inflate(R.layout.fragment_fav_vachana_list_item, parent, false);
         return new ViewHolder(view);
     }
 
@@ -69,7 +69,7 @@ public class MyFavoriteVachanaListAdapter extends RecyclerView.Adapter<MyFavorit
                 if (null != mListener) {
                     // Notify the active callbacks interface (the activity, if the
                     // fragment is attached to one) that an item has been selected.
-                    mListener.onListFragmentInteraction((ArrayList<VachanaMini>) mValues, position);
+                    mListener.onFavoriteListFragmentInteraction((ArrayList<VachanaMini>) mValues, position);
                 }
                 }
             });
