@@ -1,5 +1,6 @@
 package com.akash.vachana.activity;
 
+import android.net.Uri;
 import android.os.AsyncTask;
 import android.support.v4.app.FragmentManager;
 import android.os.Bundle;
@@ -22,6 +23,7 @@ import com.akash.vachana.dbUtil.MainDbHelper;
 import com.akash.vachana.dbUtil.VachanaMini;
 import com.akash.vachana.fragment.FavoriteListFragment;
 import com.akash.vachana.fragment.KathruListFragment;
+import com.akash.vachana.fragment.SearchFragment;
 import com.akash.vachana.fragment.VachanaListFragment;
 
 import java.io.IOException;
@@ -30,39 +32,19 @@ import java.util.Random;
 
 public class MainActivity extends AppCompatActivity
         implements NavigationView.OnNavigationItemSelectedListener, VachanaListFragment.OnListFragmentInteractionListener,
-        KathruListFragment.OnKathruListFragmentInteractionListener, FavoriteListFragment.OnListFavoriteInteractionListener {
+        KathruListFragment.OnKathruListFragmentInteractionListener, FavoriteListFragment.OnListFavoriteInteractionListener,
+        SearchFragment.OnSearchFragmentInteractionListener {
 
     private static final String TAG = "MainActivity";
-    public static final String DB_NAME = "raw/main.db";
 
     final String[] fragments ={
             "com.akash.vachana.fragment.VachanaFragment",
             "com.akash.vachana.fragment.VachanaListFragment",
             "com.akash.vachana.fragment.KathruListFragment",
-            "com.akash.vachana.fragment.FavoriteListFragment"
+            "com.akash.vachana.fragment.FavoriteListFragment",
+            "com.akash.vachana.fragment.SearchFragment"
     };
 
-    private final int[] bgColors = {
-            R.color.color1,
-            R.color.color2,
-            R.color.color3,
-            R.color.color4,
-            R.color.color5,
-            R.color.color6,
-            R.color.color7,
-            R.color.color8,
-            R.color.color9,
-            R.color.color10,
-            R.color.color11,
-            R.color.color12,
-            R.color.color13,
-            R.color.color14,
-            R.color.color15,
-            R.color.color16,
-            R.color.color17,
-            R.color.color18,
-            R.color.color19
-    };
     private ActionBar actionBar;
     private ShareActionProvider mShareActionProvider;
     public MainDbHelper db;
@@ -163,8 +145,11 @@ public class MainActivity extends AppCompatActivity
             case R.id.nav_favorite:
                 fragment = Fragment.instantiate(MainActivity.this, fragments[3]);
                 break;
-            case R.id.nav_settings:
+            case R.id.nav_search:
+                fragment = Fragment.instantiate(MainActivity.this, fragments[4]);
                 break;
+            case R.id.nav_settings:
+                return;
             default:
                 Log.e(TAG, "selectItem: Error, Wrong id");
         }
@@ -182,7 +167,6 @@ public class MainActivity extends AppCompatActivity
 
     @Override
     public void onListFragmentInteraction(ArrayList<VachanaMini> vachanaMinis, int position) {
-//        Bundle bundle = new Bundle();
         FragmentManager fragmentManager = getSupportFragmentManager();
         Fragment fragment = Fragment.instantiate(MainActivity.this, fragments[0]);
 
@@ -190,12 +174,16 @@ public class MainActivity extends AppCompatActivity
         getIntent().putExtra("current_position", position);
         fragment.setArguments(getIntent().getExtras());
 
-//        fragment.setArguments(bundle);
         fragmentManager.popBackStack("vachana_list", FragmentManager.POP_BACK_STACK_INCLUSIVE);
         fragmentManager.beginTransaction()
                 .replace(R.id.main_content, fragment)
                 .addToBackStack( "vachana_list" )
                 .commit();
+    }
+
+    @Override
+    public void onFragmentInteraction(Uri uri) {
+        Log.d(TAG, "onFragmentInteraction: Hi dude!!");
     }
 
     public class UpdateVachanaFavorite extends AsyncTask {
@@ -218,7 +206,6 @@ public class MainActivity extends AppCompatActivity
         getIntent().putExtra("current_position", position);
         fragment.setArguments(getIntent().getExtras());
 
-//        fragment.setArguments(bundle);
         fragmentManager.popBackStack("favorite_vachana_list", FragmentManager.POP_BACK_STACK_INCLUSIVE);
         fragmentManager.beginTransaction()
                 .replace(R.id.main_content, fragment)
