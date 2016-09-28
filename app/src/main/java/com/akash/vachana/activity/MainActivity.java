@@ -166,6 +166,7 @@ public class MainActivity extends AppCompatActivity
                     }
                 });
                 fragment = Fragment.instantiate(MainActivity.this, fragments[1]);
+                fragmentManager.popBackStack("vachana_list", FragmentManager.POP_BACK_STACK_INCLUSIVE);
                 break;
             case R.id.nav_kathru:
                 fragment = Fragment.instantiate(MainActivity.this, fragments[2]);
@@ -201,10 +202,10 @@ public class MainActivity extends AppCompatActivity
                 });
                 fragment = Fragment.instantiate(MainActivity.this, fragments[1]);
                 fragment.setArguments(bundle);
-                fragmentManager.popBackStack("favorite_list", FragmentManager.POP_BACK_STACK_INCLUSIVE);
+                fragmentManager.popBackStack("vachana_list", FragmentManager.POP_BACK_STACK_INCLUSIVE);
                 fragmentManager.beginTransaction()
                         .replace(R.id.main_content, fragment)
-                        .addToBackStack( "favorite_list" )
+                        .addToBackStack( "vachana_list" )
                         .commit();
                 return;
             case R.id.nav_search:
@@ -297,7 +298,7 @@ public class MainActivity extends AppCompatActivity
         });
 
         fragment.setArguments(bundle);
-        fragmentManager.popBackStack("kathru_list", FragmentManager.POP_BACK_STACK_INCLUSIVE);
+        fragmentManager.popBackStack(null, FragmentManager.POP_BACK_STACK_INCLUSIVE);
         fragmentManager.beginTransaction()
                 .replace(R.id.main_content, fragment)
                 .addToBackStack( "kathru_list" )
