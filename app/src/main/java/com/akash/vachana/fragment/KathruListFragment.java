@@ -77,7 +77,7 @@ public class KathruListFragment extends Fragment {
         mListener = null;
     }
 
-    public interface OnKathruListFragmentInteractionListener extends VachanaListFragment.OnListFragmentInteractionListener {
+    public interface OnKathruListFragmentInteractionListener{
         // TODO: Update argument type and name
         void onListFragmentInteraction(KathruMini item);
     }

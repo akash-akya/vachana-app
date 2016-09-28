@@ -162,6 +162,21 @@ public class MainDbHelper extends SQLiteOpenHelper {
         onCreate(sqLiteDatabase);
     }
 
+    public KathruMini getKathruMiniById(int id) {
+        SQLiteDatabase db = this.getReadableDatabase();
+
+        Cursor cursor = db.query(TABLE_KATHRU, new String[] { KEY_KATHRU_ID,
+                        KEY_NAME, KEY_ANKITHA, KEY_NUMBER}, KEY_KATHRU_ID + "=?",
+                new String[] { String.valueOf(id) }, null, null, null, null);
+
+        if (cursor != null)
+            cursor.moveToFirst();
+
+        String name = cursor.getString(1);
+        return new KathruMini(Integer.parseInt(cursor.getString(0)), name, cursor.getString(2),
+                cursor.getInt(3));
+    }
+
     public ArrayList<KathruMini> getAllKathruMinis(){
         ArrayList<KathruMini> contactList = new ArrayList<KathruMini>();
         String selectQuery = "SELECT  * FROM " + TABLE_KATHRU + " ORDER BY Name";

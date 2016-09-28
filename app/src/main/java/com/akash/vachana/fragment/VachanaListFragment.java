@@ -26,6 +26,7 @@ import com.akash.vachana.util.FileHelper;
 
 import java.io.IOException;
 import java.io.InputStream;
+import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.concurrent.ExecutionException;
 
@@ -40,18 +41,21 @@ public class VachanaListFragment extends Fragment {
 
     private static final String TAG = "VachanaListFragment";
 
-    private Kathru currentKathru;
+//    private Kathru currentKathru;
+    private String title = null;
     private ArrayList<VachanaMini> vachanaMinis = null;
     private MainActivity mainActivity;
     private RecyclerView recyclerView;
+    private OnListFragmentInteractionListener listener;
 
-    public VachanaListFragment() {
-    }
+    public VachanaListFragment() { }
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         mainActivity = (MainActivity) getContext();
+        title = getArguments().getString("title");
+        listener = (OnListFragmentInteractionListener) getArguments().getSerializable("listener");
     }
 
     private class VachanaListTask extends AsyncTask {
@@ -66,26 +70,28 @@ public class VachanaListFragment extends Fragment {
         }
 
         @Override
-        protected Kathru doInBackground(Object[] objects) {
-            Kathru kathru = mainActivity.db.getKathruById((int) objects[0]);
-            vachanaMinis = mainActivity.db.getVachanaMinisByKathruId(kathru.getId());
-            return kathru;
+        protected ArrayList<VachanaMini> doInBackground(Object[] objects) {
+            return listener.getVachanaMinis();
+//            return ((MainActivity)getActivity()).getVachanaMinis((int) objects[0]);
+//            Kathru kathru = mainActivity.db.getKathruById((int) objects[0]);
+//            vachanaMinis = mainActivity.db.getVachanaMinisByKathruId(kathru.getId());
+//            return kathru;
         }
 
         @Override
         protected void onPostExecute(Object o) {
             super.onPostExecute(o);
-            Kathru kathru = (Kathru) o;
-            currentKathru = kathru;
+            vachanaMinis = (ArrayList<VachanaMini>) o;
+//            Kathru kathru = (Kathru) o;
+//            currentKathru = kathru;
             ProgressBar progressBar = (ProgressBar) getActivity().findViewById(R.id.vachana_list_progressBar);
             if (progressBar != null && recyclerView != null) {
                 recyclerView.setAdapter(new MyVachanaListRecyclerViewAdapter(vachanaMinis,
-                        (OnListFragmentInteractionListener) getActivity()));
+                        listener));
                 progressBar.setVisibility(View.INVISIBLE);
                 recyclerView.setVisibility(View.VISIBLE);
-                mainActivity.getSupportActionBar().setTitle(kathru.getName());
+                mainActivity.getSupportActionBar().setTitle(title);
             }
-
         }
     }
 
@@ -99,10 +105,11 @@ public class VachanaListFragment extends Fragment {
             new VachanaListTask().execute(getArguments().getInt("id"));
         } else {
             recyclerView.setAdapter(new MyVachanaListRecyclerViewAdapter(vachanaMinis,
-                    (OnListFragmentInteractionListener) getActivity()));
+                    listener));
             progressBar.setVisibility(View.INVISIBLE);
             recyclerView.setVisibility(View.VISIBLE);
-            mainActivity.getSupportActionBar().setTitle(currentKathru.getName());
+            if (title != null)
+                mainActivity.getSupportActionBar().setTitle(title);
         }
 
         AppBarLayout appBarLayout = (AppBarLayout)getActivity().findViewById(R.id.app_bar);
@@ -130,9 +137,9 @@ public class VachanaListFragment extends Fragment {
         super.onDetach();
     }
 
-    public interface OnListFragmentInteractionListener {
-        // TODO: Update argument type and name
+    public interface OnListFragmentInteractionListener extends Serializable {
         void onListFragmentInteraction(ArrayList<VachanaMini> item, int position);
         void onFavoriteButton(int vachanaId, boolean checked);
+        ArrayList<VachanaMini> getVachanaMinis();
     }
 }
