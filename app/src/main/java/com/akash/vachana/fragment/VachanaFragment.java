@@ -36,17 +36,10 @@ import java.util.Map;
 public class VachanaFragment extends Fragment {
 
     private static final String TAG = "VachanaFragment";
-//    private static final int VACHANA_KEY = 1;
 
-    //    private Kathru currentKathru;
     private ViewPager viewPager;
     private MyViewPagerAdapter myViewPagerAdapter;
-    private ArrayList<VachanaMini> vachanaMinis;
-    private static Context sContext;
-    private MainActivity mainActivity;
     private Menu menu;
-    private HashMap<Integer, Vachana> vachanas =  new HashMap<>();
-    private int current_position;
 
     public VachanaFragment() {}
 
@@ -54,21 +47,16 @@ public class VachanaFragment extends Fragment {
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         setHasOptionsMenu(true);
 
-        sContext = getActivity();
-        mainActivity = (MainActivity) getActivity();
         ViewGroup root = (ViewGroup) inflater.inflate(R.layout.vachana_pager_layout, null);
 
         Bundle extra = getArguments();
-        vachanaMinis = (ArrayList<VachanaMini>) extra.getSerializable("vachanas");
+        myViewPagerAdapter = new MyViewPagerAdapter((ArrayList<VachanaMini>) extra.getSerializable("vachanas"));
 
-        Log.d(TAG, "onCreateView: "+vachanaMinis.size());
         viewPager = (ViewPager) root.findViewById(R.id.vachana_view_pager);
-        myViewPagerAdapter = new MyViewPagerAdapter();
         viewPager.setOffscreenPageLimit(2);
         viewPager.setAdapter(myViewPagerAdapter);
-        viewPager.addOnPageChangeListener(viewPagerPageChangeListener);
 
-        current_position = (int) extra.getSerializable("current_position");
+        viewPager.setCurrentItem((int) extra.getSerializable("current_position"), true);
         return root;
     }
 
@@ -83,7 +71,7 @@ public class VachanaFragment extends Fragment {
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
         int id = item.getItemId();
-        Vachana vachana = (Vachana) myViewPagerAdapter.vachanaHashMap.get(viewPager.getCurrentItem());
+        Vachana vachana = myViewPagerAdapter.vachanaHashMap.get(viewPager.getCurrentItem());
         if (vachana != null) {
             switch (id) {
                 case R.id.action_share:
@@ -119,27 +107,12 @@ public class VachanaFragment extends Fragment {
         @Override
         protected Void doInBackground(Object[] objects) {
             if ((boolean)objects[1])
-                mainActivity.db.addVachanaToFavorite((int)objects[0]);
+                ((MainActivity) getActivity()).db.addVachanaToFavorite((int)objects[0]);
             else
-                mainActivity.db.removeVachanaToFavorite((int)objects[0]);
+                ((MainActivity) getActivity()).db.removeVachanaToFavorite((int)objects[0]);
             return null;
         }
     }
-
-    /**
-     * viewpager change listener
-     */
-    ViewPager.OnPageChangeListener viewPagerPageChangeListener = new ViewPager.OnPageChangeListener() {
-
-        @Override
-        public void onPageSelected(final int position) { }
-
-        @Override
-        public void onPageScrolled(int arg0, float arg1, int arg2) { }
-
-        @Override
-        public void onPageScrollStateChanged(int arg0) { }
-    };
 
     @Override
     public void onResume() {
@@ -147,29 +120,32 @@ public class VachanaFragment extends Fragment {
 
         AppBarLayout appBarLayout = (AppBarLayout)getActivity().findViewById(R.id.app_bar);
         appBarLayout.setExpanded(true, true);
-        Vachana vachana = (Vachana) myViewPagerAdapter.vachanaHashMap.get(viewPager.getCurrentItem());
+
+        Vachana vachana = myViewPagerAdapter.vachanaHashMap.get(viewPager.getCurrentItem());
         if (vachana!= null) {
             try {
-                mainActivity.getSupportActionBar().setTitle(vachana.getKathru());
+                ((MainActivity) getActivity()).getSupportActionBar().setTitle(vachana.getKathru());
             } catch (NullPointerException e){
                 Log.d(  TAG, "onCreate: Actionbar not found");
             }
         }
-        viewPager.setCurrentItem(current_position, true);
     }
 
     /**
      * View pager adapter
      */
     public class MyViewPagerAdapter extends PagerAdapter {
+        private final ArrayList<VachanaMini> vachanaMinis;
         private LayoutInflater layoutInflater;
         public HashMap<Integer, Vachana> vachanaHashMap = new HashMap<>();
 
-        public MyViewPagerAdapter() {        }
+        public MyViewPagerAdapter(ArrayList<VachanaMini> vachanaMinis) {
+            this.vachanaMinis = vachanaMinis;
+        }
 
         @Override
         public Object instantiateItem(final ViewGroup container, int position)  {
-            layoutInflater = (LayoutInflater) sContext.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
+            layoutInflater = (LayoutInflater) getActivity().getSystemService(Context.LAYOUT_INFLATER_SERVICE);
             final View view = layoutInflater.inflate(R.layout.vachana_text_view, container, false);
             new GetVachanaFromDb(view, position).execute();
             container.addView(view);
@@ -206,7 +182,7 @@ public class VachanaFragment extends Fragment {
 
             @Override
             protected Vachana doInBackground(Object[] objects) {
-                Vachana vachana = mainActivity.db.getVachana(vachanaMinis.get(position).getId());
+                Vachana vachana = ((MainActivity) getActivity()).db.getVachana(vachanaMinis.get(position).getId());
                 return vachana;
             }
 

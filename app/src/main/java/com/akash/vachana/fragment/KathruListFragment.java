@@ -21,27 +21,14 @@ import java.util.ArrayList;
 
 public class KathruListFragment extends Fragment {
 
-    // TODO: Customize parameter argument names
-    private static final String ARG_COLUMN_COUNT = "column-count";
     private static final String TAG = "KathruListFragment";
-    private int mColumnCount = 1;
     private OnKathruListFragmentInteractionListener mListener;
-    private ArrayList<KathruMini> kathruMinis;
-    private MainActivity mainActivity;
 
-    public KathruListFragment() {
-    }
+    public KathruListFragment() { }
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-
-        if (getArguments() != null) {
-            mColumnCount = getArguments().getInt(ARG_COLUMN_COUNT);
-        }
-
-        mainActivity = (MainActivity) getActivity();
-        kathruMinis = mainActivity.db.getAllKathruMinis();
     }
 
     @Override
@@ -52,7 +39,7 @@ public class KathruListFragment extends Fragment {
         appBarLayout.setExpanded(true, true);
 
         try {
-            mainActivity.getSupportActionBar().setTitle("ವಚನಕಾರರು");
+            ((MainActivity)getActivity()).getSupportActionBar().setTitle("ವಚನಕಾರರು");
         } catch (NullPointerException e){
             Log.d(TAG, "onCreate: Actionbar not found");
         }
@@ -62,16 +49,12 @@ public class KathruListFragment extends Fragment {
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         View view = inflater.inflate(R.layout.fragment_kathru_list, container, false);
-        mListener = (KathruListFragment.OnKathruListFragmentInteractionListener) getActivity();
-        // Set the adapter
+        mListener = (KathruListFragment.OnKathruListFragmentInteractionListener) view.getContext();
+
         if (view instanceof RecyclerView) {
-            Context context = view.getContext();
             RecyclerView recyclerView = (RecyclerView) view;
-            if (mColumnCount <= 1) {
-                recyclerView.setLayoutManager(new LinearLayoutManager(context));
-            } else {
-                recyclerView.setLayoutManager(new GridLayoutManager(context, mColumnCount));
-            }
+            recyclerView.setLayoutManager(new LinearLayoutManager(view.getContext()));
+            ArrayList<KathruMini> kathruMinis = ((MainActivity) getActivity()).db.getAllKathruMinis();
             recyclerView.setAdapter(new MyKathruListRecyclerViewAdapter(kathruMinis, mListener));
         }
         return view;
@@ -94,17 +77,6 @@ public class KathruListFragment extends Fragment {
         mListener = null;
     }
 
-
-    /**
-     * This interface must be implemented by activities that contain this
-     * fragment to allow an interaction in this fragment to be communicated
-     * to the activity and potentially other fragments contained in that
-     * activity.
-     * <p/>
-     * See the Android Training lesson <a href=
-     * "http://developer.android.com/training/basics/fragments/communicating.html"
-     * >Communicating with Other Fragments</a> for more information.
-     */
     public interface OnKathruListFragmentInteractionListener extends VachanaListFragment.OnListFragmentInteractionListener {
         // TODO: Update argument type and name
         void onListFragmentInteraction(KathruMini item);
