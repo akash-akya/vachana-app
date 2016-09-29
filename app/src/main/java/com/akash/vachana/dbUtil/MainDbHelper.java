@@ -16,6 +16,7 @@ import java.io.Serializable;
 import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.StringTokenizer;
 import java.util.TreeMap;
 
 /**
@@ -27,21 +28,20 @@ public class MainDbHelper extends SQLiteOpenHelper implements Serializable {
     public static final String DATABASE_NAME = "main.db";
     public static final int DATABASE_VERSION = 2;
 
-    private static final String TABLE_KATHRU = "Kathru";
-    private static final String KEY_KATHRU_ID = "Id";
-    private static final String KEY_NAME = "Name";
-    private static final String KEY_ANKITHA = "Ankitha";
-    private static final String KEY_NUMBER  = "Num";
-    private static final String KEY_DETAILS= "Details";
-
+    public static final String TABLE_KATHRU = "Kathru";
+    public static final String KEY_KATHRU_ID = "Id";
+    public static final String KEY_NAME = "Name";
+    public static final String KEY_ANKITHA = "Ankitha";
+    public static final String KEY_NUMBER  = "Num";
+    public static final String KEY_DETAILS = "Details";
 
     ////// Vachana Table
-    private static final String TABLE_VACHANA = "Vachana";
-    private static final String KEY_VACHANA_ID = "Id";
-    private static final String KEY_TEXT = "Txt";
-    private static final String KEY_TITLE = "Title";
-    private static final String FOREIGN_KEY_KATHRU_ID = "KathruId";
-    private static final String KEY_FAVORITE = "Favorite";
+    public static final String TABLE_VACHANA = "Vachana";
+    public static final String KEY_VACHANA_ID = "Id";
+    public static final String KEY_TEXT = "Txt";
+    public static final String KEY_TITLE = "Title";
+    public static final String FOREIGN_KEY_KATHRU_ID = "KathruId";
+    public static final String KEY_FAVORITE = "Favorite";;
 
     private static Context mContext;
     private static SQLiteDatabase mDataBase;
@@ -252,6 +252,28 @@ public class MainDbHelper extends SQLiteOpenHelper implements Serializable {
         int id = Integer.parseInt(cursor.getString(0));
         String text = cursor.getString(1);
         return new Vachana(id, text, getKathruNameById(kathruId), cursor.getInt(2)==1? true : false);
+    }
+
+    public ArrayList<VachanaMini> query(String[] fields, String q, String[] parameter) {
+        ArrayList<VachanaMini> vachanaMinis = new ArrayList<>();
+        if (q.length()<3)
+            return vachanaMinis;
+
+        SQLiteDatabase db = this.getReadableDatabase();
+        Cursor cursor = db.query(TABLE_VACHANA, fields, q, parameter, null, null, null, "100");
+
+        if (cursor.moveToFirst()) {
+            do {
+                int id = Integer.parseInt(cursor.getString(0));
+                String title = cursor.getString(1);
+                int kathruId = cursor.getInt(2);
+                VachanaMini vachanaMini = new VachanaMini(id, kathruId, getKathruNameById(kathruId),
+                        title, cursor.getInt(2));
+                vachanaMinis.add(vachanaMini);
+            } while (cursor.moveToNext());
+        }
+
+        return vachanaMinis;
     }
 
     public Vachana getVachana(int id) {

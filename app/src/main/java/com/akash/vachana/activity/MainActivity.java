@@ -38,7 +38,7 @@ public class MainActivity extends AppCompatActivity
 
     private static final String TAG = "MainActivity";
 
-    static final String[] fragments ={
+    public static final String[] fragments ={
             "com.akash.vachana.fragment.VachanaFragment",
             "com.akash.vachana.fragment.VachanaListFragment",
             "com.akash.vachana.fragment.KathruListFragment",
