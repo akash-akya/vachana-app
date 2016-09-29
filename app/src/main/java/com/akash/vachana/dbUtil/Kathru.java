@@ -8,6 +8,7 @@ import android.widget.ArrayAdapter;
 import org.json.JSONException;
 import org.json.JSONObject;
 
+import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.Map;
@@ -15,15 +16,13 @@ import java.util.Map;
 /**
  * Created by akash on 8/28/16.
  */
-public class Kathru {
+public class Kathru implements Serializable{
     public static final String className = "Katru";
 
     private int id;
     private String name;
     private String ankitha;
     private int num;
-//    private KathruDetails details;
-//    private ArrayList<VachanaMini> vachanasId;
 
     public Kathru (int id, String name, String ankitha, int num, ArrayList<VachanaMini> vachanasId)
     {

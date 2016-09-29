@@ -12,6 +12,7 @@ import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
+import java.io.Serializable;
 import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.List;
@@ -20,17 +21,13 @@ import java.util.TreeMap;
 /**
  * Created by akash on 9/13/16.
  */
-public class MainDbHelper extends SQLiteOpenHelper {
-    // All Static variables
+public class MainDbHelper extends SQLiteOpenHelper implements Serializable {
     private static String DB_PATH;
 
     public static final String DATABASE_NAME = "main.db";
-    // If you change the database schema, you must increment the database version.
     public static final int DATABASE_VERSION = 2;
 
-    // Contacts table name
     private static final String TABLE_KATHRU = "Kathru";
-    // Contacts Table Columns names
     private static final String KEY_KATHRU_ID = "Id";
     private static final String KEY_NAME = "Name";
     private static final String KEY_ANKITHA = "Ankitha";
@@ -40,7 +37,6 @@ public class MainDbHelper extends SQLiteOpenHelper {
 
     ////// Vachana Table
     private static final String TABLE_VACHANA = "Vachana";
-    // Table Columns names
     private static final String KEY_VACHANA_ID = "Id";
     private static final String KEY_TEXT = "Txt";
     private static final String KEY_TITLE = "Title";

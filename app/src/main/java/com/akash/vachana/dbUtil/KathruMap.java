@@ -6,12 +6,13 @@ import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
+import java.io.Serializable;
 import java.util.ArrayList;
 
 /**
  * Created by akash on 8/28/16.
  */
-public class KathruMap {
+public class KathruMap implements Serializable{
 
     private static final String TAG = "KathruMap";
 

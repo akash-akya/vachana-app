@@ -5,10 +5,12 @@ import android.util.Log;
 import org.json.JSONException;
 import org.json.JSONObject;
 
+import java.io.Serializable;
+
 /**
  * Created by akash on 9/5/16.
  */
-public class KathruDetails {
+public class KathruDetails implements Serializable{
     private static final String TAG = "KathruDetails";
     private String ankithanama;
     private String kaala;

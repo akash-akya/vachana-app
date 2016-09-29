@@ -1,9 +1,11 @@
 package com.akash.vachana.dbUtil;
 
+import java.io.Serializable;
+
 /**
  * Created by akash on 8/28/16.
  */
-public class KathruMini {
+public class KathruMini implements Serializable{
     private int id;
     private String name;
     private String ankitha;

@@ -17,6 +17,7 @@ import com.akash.vachana.R;
 import com.akash.vachana.activity.MainActivity;
 import com.akash.vachana.dbUtil.KathruMini;
 
+import java.io.Serializable;
 import java.util.ArrayList;
 
 public class KathruListFragment extends Fragment {
@@ -77,7 +78,7 @@ public class KathruListFragment extends Fragment {
         mListener = null;
     }
 
-    public interface OnKathruListFragmentInteractionListener{
+    public interface OnKathruListFragmentInteractionListener extends Serializable{
         // TODO: Update argument type and name
         void onListFragmentInteraction(KathruMini item);
     }

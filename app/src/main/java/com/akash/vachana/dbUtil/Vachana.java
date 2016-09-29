@@ -5,10 +5,12 @@ import android.util.Log;
 import org.json.JSONException;
 import org.json.JSONObject;
 
+import java.io.Serializable;
+
 /**
  * Created by akash on 8/28/16.
  */
-public class Vachana {
+public class Vachana implements Serializable {
     final public String className = "Vachana";
     private boolean favorite;
     private int id;

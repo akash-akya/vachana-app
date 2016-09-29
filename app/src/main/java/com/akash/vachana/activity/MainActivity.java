@@ -27,25 +27,24 @@ import com.akash.vachana.fragment.SearchFragment;
 import com.akash.vachana.fragment.VachanaListFragment;
 
 import java.io.IOException;
+import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.Random;
 
 public class MainActivity extends AppCompatActivity
         implements NavigationView.OnNavigationItemSelectedListener,
         KathruListFragment.OnKathruListFragmentInteractionListener,
-        SearchFragment.OnSearchFragmentInteractionListener {
+        SearchFragment.OnSearchFragmentInteractionListener, Serializable {
 
     private static final String TAG = "MainActivity";
 
-    final String[] fragments ={
+    static final String[] fragments ={
             "com.akash.vachana.fragment.VachanaFragment",
             "com.akash.vachana.fragment.VachanaListFragment",
             "com.akash.vachana.fragment.KathruListFragment",
             "com.akash.vachana.fragment.SearchFragment"
     };
 
-    private ActionBar actionBar;
-    private ShareActionProvider mShareActionProvider;
     public MainDbHelper db;
 
     @Override
@@ -55,8 +54,8 @@ public class MainActivity extends AppCompatActivity
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
 
-        actionBar = getSupportActionBar();
-        if (actionBar!= null) {
+        ActionBar actionBar = getSupportActionBar();
+        if (actionBar != null) {
             actionBar.setElevation(0);
             actionBar.setHomeButtonEnabled(true);
             actionBar.setDisplayShowHomeEnabled(true);
@@ -64,14 +63,11 @@ public class MainActivity extends AppCompatActivity
 
         db = new MainDbHelper(this);
         try {
-
             db.createDataBase();
             Log.d(TAG, "onCreate: Database Created\n");
-
         } catch (IOException ioe) {
             //throw new Error("Unable to create database");
         }
-
 
         DrawerLayout drawer = (DrawerLayout) findViewById(R.id.drawer_layout);
         ActionBarDrawerToggle toggle = new ActionBarDrawerToggle(
@@ -109,7 +105,6 @@ public class MainActivity extends AppCompatActivity
             case R.id.action_settings:
                 return true;
         }
-
         return super.onOptionsItemSelected(item);
     }
 
@@ -124,9 +119,7 @@ public class MainActivity extends AppCompatActivity
         return true;
     }
 
-    /** Swaps fragments in the main content view */
     private void selectItem(int itemId) {
-        // Insert the fragment by replacing any existing fragment
         FragmentManager fragmentManager = getSupportFragmentManager();
         Fragment fragment = null;
 
@@ -267,7 +260,6 @@ public class MainActivity extends AppCompatActivity
         Bundle bundle = new Bundle();
         FragmentManager fragmentManager = getSupportFragmentManager();
         Fragment fragment = Fragment.instantiate(MainActivity.this, fragments[1]);
-//        bundle.putInt("id", item.getId());
         bundle.putString("title", item.getName());
         bundle.putSerializable("listener", new VachanaListFragment.OnListFragmentInteractionListener() {
             @Override
@@ -304,6 +296,4 @@ public class MainActivity extends AppCompatActivity
                 .addToBackStack( "kathru_list" )
                 .commit();
     }
-
-//    private VachanaListFragment.OnListFragmentInteractionListener listener = ;
 }

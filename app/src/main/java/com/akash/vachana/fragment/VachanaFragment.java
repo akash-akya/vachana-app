@@ -86,7 +86,7 @@ public class VachanaFragment extends Fragment {
                     }
                     sharingIntent.putExtra(android.content.Intent.EXTRA_SUBJECT, vachana.getKathru());
                     sharingIntent.putExtra(android.content.Intent.EXTRA_TEXT, shareBody);
-                    startActivity(Intent.createChooser(sharingIntent, "Share via"));
+                    getActivity().startActivity(Intent.createChooser(sharingIntent, "Share via"));
                     return true;
 
                 case R.id.action_favorite:
@@ -97,7 +97,7 @@ public class VachanaFragment extends Fragment {
                     else
                         item.setIcon(R.drawable.ic_star_outline_20dp);
                     new UpdateVachanaFavorite().execute(vachana.getId(), new_state);
-                    break;
+                    return true;
             }
         }
         return super.onOptionsItemSelected(item);
