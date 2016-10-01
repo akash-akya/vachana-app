@@ -10,9 +10,13 @@ import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.GridLayoutManager;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
+import android.support.v7.widget.SearchView;
 import android.support.v7.widget.Toolbar;
 import android.util.Log;
 import android.view.LayoutInflater;
+import android.view.Menu;
+import android.view.MenuInflater;
+import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ProgressBar;
@@ -21,6 +25,7 @@ import com.akash.vachana.R;
 import com.akash.vachana.ListViewHelper.VachanaList;
 import com.akash.vachana.activity.MainActivity;
 import com.akash.vachana.dbUtil.Kathru;
+import com.akash.vachana.dbUtil.KathruMini;
 import com.akash.vachana.dbUtil.VachanaMini;
 import com.akash.vachana.util.FileHelper;
 
@@ -47,6 +52,8 @@ public class VachanaListFragment extends Fragment {
     private MainActivity mainActivity;
     private RecyclerView recyclerView;
     private OnListFragmentInteractionListener listener;
+    private MyVachanaListRecyclerViewAdapter adapter;
+//    private ArrayList<VachanaMini> dup_vachanaMinis = new ArrayList<>();
 
     public VachanaListFragment() { }
 
@@ -60,10 +67,12 @@ public class VachanaListFragment extends Fragment {
 
     private class VachanaListTask extends AsyncTask {
 
+        private ProgressBar progressBar;
+
         @Override
         protected void onPreExecute() {
             super.onPreExecute();
-            ProgressBar progressBar = (ProgressBar) getActivity().findViewById(R.id.vachana_list_progressBar);
+            progressBar = (ProgressBar) getActivity().findViewById(R.id.vachana_list_progressBar);
             recyclerView = (RecyclerView) getActivity().findViewById(R.id.list);
             progressBar.setVisibility(View.VISIBLE);
             recyclerView.setVisibility(View.INVISIBLE);
@@ -72,22 +81,15 @@ public class VachanaListFragment extends Fragment {
         @Override
         protected ArrayList<VachanaMini> doInBackground(Object[] objects) {
             return listener.getVachanaMinis();
-//            return ((MainActivity)getActivity()).getVachanaMinis((int) objects[0]);
-//            Kathru kathru = mainActivity.db.getKathruById((int) objects[0]);
-//            vachanaMinis = mainActivity.db.getVachanaMinisByKathruId(kathru.getId());
-//            return kathru;
         }
 
         @Override
         protected void onPostExecute(Object o) {
             super.onPostExecute(o);
             vachanaMinis = (ArrayList<VachanaMini>) o;
-//            Kathru kathru = (Kathru) o;
-//            currentKathru = kathru;
-            ProgressBar progressBar = (ProgressBar) getActivity().findViewById(R.id.vachana_list_progressBar);
             if (progressBar != null && recyclerView != null) {
-                recyclerView.setAdapter(new MyVachanaListRecyclerViewAdapter(vachanaMinis,
-                        listener));
+                adapter = new MyVachanaListRecyclerViewAdapter(vachanaMinis, listener);
+                recyclerView.setAdapter(adapter);
                 progressBar.setVisibility(View.INVISIBLE);
                 recyclerView.setVisibility(View.VISIBLE);
                 mainActivity.getSupportActionBar().setTitle(title);
@@ -117,8 +119,48 @@ public class VachanaListFragment extends Fragment {
     }
 
     @Override
+    public void onCreateOptionsMenu(Menu menu, MenuInflater inflater) {
+        menu.clear();
+        super.onCreateOptionsMenu(menu, inflater);
+        inflater.inflate(R.menu.main, menu);
+        final MenuItem searchMenuItem = menu.findItem(R.id.menu_search);
+        final SearchView searchView = (SearchView) searchMenuItem.getActionView();
+        searchView.setOnQueryTextFocusChangeListener(new View.OnFocusChangeListener() {
+            @Override
+            public void onFocusChange(View view, boolean queryTextFocused) {
+                if(!queryTextFocused) {
+                    searchMenuItem.collapseActionView();
+                    searchView.setQuery("", false);
+                }
+            }
+        });
+        //***setOnQueryTextListener***
+        searchView.setOnQueryTextListener(new SearchView.OnQueryTextListener() {
+
+            @Override
+            public boolean onQueryTextSubmit(String query) {
+
+                return false;
+            }
+
+            @Override
+            public boolean onQueryTextChange(String newText) {
+                if (adapter != null && recyclerView != null) {
+                    adapter.filter(newText);
+                    recyclerView.invalidate();
+                    Log.d(TAG, "onQueryTextChange: "+newText);
+                    return true;
+                }
+                return false;
+            }
+        });
+    }
+
+
+    @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
+        setHasOptionsMenu(true);
         View view = inflater.inflate(R.layout.fragment_vachana_list, container, false);
 
         recyclerView = (RecyclerView) view.findViewById(R.id.list);

@@ -8,19 +8,24 @@ import android.widget.TextView;
 
 import com.akash.vachana.R;
 import com.akash.vachana.dbUtil.KathruMini;
+import com.akash.vachana.dbUtil.VachanaMini;
 import com.akash.vachana.fragment.KathruListFragment.OnKathruListFragmentInteractionListener;
 
+import java.util.ArrayList;
 import java.util.List;
+import java.util.Locale;
 
 public class MyKathruListRecyclerViewAdapter extends RecyclerView.Adapter<MyKathruListRecyclerViewAdapter.ViewHolder> {
 
     private static final String TAG = "MyKathruListRecyclerViewAdapter";
-    private final List<KathruMini> mValues;
+    private List<KathruMini> kathruMinis;
+    private ArrayList<KathruMini> dupKathruMinis = new ArrayList<>();
     private final OnKathruListFragmentInteractionListener mListener;
 
     public MyKathruListRecyclerViewAdapter(List<KathruMini> items, OnKathruListFragmentInteractionListener listener) {
-        mValues = items;
+        kathruMinis = items;
         mListener = listener;
+        dupKathruMinis.addAll(kathruMinis);
     }
 
     @Override
@@ -30,12 +35,28 @@ public class MyKathruListRecyclerViewAdapter extends RecyclerView.Adapter<MyKath
         return new ViewHolder(view);
     }
 
+    public void filter(String charText) {
+        kathruMinis.clear();
+        if (charText.length() == 0) {
+            kathruMinis.addAll(dupKathruMinis);
+
+        } else {
+            for (KathruMini kathruMini : dupKathruMinis) {
+                if (charText.length() != 0 && (kathruMini.getName().contains(charText) ||
+                        kathruMini.getAnkitha().contains(charText))) {
+                    kathruMinis.add(kathruMini);
+                }
+            }
+        }
+        notifyDataSetChanged();
+    }
+
     @Override
     public void onBindViewHolder(final ViewHolder holder, int position) {
-        holder.mItem = mValues.get(position);
-        holder.mAnkitha.setText(mValues.get(position).getAnkitha());
-        holder.mName.setText(mValues.get(position).getName());
-        holder.mVachanaCount.setText(String.format("%d", mValues.get(position).getCount()));
+        holder.mItem = kathruMinis.get(position);
+        holder.mAnkitha.setText(kathruMinis.get(position).getAnkitha());
+        holder.mName.setText(kathruMinis.get(position).getName());
+        holder.mVachanaCount.setText(String.format("%d", kathruMinis.get(position).getCount()));
 
         holder.mView.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -51,7 +72,7 @@ public class MyKathruListRecyclerViewAdapter extends RecyclerView.Adapter<MyKath
 
     @Override
     public int getItemCount() {
-        return mValues.size();
+        return kathruMinis.size();
     }
 
     public class ViewHolder extends RecyclerView.ViewHolder {

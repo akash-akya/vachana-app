@@ -7,6 +7,7 @@ import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentTransaction;
 import android.support.v7.app.ActionBar;
+import android.support.v7.widget.SearchView;
 import android.util.Log;
 import android.support.design.widget.NavigationView;
 import android.support.v4.view.GravityCompat;
@@ -16,6 +17,7 @@ import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.view.Menu;
 import android.view.MenuItem;
+import android.view.View;
 import android.widget.ShareActionProvider;
 
 import com.akash.vachana.R;
@@ -94,6 +96,18 @@ public class MainActivity extends AppCompatActivity
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
         getMenuInflater().inflate(R.menu.main, menu);
+//        final MenuItem searchMenuItem = menu.findItem(R.id.menu_search);
+//        final SearchView searchView = (SearchView) searchMenuItem.getActionView();
+//
+//        searchView.setOnQueryTextFocusChangeListener(new View.OnFocusChangeListener() {
+//            @Override
+//            public void onFocusChange(View view, boolean queryTextFocused) {
+//                if(!queryTextFocused) {
+//                    searchMenuItem.collapseActionView();
+//                    searchView.setQuery("", false);
+//                }
+//            }
+//        });
         return true;
     }
 
@@ -163,7 +177,12 @@ public class MainActivity extends AppCompatActivity
                 break;
             case R.id.nav_kathru:
                 fragment = Fragment.instantiate(MainActivity.this, fragments[2]);
-                break;
+                fragmentManager.popBackStack(null, FragmentManager.POP_BACK_STACK_INCLUSIVE);
+                fragmentManager.beginTransaction()
+                        .replace(R.id.main_content, fragment)
+//                        .addToBackStack( "kathru_list" )
+                        .commit();
+                return;
             case R.id.nav_favorite:
                 bundle.putString("title", "ನೆಚ್ಚಿನ ವಚನಗಳು");
                 bundle.putSerializable("listener", new VachanaListFragment.OnListFragmentInteractionListener() {
@@ -203,7 +222,18 @@ public class MainActivity extends AppCompatActivity
                 return;
             case R.id.nav_search:
                 fragment = Fragment.instantiate(MainActivity.this, fragments[3]);
-                break;
+                try {
+                    fragment.setArguments(bundle);
+                } catch (NullPointerException e){
+                    Log.d(TAG, "selectItem: Fragment is null!!");
+                }
+//                fragmentManager.popBackStack("search_fragment", FragmentManager.POP_BACK_STACK_INCLUSIVE);
+                fragmentManager.beginTransaction()
+                        .replace(R.id.main_content, fragment)
+//                        .addToBackStack("search_fragment")
+                        .commit();
+                return;
+//                break;
             case R.id.nav_settings:
                 return;
             default:
@@ -295,5 +325,10 @@ public class MainActivity extends AppCompatActivity
                 .replace(R.id.main_content, fragment)
                 .addToBackStack( "kathru_list" )
                 .commit();
+    }
+
+    @Override
+    public ArrayList<KathruMini> getAllKathruMinis() {
+        return db.getAllKathruMinis();
     }
 }

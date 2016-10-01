@@ -1,25 +1,16 @@
 package com.akash.vachana.fragment;
 
-import android.os.AsyncTask;
-import android.support.v7.util.AsyncListUtil;
 import android.support.v7.widget.RecyclerView;
-import android.util.Log;
 import android.view.LayoutInflater;
-import android.view.MotionEvent;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.CheckBox;
 import android.widget.CompoundButton;
-import android.widget.ImageButton;
-import android.widget.ProgressBar;
 import android.widget.TextView;
-import android.widget.ToggleButton;
 
 import com.akash.vachana.R;
-import com.akash.vachana.dbUtil.Vachana;
 import com.akash.vachana.dbUtil.VachanaMini;
 import com.akash.vachana.fragment.VachanaListFragment.OnListFragmentInteractionListener;
-import com.akash.vachana.ListViewHelper.VachanaList.VachanaItem;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -28,12 +19,14 @@ import static android.widget.CompoundButton.*;
 
 public class MyVachanaListRecyclerViewAdapter extends RecyclerView.Adapter<MyVachanaListRecyclerViewAdapter.ViewHolder> {
 
-    private final List<VachanaMini> mValues;
-    private final OnListFragmentInteractionListener mListener;
+    private List<VachanaMini> vachanaMinis;
+    private ArrayList<VachanaMini> dupVachanaMinis = new ArrayList<>();
+    private OnListFragmentInteractionListener mListener;
 
     public MyVachanaListRecyclerViewAdapter(List<VachanaMini> items, OnListFragmentInteractionListener listener) {
-        mValues = items;
+        vachanaMinis = items;
         mListener = listener;
+        dupVachanaMinis.addAll(vachanaMinis);
     }
 
     @Override
@@ -45,7 +38,7 @@ public class MyVachanaListRecyclerViewAdapter extends RecyclerView.Adapter<MyVac
 
     @Override
     public void onBindViewHolder(final ViewHolder holder, final int position) {
-        holder.mItem = mValues.get(position);
+        holder.mItem = vachanaMinis.get(position);
         holder.mTitle.setText(holder.mItem.getTitle());
         holder.mKathru.setText(holder.mItem.getKathruName());
 
@@ -68,15 +61,30 @@ public class MyVachanaListRecyclerViewAdapter extends RecyclerView.Adapter<MyVac
                 if (null != mListener) {
                     // Notify the active callbacks interface (the activity, if the
                     // fragment is attached to one) that an item has been selected.
-                    mListener.onListFragmentInteraction((ArrayList<VachanaMini>) mValues, position);
+                    mListener.onListFragmentInteraction((ArrayList<VachanaMini>) vachanaMinis, position);
                 }
             }
         });
     }
 
+    public void filter(String charText) {
+        vachanaMinis.clear();
+        if (charText.length() == 0) {
+            vachanaMinis.addAll(dupVachanaMinis);
+
+        } else {
+            for (VachanaMini kathruMini : dupVachanaMinis) {
+                if (charText.length() != 0 && (kathruMini.getTitle().contains(charText))) {
+                    vachanaMinis.add(kathruMini);
+                }
+            }
+        }
+        notifyDataSetChanged();
+    }
+
     @Override
     public int getItemCount() {
-        return mValues.size();
+        return vachanaMinis.size();
     }
 
     public class ViewHolder extends RecyclerView.ViewHolder {

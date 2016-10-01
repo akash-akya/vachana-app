@@ -11,6 +11,8 @@ import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.Button;
+import android.widget.EditText;
 import android.widget.ProgressBar;
 import android.widget.SearchView;
 
@@ -42,20 +44,20 @@ public class SearchFragment extends Fragment implements Serializable{
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         View view = inflater.inflate(R.layout.fragment_search, container, false);
-        final SearchView searchView = (SearchView) view.findViewById(R.id.search_bar);
-        searchView.setOnQueryTextListener(new SearchView.OnQueryTextListener() {
-
+        final EditText searchView = (EditText) view.findViewById(R.id.search_bar);
+        final Button searchButton = (Button) view.findViewById(R.id.search_button);
+        searchButton.setOnClickListener(new View.OnClickListener() {
             @Override
-            public boolean onQueryTextChange(String newText) {
-                return false;
-            }
-
-            @Override
-            public boolean onQueryTextSubmit(String query) {
+            public void onClick(View v) {
                 Bundle bundle = new Bundle();
                 final MainActivity mainActivity = (MainActivity) getActivity();
                 FragmentManager fragmentManager = mainActivity.getSupportFragmentManager();
                 Fragment fragment = Fragment.instantiate(mainActivity, MainActivity.fragments[1]);
+                final String query = searchView.getText().toString();
+                if (query.length() < 3)
+                    return;
+
+                Log.d("Search Fragment", "onClick: "+query);
                 bundle.putString("title", "ಹುಡುಕು");
                 bundle.putSerializable("listener", new VachanaListFragment.OnListFragmentInteractionListener() {
                     public static final String TAG = "VachanaListFragment" ;
@@ -69,10 +71,10 @@ public class SearchFragment extends Fragment implements Serializable{
                         mainActivity.getIntent().putExtra("current_position", position);
                         fragment.setArguments(mainActivity.getIntent().getExtras());
 
-                        fragmentManager.popBackStack("vachana_list", FragmentManager.POP_BACK_STACK_INCLUSIVE);
+                        fragmentManager.popBackStack("search_vachana_list", FragmentManager.POP_BACK_STACK_INCLUSIVE);
                         fragmentManager.beginTransaction()
                                 .replace(R.id.main_content, fragment)
-                                .addToBackStack( "vachana_list" )
+                                .addToBackStack( "search_vachana_list" )
                                 .commit();
                     }
 
@@ -89,18 +91,17 @@ public class SearchFragment extends Fragment implements Serializable{
                                         MainDbHelper.FOREIGN_KEY_KATHRU_ID,
                                         MainDbHelper.KEY_FAVORITE},
                                 MainDbHelper.KEY_TEXT + " LIKE ? ",
-                                new String[] { "%"+String.valueOf(searchView.getQuery())+"%" }
+                                new String[] { "%"+query+"%" }
                         );
                     }
                 });
 
                 fragment.setArguments(bundle);
-                fragmentManager.popBackStack(null, FragmentManager.POP_BACK_STACK_INCLUSIVE);
+                fragmentManager.popBackStack("search_fragment", FragmentManager.POP_BACK_STACK_INCLUSIVE);
                 fragmentManager.beginTransaction()
                         .replace(R.id.main_content, fragment)
-                        .addToBackStack( "kathru_list" )
+                        .addToBackStack( "search_fragment")
                         .commit();
-                return true;
             }
         });
 
@@ -118,11 +119,11 @@ public class SearchFragment extends Fragment implements Serializable{
         }
     }
 
-    public void onButtonPressed(Uri uri) {
-        if (mListener != null) {
-            mListener.onFragmentInteraction(uri);
-        }
-    }
+//    public void onButtonPressed(Uri uri) {
+//        if (mListener != null) {
+//            mListener.onFragmentInteraction(uri);
+//        }
+//    }
 
     @Override
     public void onResume() {

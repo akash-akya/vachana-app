@@ -6,4 +6,11 @@
         android:orderInCategory="100"
         android:title="ಅಳವಡಿಕೆಗಳು"
         app:showAsAction="never" />
+
+    <item
+        android:id="@+id/menu_search"
+        android:title="ಹುಡುಕು"
+        app:actionViewClass="android.support.v7.widget.SearchView"
+        app:showAsAction="always"/>
+
 </menu>
