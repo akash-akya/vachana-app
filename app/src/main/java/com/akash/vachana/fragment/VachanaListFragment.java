@@ -125,15 +125,7 @@ public class VachanaListFragment extends Fragment {
         inflater.inflate(R.menu.main, menu);
         final MenuItem searchMenuItem = menu.findItem(R.id.menu_search);
         final SearchView searchView = (SearchView) searchMenuItem.getActionView();
-        searchView.setOnQueryTextFocusChangeListener(new View.OnFocusChangeListener() {
-            @Override
-            public void onFocusChange(View view, boolean queryTextFocused) {
-                if(!queryTextFocused) {
-                    searchMenuItem.collapseActionView();
-                    searchView.setQuery("", false);
-                }
-            }
-        });
+
         //***setOnQueryTextListener***
         searchView.setOnQueryTextListener(new SearchView.OnQueryTextListener() {
 

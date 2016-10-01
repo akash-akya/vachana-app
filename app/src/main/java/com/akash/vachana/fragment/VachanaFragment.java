@@ -118,6 +118,7 @@ public class VachanaFragment extends Fragment {
     public void onResume() {
         super.onResume();
 
+        myViewPagerAdapter.notifyDataSetChanged();
         AppBarLayout appBarLayout = (AppBarLayout)getActivity().findViewById(R.id.app_bar);
         appBarLayout.setExpanded(true, true);
 

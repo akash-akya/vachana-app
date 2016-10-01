@@ -191,6 +191,7 @@ public class MainActivity extends AppCompatActivity
                         FragmentManager fragmentManager = getSupportFragmentManager();
                         Fragment fragment = Fragment.instantiate(MainActivity.this, fragments[0]);
 
+                        Log.d(TAG, "onListFragmentInteraction: "+position);
                         getIntent().putExtra("vachanas", vachanaMinis);
                         getIntent().putExtra("current_position", position);
                         fragment.setArguments(getIntent().getExtras());
