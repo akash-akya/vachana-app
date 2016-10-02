@@ -96,18 +96,20 @@ public class MainActivity extends AppCompatActivity
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
         getMenuInflater().inflate(R.menu.main, menu);
-//        final MenuItem searchMenuItem = menu.findItem(R.id.menu_search);
-//        final SearchView searchView = (SearchView) searchMenuItem.getActionView();
-//
-//        searchView.setOnQueryTextFocusChangeListener(new View.OnFocusChangeListener() {
-//            @Override
-//            public void onFocusChange(View view, boolean queryTextFocused) {
-//                if(!queryTextFocused) {
-//                    searchMenuItem.collapseActionView();
-//                    searchView.setQuery("", false);
-//                }
-//            }
-//        });
+/*
+        final MenuItem searchMenuItem = menu.findItem(R.id.menu_search);
+        final SearchView searchView = (SearchView) searchMenuItem.getActionView();
+
+        searchView.setOnQueryTextFocusChangeListener(new View.OnFocusChangeListener() {
+            @Override
+            public void onFocusChange(View view, boolean queryTextFocused) {
+                if(!queryTextFocused) {
+                    searchMenuItem.collapseActionView();
+                    searchView.setQuery("", false);
+                }
+            }
+        });
+*/
         return true;
     }
 
@@ -228,13 +230,10 @@ public class MainActivity extends AppCompatActivity
                 } catch (NullPointerException e){
                     Log.d(TAG, "selectItem: Fragment is null!!");
                 }
-//                fragmentManager.popBackStack("search_fragment", FragmentManager.POP_BACK_STACK_INCLUSIVE);
                 fragmentManager.beginTransaction()
                         .replace(R.id.main_content, fragment)
-//                        .addToBackStack("search_fragment")
                         .commit();
                 return;
-//                break;
             case R.id.nav_settings:
                 return;
             default:
@@ -251,24 +250,6 @@ public class MainActivity extends AppCompatActivity
                     .replace(R.id.main_content, fragment)
                     .commit();
     }
-/*
-
-    @Override
-    public void onListFragmentInteraction(ArrayList<VachanaMini> vachanaMinis, int position) {
-        FragmentManager fragmentManager = getSupportFragmentManager();
-        Fragment fragment = Fragment.instantiate(MainActivity.this, fragments[0]);
-
-        getIntent().putExtra("vachanas", vachanaMinis);
-        getIntent().putExtra("current_position", position);
-        fragment.setArguments(getIntent().getExtras());
-
-        fragmentManager.popBackStack("vachana_list", FragmentManager.POP_BACK_STACK_INCLUSIVE);
-        fragmentManager.beginTransaction()
-                .replace(R.id.main_content, fragment)
-                .addToBackStack( "vachana_list" )
-                .commit();
-    }
-*/
 
     @Override
     public void onFragmentInteraction(Uri uri) {

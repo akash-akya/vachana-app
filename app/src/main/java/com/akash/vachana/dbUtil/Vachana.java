@@ -25,26 +25,6 @@ public class Vachana implements Serializable {
         this.favorite = favorite;
     }
 
-/*    public Vachana(String src, String kathru) {
-        this.kathru = kathru;
-        JSONObject j = null;
-        try {
-            j = new JSONObject(src);
-        } catch (JSONException e) {
-            e.printStackTrace();
-        }
-        try {
-            if (j != null) {
-                id = Integer.parseInt(j.getString("id"));
-                text = j.getString("vachana");
-            } else {
-                Log.e(className, "JSON Object is null!");
-            }
-        } catch (JSONException e) {
-            e.printStackTrace();
-        }
-    }*/
-
     public String getKathru() {
         return kathru;
     }

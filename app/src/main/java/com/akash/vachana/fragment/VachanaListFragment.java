@@ -5,13 +5,9 @@ import android.os.AsyncTask;
 import android.os.Bundle;
 import android.support.design.widget.AppBarLayout;
 import android.support.v4.app.Fragment;
-import android.support.v7.app.ActionBarActivity;
-import android.support.v7.app.AppCompatActivity;
-import android.support.v7.widget.GridLayoutManager;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.SearchView;
-import android.support.v7.widget.Toolbar;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.Menu;
@@ -22,18 +18,11 @@ import android.view.ViewGroup;
 import android.widget.ProgressBar;
 
 import com.akash.vachana.R;
-import com.akash.vachana.ListViewHelper.VachanaList;
 import com.akash.vachana.activity.MainActivity;
-import com.akash.vachana.dbUtil.Kathru;
-import com.akash.vachana.dbUtil.KathruMini;
 import com.akash.vachana.dbUtil.VachanaMini;
-import com.akash.vachana.util.FileHelper;
 
-import java.io.IOException;
-import java.io.InputStream;
 import java.io.Serializable;
 import java.util.ArrayList;
-import java.util.concurrent.ExecutionException;
 
 
 /**
@@ -45,15 +34,12 @@ import java.util.concurrent.ExecutionException;
 public class VachanaListFragment extends Fragment {
 
     private static final String TAG = "VachanaListFragment";
-
-//    private Kathru currentKathru;
-    private String title = null;
+    private String title =null;
     private ArrayList<VachanaMini> vachanaMinis = null;
     private MainActivity mainActivity;
     private RecyclerView recyclerView;
     private OnListFragmentInteractionListener listener;
     private MyVachanaListRecyclerViewAdapter adapter;
-//    private ArrayList<VachanaMini> dup_vachanaMinis = new ArrayList<>();
 
     public VachanaListFragment() { }
 

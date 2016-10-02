@@ -91,7 +91,6 @@ public class MainDbHelper extends SQLiteOpenHelper implements Serializable {
     //Check that the database exists here: /data/data/your package/databases/Da Name
     private boolean checkDataBase() {
         File dbFile = new File(DB_PATH + DATABASE_NAME);
-//        Log.v("dbFile", dbFile + "   "+ dbFile.exists());
         return dbFile.exists();
     }
 
@@ -186,7 +185,6 @@ public class MainDbHelper extends SQLiteOpenHelper implements Serializable {
                 String name = cursor.getString(1);
                 String ankitha = cursor.getString(2);
                 int num = cursor.getInt(3);
-//                String details = cursor.getString(2);
 
                 KathruMini contact = new KathruMini(id, name, ankitha, num);
 
@@ -195,23 +193,6 @@ public class MainDbHelper extends SQLiteOpenHelper implements Serializable {
         }
 
         return contactList;
-    }
-
-    public Kathru getKathruById (int id) {
-        SQLiteDatabase db = this.getReadableDatabase();
-
-        Cursor cursor = db.query(TABLE_KATHRU, new String[] { KEY_KATHRU_ID,
-                        KEY_NAME, KEY_ANKITHA, KEY_NUMBER, KEY_DETAILS}, KEY_KATHRU_ID + "=?",
-                new String[] { String.valueOf(id) }, null, null, null, null);
-
-        if (cursor != null)
-            cursor.moveToFirst();
-
-        String name = cursor.getString(1);
-        ArrayList<VachanaMini> vachanaMinis = getVachanaMinisByKathruId(id, name);
-
-        return new Kathru(Integer.parseInt(cursor.getString(0)), name, cursor.getString(2),
-                cursor.getInt(3), vachanaMinis);
     }
 
     public ArrayList<VachanaMini> getVachanaMinisByKathruId (int kathruId, String kathruName) {
@@ -239,7 +220,7 @@ public class MainDbHelper extends SQLiteOpenHelper implements Serializable {
         return  getVachanaMinisByKathruId(kathruId, getKathruNameById(kathruId));
     }
 
-    public String getKathruNameById(int kathruId) { return getKathruById(kathruId).getName(); }
+    public String getKathruNameById(int kathruId) { return getKathruMiniById(kathruId).getName(); }
 
     public Vachana getFirstVachana(int kathruId) {
         SQLiteDatabase db = this.getReadableDatabase();
