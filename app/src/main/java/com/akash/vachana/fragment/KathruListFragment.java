@@ -33,12 +33,15 @@ public class KathruListFragment extends Fragment {
     private OnKathruListFragmentInteractionListener mListener;
     private MyKathruListRecyclerViewAdapter myAdapter;
     private RecyclerView recyclerView;
+//    private String title;
 
     public KathruListFragment() { }
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+//        title = getArguments().getString("title");
+        mListener = (OnKathruListFragmentInteractionListener) getArguments().getSerializable("listener");
     }
 
     @Override
@@ -59,9 +62,8 @@ public class KathruListFragment extends Fragment {
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         setHasOptionsMenu(true);
-        View view = inflater.inflate(R.layout.fragment_kathru_list, container, false);
-        mListener = (KathruListFragment.OnKathruListFragmentInteractionListener) view.getContext();
-        return view;
+        //        mListener = (KathruListFragment.OnKathruListFragmentInteractionListener) view.getContext();
+        return inflater.inflate(R.layout.fragment_kathru_list, container, false);
     }
 
     private class KathruListTask extends AsyncTask {
@@ -79,7 +81,7 @@ public class KathruListFragment extends Fragment {
 
         @Override
         protected ArrayList<KathruMini> doInBackground(Object[] objects) {
-            return mListener.getAllKathruMinis();
+            return mListener.getKathruMinis();
         }
 
         @Override
@@ -129,12 +131,6 @@ public class KathruListFragment extends Fragment {
     @Override
     public void onAttach(Context context) {
         super.onAttach(context);
-        if (context instanceof OnKathruListFragmentInteractionListener ) {
-            mListener = (OnKathruListFragmentInteractionListener ) context;
-        } else {
-            throw new RuntimeException(context.toString()
-                    + " must implement OnListFragmentInteractionListener");
-        }
     }
 
     @Override
@@ -143,8 +139,9 @@ public class KathruListFragment extends Fragment {
         mListener = null;
     }
 
-    public interface OnKathruListFragmentInteractionListener extends Serializable{
+    public interface OnKathruListFragmentInteractionListener extends Serializable {
         void onListFragmentInteraction(KathruMini item);
-        ArrayList<KathruMini> getAllKathruMinis();
+        void onFavoriteButton(int kathruId, boolean checked);
+        ArrayList<KathruMini> getKathruMinis();
     }
 }

@@ -1,9 +1,12 @@
 package com.akash.vachana.fragment;
 
 import android.support.v7.widget.RecyclerView;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.CheckBox;
+import android.widget.CompoundButton;
 import android.widget.TextView;
 
 import com.akash.vachana.R;
@@ -58,6 +61,19 @@ public class MyKathruListRecyclerViewAdapter extends RecyclerView.Adapter<MyKath
         holder.mName.setText(kathruMinis.get(position).getName());
         holder.mVachanaCount.setText(String.format("%d", kathruMinis.get(position).getCount()));
 
+        if(holder.mItem.getFavorite() == 1)
+            holder.mFavorite.setChecked(true);
+        else
+            holder.mFavorite.setChecked(false);
+
+        holder.mFavorite.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
+            @Override
+            public void onCheckedChanged(CompoundButton compoundButton, boolean b) {
+                mListener.onFavoriteButton(holder.mItem.getId(), b);
+                holder.mItem.setFavorite(b);
+            }
+        });
+
         holder.mView.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -80,6 +96,7 @@ public class MyKathruListRecyclerViewAdapter extends RecyclerView.Adapter<MyKath
         public final TextView mAnkitha;
         public final TextView mName;
         public final TextView mVachanaCount;
+        private final CheckBox mFavorite;
 
         public KathruMini mItem;
 
@@ -89,6 +106,7 @@ public class MyKathruListRecyclerViewAdapter extends RecyclerView.Adapter<MyKath
             mName = (TextView) view.findViewById(R.id.tv_kathru_name);
             mAnkitha = (TextView) view.findViewById(R.id.tv_kathru_ankitha);
             mVachanaCount = (TextView) view.findViewById(R.id.tv_kathru_count);
+            mFavorite = (CheckBox) view.findViewById(R.id.kathru_favorite);
         }
 
         @Override

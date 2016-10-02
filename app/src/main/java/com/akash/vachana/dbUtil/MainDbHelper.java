@@ -161,7 +161,8 @@ public class MainDbHelper extends SQLiteOpenHelper implements Serializable {
         SQLiteDatabase db = this.getReadableDatabase();
 
         Cursor cursor = db.query(TABLE_KATHRU, new String[] { KEY_KATHRU_ID,
-                        KEY_NAME, KEY_ANKITHA, KEY_NUMBER}, KEY_KATHRU_ID + "=?",
+                        KEY_NAME, KEY_ANKITHA, KEY_NUMBER, KEY_FAVORITE },
+                KEY_KATHRU_ID + "=?",
                 new String[] { String.valueOf(id) }, null, null, null, null);
 
         if (cursor != null)
@@ -169,12 +170,18 @@ public class MainDbHelper extends SQLiteOpenHelper implements Serializable {
 
         String name = cursor.getString(1);
         return new KathruMini(Integer.parseInt(cursor.getString(0)), name, cursor.getString(2),
-                cursor.getInt(3));
+                cursor.getInt(3), cursor.getInt(3));
     }
 
     public ArrayList<KathruMini> getAllKathruMinis(){
         ArrayList<KathruMini> contactList = new ArrayList<KathruMini>();
-        String selectQuery = "SELECT  * FROM " + TABLE_KATHRU + " ORDER BY Name";
+        String selectQuery = "SELECT " +
+                KEY_KATHRU_ID + ", " +
+                KEY_NAME + ", " +
+                KEY_ANKITHA + ", " +
+                KEY_NUMBER + ", " +
+                KEY_FAVORITE +
+                " FROM " + TABLE_KATHRU + " ORDER BY Name";
 
         SQLiteDatabase db = this.getWritableDatabase();
         Cursor cursor = db.rawQuery(selectQuery, null);
@@ -185,8 +192,9 @@ public class MainDbHelper extends SQLiteOpenHelper implements Serializable {
                 String name = cursor.getString(1);
                 String ankitha = cursor.getString(2);
                 int num = cursor.getInt(3);
+                int favorite = cursor.getInt(4);
 
-                KathruMini contact = new KathruMini(id, name, ankitha, num);
+                KathruMini contact = new KathruMini(id, name, ankitha, num, favorite);
 
                 contactList.add(contact);
             } while (cursor.moveToNext());
@@ -282,7 +290,7 @@ public class MainDbHelper extends SQLiteOpenHelper implements Serializable {
         db.update(TABLE_VACHANA, newValues, KEY_VACHANA_ID+"=?", args);
     }
 
-    public void removeVachanaToFavorite(int vachanaId){
+    public void removeVachanaFromFavorite(int vachanaId){
         SQLiteDatabase db = this.getReadableDatabase();
 
         ContentValues newValues = new ContentValues();
@@ -325,5 +333,56 @@ public class MainDbHelper extends SQLiteOpenHelper implements Serializable {
         }
 
         return vachanaMinis;
+    }
+
+    public ArrayList<KathruMini> getFavoriteKathruMinis() {
+        ArrayList<KathruMini> kathruMinis = new ArrayList<KathruMini>();
+        String selectQuery = "SELECT " +
+                KEY_KATHRU_ID + ", " +
+                KEY_NAME + ", " +
+                KEY_ANKITHA + ", " +
+                KEY_NUMBER + ", " +
+                KEY_FAVORITE +
+                " FROM " + TABLE_KATHRU + " WHERE " + KEY_FAVORITE +
+                " = 1 ORDER BY Name";
+
+        SQLiteDatabase db = this.getWritableDatabase();
+        Cursor cursor = db.rawQuery(selectQuery, null);
+
+        if (cursor.moveToFirst()) {
+            do {
+                int id = Integer.parseInt(cursor.getString(0));
+                String name = cursor.getString(1);
+                String ankitha = cursor.getString(2);
+                int num = cursor.getInt(3);
+                int favorite = cursor.getInt(4);
+
+                KathruMini contact = new KathruMini(id, name, ankitha, num, favorite);
+
+                kathruMinis.add(contact);
+            } while (cursor.moveToNext());
+        }
+
+        return kathruMinis;
+    }
+
+    public void addKathruToFavorite(int kathruId){
+        SQLiteDatabase db = this.getReadableDatabase();
+
+        ContentValues newValues = new ContentValues();
+        newValues.put(KEY_FAVORITE, 1);
+
+        String[] args = new String[]{String.valueOf(kathruId)};
+        db.update(TABLE_KATHRU, newValues, KEY_KATHRU_ID+"=?", args);
+    }
+
+    public void removeKathruFromFavorite(int vachanaId){
+        SQLiteDatabase db = this.getReadableDatabase();
+
+        ContentValues newValues = new ContentValues();
+        newValues.put(KEY_FAVORITE, 0);
+
+        String[] args = new String[]{String.valueOf(vachanaId)};
+        db.update(TABLE_KATHRU, newValues, KEY_KATHRU_ID+"=?", args);
     }
 }

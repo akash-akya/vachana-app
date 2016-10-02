@@ -10,12 +10,18 @@ public class KathruMini implements Serializable{
     private String name;
     private String ankitha;
     private int count;
+    private int favorite;
 
-    public KathruMini(int id, String name, String ankitha, int count) {
+    public KathruMini(int id, String name, String ankitha, int count, int favorite) {
         this.id = id;
         this.name = name;
         this.ankitha = ankitha;
         this.count = count;
+        this.favorite = favorite;
+    }
+
+    public int getFavorite() {
+        return favorite;
     }
 
     public String getAnkitha() {
@@ -32,5 +38,12 @@ public class KathruMini implements Serializable{
 
     public String getName() {
         return name;
+    }
+
+    public void setFavorite(boolean favorite) {
+        if (favorite)
+            this.favorite = 1;
+        else
+            this.favorite = 0;
     }
 }

@@ -150,7 +150,7 @@ public class SearchFragment extends Fragment implements Serializable{
             if ((boolean)objects[1])
                 ((MainActivity) getActivity()).db.addVachanaToFavorite((int)objects[0]);
             else
-                ((MainActivity) getActivity()).db.removeVachanaToFavorite((int)objects[0]);
+                ((MainActivity) getActivity()).db.removeVachanaFromFavorite((int)objects[0]);
             return null;
         }
     }

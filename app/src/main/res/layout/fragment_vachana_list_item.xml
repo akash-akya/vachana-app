@@ -19,8 +19,9 @@
             android:orientation="horizontal">
 
             <RelativeLayout
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
+                android:layout_width="0dp"
+                android:layout_height="match_parent"
+                android:layout_weight="0.8"
                 android:layout_gravity="center_vertical"
                 android:gravity="center_vertical">
 
@@ -47,8 +48,9 @@
 
             <CheckBox
                 android:id="@+id/favorite"
-                android:layout_width="match_parent"
+                android:layout_width="0dp"
                 android:layout_height="match_parent"
+                android:layout_weight="0.1"
                 style="?android:attr/starStyle"
                 android:button="@drawable/check_box"
                 android:checked="false"
