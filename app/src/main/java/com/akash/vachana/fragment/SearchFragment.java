@@ -7,12 +7,17 @@ import android.os.Bundle;
 import android.support.design.widget.AppBarLayout;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
+import android.support.v7.widget.RecyclerView;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.view.inputmethod.InputMethodManager;
+import android.widget.AdapterView;
+import android.widget.ArrayAdapter;
+import android.widget.AutoCompleteTextView;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ProgressBar;
@@ -21,6 +26,7 @@ import android.widget.SearchView;
 
 import com.akash.vachana.R;
 import com.akash.vachana.activity.MainActivity;
+import com.akash.vachana.dbUtil.KathruMini;
 import com.akash.vachana.dbUtil.MainDbHelper;
 import com.akash.vachana.dbUtil.VachanaMini;
 
@@ -30,6 +36,7 @@ import java.util.ArrayList;
 public class SearchFragment extends Fragment implements Serializable{
 
     private static final String TAG = "SearchFragment";
+    private ArrayList<KathruMini> kathruMinis;
 
     public SearchFragment() {
         // Required empty public constructor
@@ -48,22 +55,28 @@ public class SearchFragment extends Fragment implements Serializable{
                              Bundle savedInstanceState) {
         setHasOptionsMenu(true);
 
+        new KathruListTask().execute();
+
         View view = inflater.inflate(R.layout.fragment_search, container, false);
         final EditText textSearchView = (EditText) view.findViewById(R.id.search_bar_text);
-        final EditText kathruSearchView = (EditText) view.findViewById(R.id.search_bar_kathru);
+        final AutoCompleteTextView autoCompleteTextView= (AutoCompleteTextView) view.findViewById(R.id.auto_complete_kathru);
         final RadioButton radioPartial = (RadioButton) view.findViewById(R.id.radio_partial);
         final Button resetButton = (Button) view.findViewById(R.id.reset_button);
         final Button searchButton = (Button) view.findViewById(R.id.search_button);
 
+
         searchButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
+                InputMethodManager inputMethodManager = (InputMethodManager) getActivity().getSystemService(Context.INPUT_METHOD_SERVICE);
+                inputMethodManager.hideSoftInputFromWindow(getActivity().getCurrentFocus().getWindowToken(), 0);
+
                 Bundle bundle = new Bundle();
                 final MainActivity mainActivity = (MainActivity) getActivity();
                 FragmentManager fragmentManager = mainActivity.getSupportFragmentManager();
                 Fragment fragment = Fragment.instantiate(mainActivity, MainActivity.fragments[1]);
                 final String query = textSearchView.getText().toString();
-                final String kathruString = kathruSearchView.getText().toString();
+                final String kathruString = autoCompleteTextView.getText().toString();
                 final Boolean isPartialSearch = radioPartial.isChecked();
 
                 if (query.length() < 3)
@@ -116,7 +129,7 @@ public class SearchFragment extends Fragment implements Serializable{
                                     MainDbHelper.FOREIGN_KEY_KATHRU_ID + " IN " +
                                     " ( SELECT " + MainDbHelper.KEY_KATHRU_ID +
                                     " FROM " + MainDbHelper.TABLE_KATHRU +
-                                    " WHERE " + MainDbHelper.KEY_NAME + " LIKE ? "; // + "%"+kathruString+"% ) ";
+                                    " WHERE " + MainDbHelper.KEY_NAME + " LIKE ? )"; // + "%"+kathruString+"% ) ";
                             parameters = new  String[]{query_text_parameter, "%"+kathruString+"%"};
                         } else {
                             parameters = new  String[]{query_text_parameter};
@@ -139,7 +152,7 @@ public class SearchFragment extends Fragment implements Serializable{
             @Override
             public void onClick(View v) {
                 textSearchView.setText("");
-                kathruSearchView.setText("");
+                autoCompleteTextView.setText("");
                 radioPartial.setChecked(true);
             }
         });
@@ -147,6 +160,36 @@ public class SearchFragment extends Fragment implements Serializable{
         return view;
     }
 
+    private class KathruListTask extends AsyncTask {
+        @Override
+        protected void onPreExecute() {
+            super.onPreExecute();
+        }
+
+        @Override
+        protected ArrayList<KathruMini> doInBackground(Object[] objects) {
+            return ((MainActivity)getActivity()).getAllKathruMinis();
+        }
+
+        @Override
+        protected void onPostExecute(Object o) {
+            super.onPostExecute(o);
+            kathruMinis = (ArrayList<KathruMini>) o;
+            final AutoCompleteTextView autoTextView = (AutoCompleteTextView) getActivity().findViewById(R.id.auto_complete_kathru);
+            ArrayAdapter<KathruMini> adapter = new ArrayAdapter<KathruMini>(getActivity(), android.R.layout.simple_dropdown_item_1line,
+                    kathruMinis);
+            autoTextView.setAdapter(adapter);
+            autoTextView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+
+                @Override
+                public void onItemClick(AdapterView<?> arg0, View arg1, int arg2,
+                                        long arg3) {
+                    KathruMini selected = (KathruMini) arg0.getAdapter().getItem(arg2);
+                    autoTextView.setText(selected.getName());
+                }
+            });
+        }
+    }
     @Override
     public void onCreateOptionsMenu(Menu menu, MenuInflater inflater) {
         menu.clear();

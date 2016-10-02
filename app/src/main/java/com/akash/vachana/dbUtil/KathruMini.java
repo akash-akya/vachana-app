@@ -46,4 +46,9 @@ public class KathruMini implements Serializable{
         else
             this.favorite = 0;
     }
+
+    @Override
+    public String toString() {
+        return name;
+    }
 }

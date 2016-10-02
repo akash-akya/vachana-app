@@ -270,6 +270,10 @@ public class MainActivity extends AppCompatActivity
                     .commit();
     }
 
+    public ArrayList<KathruMini> getAllKathruMinis() {
+        return db.getAllKathruMinis();
+    }
+
     public class UpdateVachanaFavorite extends AsyncTask {
         @Override
         protected Void doInBackground(Object[] objects) {
