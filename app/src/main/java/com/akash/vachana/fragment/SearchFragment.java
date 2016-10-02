@@ -9,6 +9,8 @@ import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
 import android.util.Log;
 import android.view.LayoutInflater;
+import android.view.Menu;
+import android.view.MenuInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
@@ -28,7 +30,6 @@ import java.util.ArrayList;
 public class SearchFragment extends Fragment implements Serializable{
 
     private static final String TAG = "SearchFragment";
-    private OnSearchFragmentInteractionListener mListener;
 
     public SearchFragment() {
         // Required empty public constructor
@@ -45,6 +46,8 @@ public class SearchFragment extends Fragment implements Serializable{
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
+        setHasOptionsMenu(true);
+
         View view = inflater.inflate(R.layout.fragment_search, container, false);
         final EditText textSearchView = (EditText) view.findViewById(R.id.search_bar_text);
         final EditText kathruSearchView = (EditText) view.findViewById(R.id.search_bar_kathru);
@@ -144,6 +147,12 @@ public class SearchFragment extends Fragment implements Serializable{
         return view;
     }
 
+    @Override
+    public void onCreateOptionsMenu(Menu menu, MenuInflater inflater) {
+        menu.clear();
+        inflater.inflate(R.menu.simple_menu, menu);
+    }
+
     public class UpdateVachanaFavorite extends AsyncTask {
         @Override
         protected Void doInBackground(Object[] objects) {
@@ -154,12 +163,6 @@ public class SearchFragment extends Fragment implements Serializable{
             return null;
         }
     }
-
-//    public void onButtonPressed(Uri uri) {
-//        if (mListener != null) {
-//            mListener.onFragmentInteraction(uri);
-//        }
-//    }
 
     @Override
     public void onResume() {
@@ -176,22 +179,10 @@ public class SearchFragment extends Fragment implements Serializable{
     @Override
     public void onAttach(Context context) {
         super.onAttach(context);
-        ((MainActivity)getActivity()).getSupportActionBar().setTitle("ಹುಡುಕು");
-        if (context instanceof OnSearchFragmentInteractionListener) {
-            mListener = (OnSearchFragmentInteractionListener) context;
-        } else {
-            throw new RuntimeException(context.toString()
-                    + " must implement OnFragmentInteractionListener");
-        }
     }
 
     @Override
     public void onDetach() {
         super.onDetach();
-        mListener = null;
-    }
-
-    public interface OnSearchFragmentInteractionListener extends Serializable{
-        void onFragmentInteraction(Uri uri);
     }
 }

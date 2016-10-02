@@ -34,8 +34,7 @@ import java.util.ArrayList;
 import java.util.Random;
 
 public class MainActivity extends AppCompatActivity
-        implements NavigationView.OnNavigationItemSelectedListener,
-        SearchFragment.OnSearchFragmentInteractionListener, Serializable {
+        implements NavigationView.OnNavigationItemSelectedListener, Serializable {
 
     private static final String TAG = "MainActivity";
 
@@ -269,11 +268,6 @@ public class MainActivity extends AppCompatActivity
         fragmentManager.beginTransaction()
                     .replace(R.id.main_content, fragment)
                     .commit();
-    }
-
-    @Override
-    public void onFragmentInteraction(Uri uri) {
-        Log.d(TAG, "onFragmentInteraction: Hi dude!!");
     }
 
     public class UpdateVachanaFavorite extends AsyncTask {
