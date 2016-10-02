@@ -8,15 +8,79 @@
     <EditText
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
+        android:layout_marginTop="15dp"
+        android:layout_marginLeft="10dp"
+        android:layout_marginRight="10dp"
         android:padding="20dp"
-        android:id="@+id/search_bar"
+        android:id="@+id/search_bar_text"
         android:inputType="text"
+        android:hint="ಶೀರ್ಷಿಕೆಯಲ್ಲಿರುವ ಪದ"
+        android:singleLine="true" />
+
+    <EditText
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="5dp"
+        android:layout_marginLeft="10dp"
+        android:layout_marginRight="10dp"
+        android:padding="20dp"
+        android:id="@+id/search_bar_kathru"
+        android:inputType="text"
+        android:hint="ವಚನಕಾರ"
+        android:singleLine="true"
         />
 
-    <Button
-        android:layout_height="wrap_content"
+    <TextView
         android:layout_width="match_parent"
-        android:id="@+id/search_button"
-        android:text="search"
-        />
+        android:layout_height="wrap_content"
+        android:paddingLeft="20dp"
+        android:layout_marginTop="20dp"
+        android:text="ಪದ ಹೊಂದಾಣಿಕೆ"/>
+
+    <RadioGroup
+        android:id="@+id/radio_match"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="10dp"
+        android:paddingLeft="20dp"
+        android:orientation="horizontal">
+        <RadioButton
+                android:id="@+id/radio_partial"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:checked="true"
+                android:text="ಭಾಗಶಃ" />
+        <RadioButton
+                android:id="@+id/radio_complete"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:text="ಸಂಪೂರ್ಣ" />
+    </RadioGroup>
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="20dp">
+
+        <Button
+            android:layout_width="0.0dip"
+            android:layout_height="fill_parent"
+            android:id="@+id/reset_button"
+            android:layout_margin="15dp"
+            android:layout_weight="1.0"
+            android:text="ಹಿಂಪಡೆ"
+            />
+
+        <Button
+            android:layout_width="0.0dip"
+            android:layout_height="fill_parent"
+            android:id="@+id/search_button"
+            android:layout_weight="1.0"
+            android:layout_margin="15dp"
+            android:text="ಹುಡುಕು"
+            android:layout_toRightOf="@id/reset_button"/>
+
+    </LinearLayout>
 </LinearLayout>

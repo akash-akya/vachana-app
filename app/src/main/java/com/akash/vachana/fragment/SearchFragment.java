@@ -14,6 +14,7 @@ import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ProgressBar;
+import android.widget.RadioButton;
 import android.widget.SearchView;
 
 import com.akash.vachana.R;
@@ -26,6 +27,7 @@ import java.util.ArrayList;
 
 public class SearchFragment extends Fragment implements Serializable{
 
+    private static final String TAG = "SearchFragment";
     private OnSearchFragmentInteractionListener mListener;
 
     public SearchFragment() {
@@ -44,8 +46,12 @@ public class SearchFragment extends Fragment implements Serializable{
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         View view = inflater.inflate(R.layout.fragment_search, container, false);
-        final EditText searchView = (EditText) view.findViewById(R.id.search_bar);
+        final EditText textSearchView = (EditText) view.findViewById(R.id.search_bar_text);
+        final EditText kathruSearchView = (EditText) view.findViewById(R.id.search_bar_kathru);
+        final RadioButton radioPartial = (RadioButton) view.findViewById(R.id.radio_partial);
+        final Button resetButton = (Button) view.findViewById(R.id.reset_button);
         final Button searchButton = (Button) view.findViewById(R.id.search_button);
+
         searchButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -53,11 +59,14 @@ public class SearchFragment extends Fragment implements Serializable{
                 final MainActivity mainActivity = (MainActivity) getActivity();
                 FragmentManager fragmentManager = mainActivity.getSupportFragmentManager();
                 Fragment fragment = Fragment.instantiate(mainActivity, MainActivity.fragments[1]);
-                final String query = searchView.getText().toString();
+                final String query = textSearchView.getText().toString();
+                final String kathruString = kathruSearchView.getText().toString();
+                final Boolean isPartialSearch = radioPartial.isChecked();
+
                 if (query.length() < 3)
                     return;
 
-                Log.d("Search Fragment", "onClick: "+query);
+                Log.d("Search Fragment", "onClick: "+query+" "+kathruString);
                 bundle.putString("title", "ಹುಡುಕು");
                 bundle.putSerializable("listener", new VachanaListFragment.OnListFragmentInteractionListener() {
                     public static final String TAG = "VachanaListFragment" ;
@@ -85,14 +94,32 @@ public class SearchFragment extends Fragment implements Serializable{
 
                     @Override
                     public ArrayList<VachanaMini> getVachanaMinis() {
-                        return ((MainActivity) getActivity()).db.query(
-                                new String[] {MainDbHelper.KEY_VACHANA_ID,
-                                        MainDbHelper.KEY_TITLE,
-                                        MainDbHelper.FOREIGN_KEY_KATHRU_ID,
-                                        MainDbHelper.KEY_FAVORITE},
-                                MainDbHelper.KEY_TEXT + " LIKE ? ",
-                                new String[] { "%"+query+"%" }
-                        );
+                        String query_text = "SELECT " +
+                                MainDbHelper.KEY_VACHANA_ID + ", "+
+                                MainDbHelper.KEY_TITLE + ", "+
+                                MainDbHelper.FOREIGN_KEY_KATHRU_ID + ", "+
+                                MainDbHelper.KEY_FAVORITE;
+                        String[] parameters;
+
+                        query_text += " FROM " + MainDbHelper.TABLE_VACHANA;
+
+                        query_text += " WHERE " +
+                                MainDbHelper.KEY_TITLE + " LIKE ? "; // + "%"+query+"%";
+
+                        String query_text_parameter = isPartialSearch? "%"+query+"%" : query;
+
+                        if (!kathruString.isEmpty()) {
+                            query_text += " AND " +
+                                    MainDbHelper.FOREIGN_KEY_KATHRU_ID + " IN " +
+                                    " ( SELECT " + MainDbHelper.KEY_KATHRU_ID +
+                                    " FROM " + MainDbHelper.TABLE_KATHRU +
+                                    " WHERE " + MainDbHelper.KEY_NAME + " LIKE ? "; // + "%"+kathruString+"% ) ";
+                            parameters = new  String[]{query_text_parameter, "%"+kathruString+"%"};
+                        } else {
+                            parameters = new  String[]{query_text_parameter};
+                        }
+
+                        return mainActivity.db.query( query_text, parameters);
                     }
                 });
 
@@ -102,6 +129,15 @@ public class SearchFragment extends Fragment implements Serializable{
                         .replace(R.id.main_content, fragment)
                         .addToBackStack( "search_fragment")
                         .commit();
+            }
+        });
+
+        resetButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                textSearchView.setText("");
+                kathruSearchView.setText("");
+                radioPartial.setChecked(true);
             }
         });
 
@@ -130,6 +166,11 @@ public class SearchFragment extends Fragment implements Serializable{
         super.onResume();
         AppBarLayout appBarLayout = (AppBarLayout)getActivity().findViewById(R.id.app_bar);
         appBarLayout.setExpanded(true, true);
+        try {
+            ((MainActivity) getActivity()).getSupportActionBar().setTitle("ಹುಡುಕು");
+        } catch (NullPointerException e){
+            Log.d(TAG, "onCreate: Actionbar not found");
+        }
     }
 
     @Override

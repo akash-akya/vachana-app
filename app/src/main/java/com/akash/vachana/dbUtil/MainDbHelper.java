@@ -254,13 +254,14 @@ public class MainDbHelper extends SQLiteOpenHelper implements Serializable {
         return new Vachana(id, text, getKathruNameById(kathruId), cursor.getInt(2)==1? true : false);
     }
 
-    public ArrayList<VachanaMini> query(String[] fields, String q, String[] parameter) {
+    public ArrayList<VachanaMini> query(String rawQuery, String[] parameters) {
         ArrayList<VachanaMini> vachanaMinis = new ArrayList<>();
-        if (q.length()<3)
+        if (parameters[0].length()<3)
             return vachanaMinis;
 
         SQLiteDatabase db = this.getReadableDatabase();
-        Cursor cursor = db.query(TABLE_VACHANA, fields, q, parameter, null, null, null, "100");
+//        Cursor cursor = db.query(TABLE_VACHANA, fields, q, parameter, null, null, null, "100");
+        Cursor cursor = db.rawQuery(rawQuery, parameters);
 
         if (cursor.moveToFirst()) {
             do {
