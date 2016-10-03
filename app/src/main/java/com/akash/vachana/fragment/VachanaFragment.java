@@ -1,15 +1,24 @@
 package com.akash.vachana.fragment;
 
+import android.app.ActionBar;
+import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
+import android.net.Uri;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.support.annotation.IntegerRes;
 import android.support.design.widget.AppBarLayout;
+import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentPagerAdapter;
 import android.support.v4.view.PagerAdapter;
 import android.support.v4.view.ViewPager;
 import android.support.v4.app.Fragment;
+import android.view.ActionMode;
+import android.text.Selection;
+import android.text.SpannableStringBuilder;
+import android.text.style.CharacterStyle;
+import android.text.style.StyleSpan;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.Menu;
@@ -22,6 +31,8 @@ import android.widget.TextView;
 
 import com.akash.vachana.R;
 import com.akash.vachana.activity.MainActivity;
+import com.akash.vachana.dbUtil.KathruMini;
+import com.akash.vachana.dbUtil.MainDbHelper;
 import com.akash.vachana.dbUtil.Vachana;
 import com.akash.vachana.dbUtil.VachanaMini;
 
@@ -49,13 +60,15 @@ public class VachanaFragment extends Fragment {
 
         ViewGroup root = (ViewGroup) inflater.inflate(R.layout.vachana_pager_layout, null);
 
+        CharSequence text = getActivity().getIntent()
+                .getCharSequenceExtra(Intent.EXTRA_PROCESS_TEXT);
+
         Bundle extra = getArguments();
         myViewPagerAdapter = new MyViewPagerAdapter((ArrayList<VachanaMini>) extra.getSerializable("vachanas"));
 
         viewPager = (ViewPager) root.findViewById(R.id.vachana_view_pager);
         viewPager.setOffscreenPageLimit(2);
         viewPager.setAdapter(myViewPagerAdapter);
-
         viewPager.setCurrentItem((int) extra.getSerializable("current_position"), true);
         return root;
     }
@@ -172,11 +185,13 @@ public class VachanaFragment extends Fragment {
 
         private class GetVachanaFromDb extends AsyncTask {
             private ProgressBar progressBar;
-            private TextView tv;
+            private TextView vachanaTextView;
+            private TextView kathruTextView;
             private int position;
 
             public GetVachanaFromDb(View view, int position) {
-                tv = (TextView) view.findViewById(R.id.vachana_text);
+                vachanaTextView = (TextView) view.findViewById(R.id.vachana_text);
+                kathruTextView = (TextView) view.findViewById(R.id.vachana_kathru_text);
                 progressBar = (ProgressBar) view.findViewById(R.id.progressBar);
                 this.position = position;
             }
@@ -195,18 +210,74 @@ public class VachanaFragment extends Fragment {
                 if (item != null){
                     if (vachana.getFavorite()) {
                         menu.findItem(R.id.action_favorite).setIcon(R.drawable.ic_star_20dp);
-                    }
-                    else {
+                    } else {
                         menu.findItem(R.id.action_favorite).setIcon(R.drawable.ic_star_outline_20dp);
                     }
                 }
+                updateActionBarTitle(myViewPagerAdapter.vachanaHashMap.get(viewPager.getCurrentItem()));
                 progressBar.setVisibility(View.GONE);
-                tv.setText(vachana.getText());
-                tv.setVisibility(View.VISIBLE);
+                vachanaTextView.setText(vachana.getText());
+                vachanaTextView.setVisibility(View.VISIBLE);
+                vachanaTextView.setCustomSelectionActionModeCallback(new StyleCallback(vachanaTextView));
+                kathruTextView.setText(vachana.getKathru());
+                kathruTextView.setVisibility(View.VISIBLE);
+                MainActivity mainActivity = (MainActivity) getActivity();
+                kathruTextView.setOnClickListener(mainActivity.getKathruOnClickListener(vachana.getKathruId()));
                 vachanaHashMap.put(position, vachana);
             }
 
         }
-    }
 
+        void updateActionBarTitle(Vachana vachana) {
+            if (vachana!= null) {
+                try {
+                    ((MainActivity) getActivity()).getSupportActionBar().setTitle(vachana.getKathru());
+                } catch (NullPointerException e){
+                    Log.d(  TAG, "onCreate: Actionbar not found");
+                }
+            }
+        }
+
+        class StyleCallback implements ActionMode.Callback {
+            private TextView bodyView;
+            private static final String wikiLink = "https://kn.m.wiktionary.org/wiki/";
+
+            public StyleCallback(TextView bodyView) {
+                this.bodyView = bodyView;
+            }
+
+            @Override
+            public boolean onCreateActionMode(ActionMode mode, Menu menu) {
+                MenuInflater inflater = mode.getMenuInflater();
+                inflater.inflate(R.menu.vachana_select, menu);
+                menu.removeItem(android.R.id.selectAll);
+                return true;
+            }
+
+            @Override
+            public boolean onPrepareActionMode(ActionMode mode, Menu menu) {
+                return false;
+            }
+
+            @Override
+            public boolean onActionItemClicked(ActionMode mode, MenuItem item) {
+                Log.d(TAG, String.format("onActionItemClicked item=%s/%d", item.toString(), item.getItemId()));
+                int startSelection=bodyView.getSelectionStart();
+                int endSelection=bodyView.getSelectionEnd();
+                String selectedText = bodyView.getText().toString().substring(startSelection, endSelection);
+
+                switch(item.getItemId()) {
+                    case R.id.wiki:
+                        Intent browserIntent = new Intent(Intent.ACTION_VIEW, Uri.parse(wikiLink+selectedText));
+                        startActivity(browserIntent);
+                        return true;
+                }
+                return false;
+            }
+
+            @Override
+            public void onDestroyActionMode(ActionMode mode) {
+            }
+        }
+    }
 }

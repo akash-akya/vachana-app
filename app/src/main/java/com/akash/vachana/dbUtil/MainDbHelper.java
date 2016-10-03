@@ -240,7 +240,7 @@ public class MainDbHelper extends SQLiteOpenHelper implements Serializable {
 
         int id = Integer.parseInt(cursor.getString(0));
         String text = cursor.getString(1);
-        return new Vachana(id, text, getKathruNameById(kathruId), cursor.getInt(2)==1? true : false);
+        return new Vachana(id, text, getKathruNameById(kathruId), cursor.getInt(2)==1? true : false, kathruId);
     }
 
     public ArrayList<VachanaMini> query(String rawQuery, String[] parameters) {
@@ -277,7 +277,7 @@ public class MainDbHelper extends SQLiteOpenHelper implements Serializable {
 
         String text = cursor.getString(1);
         int kathruId = Integer.parseInt(cursor.getString(2));
-        return new Vachana(id, text, getKathruNameById(kathruId), cursor.getInt(3)==1? true : false);
+        return new Vachana(id, text, getKathruNameById(kathruId), cursor.getInt(3)==1? true : false, kathruId);
     }
 
     public void addVachanaToFavorite(int vachanaId){

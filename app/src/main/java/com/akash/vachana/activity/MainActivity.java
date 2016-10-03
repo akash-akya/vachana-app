@@ -1,5 +1,8 @@
 package com.akash.vachana.activity;
 
+import android.app.Activity;
+import android.content.Context;
+import android.content.Intent;
 import android.net.Uri;
 import android.os.AsyncTask;
 import android.support.v4.app.FragmentManager;
@@ -403,4 +406,52 @@ public class MainActivity extends AppCompatActivity
             return db.getFavoriteKathruMinis();
         }
     };
+
+    public View.OnClickListener getKathruOnClickListener (final int kathruMiniId) {
+        final KathruMini kathruMini = db.getKathruMiniById(kathruMiniId);
+        final FragmentManager fragmentManager = getSupportFragmentManager();
+
+        return new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Bundle bundle = new Bundle();
+                final Fragment fragment = Fragment.instantiate(MainActivity.this, MainActivity.fragments[1]);
+                bundle.putString("title", kathruMini.getName());
+                bundle.putSerializable("listener", new VachanaListFragment.OnListFragmentInteractionListener() {
+                    @Override
+                    public void onListFragmentInteraction(ArrayList<VachanaMini> vachanaMinis, int position) {
+                        Fragment fragment = Fragment.instantiate(MainActivity.this, MainActivity.fragments[0]);
+
+                        Intent intent = getIntent();
+                        intent.putExtra("vachanas", vachanaMinis);
+                        intent.putExtra("current_position", position);
+                        fragment.setArguments(intent.getExtras());
+
+                        fragmentManager.popBackStack("vachana_list", FragmentManager.POP_BACK_STACK_INCLUSIVE);
+                        fragmentManager.beginTransaction()
+                                .replace(R.id.main_content, fragment)
+                                .addToBackStack("vachana_list")
+                                .commit();
+                    }
+
+                    @Override
+                    public void onFavoriteButton(int vachanaId, boolean checked) {
+                        new UpdateVachanaFavorite().execute(vachanaId, checked);
+                    }
+
+                    @Override
+                    public ArrayList<VachanaMini> getVachanaMinis() {
+                        return db.getVachanaMinisByKathruId(kathruMini.getId());
+                    }
+                });
+
+                fragment.setArguments(bundle);
+                fragmentManager.popBackStack(null, FragmentManager.POP_BACK_STACK_INCLUSIVE);
+                fragmentManager.beginTransaction()
+                        .replace(R.id.main_content, fragment)
+                        .addToBackStack("kathru_list")
+                        .commit();
+            }
+        };
+    }
 }

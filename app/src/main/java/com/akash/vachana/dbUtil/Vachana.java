@@ -16,13 +16,15 @@ public class Vachana implements Serializable {
     private int id;
     private String text;
     private String kathru;
+    private int kathruId;
 
-    public Vachana(int id, String text, String kathru, boolean favorite)
+    public Vachana(int id, String text, String kathru, boolean favorite, int kathruId)
     {
         this.id = id;
         this.text = text;
         this.kathru= kathru;
         this.favorite = favorite;
+        this.kathruId = kathruId;
     }
 
     public String getKathru() {
@@ -43,5 +45,9 @@ public class Vachana implements Serializable {
 
     public String getText() {
         return text;
+    }
+
+    public int getKathruId() {
+        return kathruId;
     }
 }
