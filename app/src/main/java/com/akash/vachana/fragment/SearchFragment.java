@@ -37,6 +37,7 @@ public class SearchFragment extends Fragment implements Serializable{
 
     private static final String TAG = "SearchFragment";
     private ArrayList<KathruMini> kathruMinis;
+    private KathruListTask kathruListTask;
 
     public SearchFragment() {
         // Required empty public constructor
@@ -54,8 +55,6 @@ public class SearchFragment extends Fragment implements Serializable{
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         setHasOptionsMenu(true);
-
-        new KathruListTask().execute();
 
         View view = inflater.inflate(R.layout.fragment_search, container, false);
         final EditText textSearchView = (EditText) view.findViewById(R.id.search_bar_text);
@@ -173,22 +172,24 @@ public class SearchFragment extends Fragment implements Serializable{
 
         @Override
         protected void onPostExecute(Object o) {
-            super.onPostExecute(o);
-            kathruMinis = (ArrayList<KathruMini>) o;
-            final AutoCompleteTextView autoTextView = (AutoCompleteTextView) getActivity().findViewById(R.id.auto_complete_kathru);
-            ArrayAdapter<KathruMini> adapter = new ArrayAdapter<KathruMini>(getActivity(), android.R.layout.simple_dropdown_item_1line,
-                    kathruMinis);
-            if (autoTextView != null) {
-                autoTextView.setAdapter(adapter);
-                autoTextView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+            if (!kathruListTask.isCancelled()) {
+                super.onPostExecute(o);
+                kathruMinis = (ArrayList<KathruMini>) o;
+                final AutoCompleteTextView autoTextView = (AutoCompleteTextView) getActivity().findViewById(R.id.auto_complete_kathru);
+                ArrayAdapter<KathruMini> adapter = new ArrayAdapter<KathruMini>(getActivity(), android.R.layout.simple_dropdown_item_1line,
+                        kathruMinis);
+                if (autoTextView != null) {
+                    autoTextView.setAdapter(adapter);
+                    autoTextView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
 
-                    @Override
-                    public void onItemClick(AdapterView<?> arg0, View arg1, int arg2,
-                                            long arg3) {
-                        KathruMini selected = (KathruMini) arg0.getAdapter().getItem(arg2);
-                        autoTextView.setText(selected.getName());
-                    }
-                });
+                        @Override
+                        public void onItemClick(AdapterView<?> arg0, View arg1, int arg2,
+                                                long arg3) {
+                            KathruMini selected = (KathruMini) arg0.getAdapter().getItem(arg2);
+                            autoTextView.setText(selected.getName());
+                        }
+                    });
+                }
             }
         }
     }
@@ -212,6 +213,15 @@ public class SearchFragment extends Fragment implements Serializable{
     @Override
     public void onResume() {
         super.onResume();
+
+        if (kathruListTask == null)
+            kathruListTask = new KathruListTask();
+
+        if (kathruListTask.isCancelled()) {
+            kathruListTask = new KathruListTask();
+            kathruListTask.execute();
+        }
+
         AppBarLayout appBarLayout = (AppBarLayout)getActivity().findViewById(R.id.app_bar);
         appBarLayout.setExpanded(true, true);
         try {
@@ -219,6 +229,12 @@ public class SearchFragment extends Fragment implements Serializable{
         } catch (NullPointerException e){
             Log.d(TAG, "onCreate: Actionbar not found");
         }
+    }
+
+    @Override
+    public void onPause() {
+        super.onPause();
+        kathruListTask.cancel(true);
     }
 
     @Override
