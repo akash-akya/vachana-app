@@ -119,7 +119,6 @@ public class KathruListFragment extends Fragment {
                 if (myAdapter != null && recyclerView != null) {
                     myAdapter.filter(newText.trim());
                     recyclerView.invalidate();
-                    Log.d(TAG, "onQueryTextChange: "+newText);
                     return true;
                 }
                 return false;

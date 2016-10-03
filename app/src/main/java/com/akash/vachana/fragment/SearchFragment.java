@@ -178,16 +178,18 @@ public class SearchFragment extends Fragment implements Serializable{
             final AutoCompleteTextView autoTextView = (AutoCompleteTextView) getActivity().findViewById(R.id.auto_complete_kathru);
             ArrayAdapter<KathruMini> adapter = new ArrayAdapter<KathruMini>(getActivity(), android.R.layout.simple_dropdown_item_1line,
                     kathruMinis);
-            autoTextView.setAdapter(adapter);
-            autoTextView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+            if (autoTextView != null) {
+                autoTextView.setAdapter(adapter);
+                autoTextView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
 
-                @Override
-                public void onItemClick(AdapterView<?> arg0, View arg1, int arg2,
-                                        long arg3) {
-                    KathruMini selected = (KathruMini) arg0.getAdapter().getItem(arg2);
-                    autoTextView.setText(selected.getName());
-                }
-            });
+                    @Override
+                    public void onItemClick(AdapterView<?> arg0, View arg1, int arg2,
+                                            long arg3) {
+                        KathruMini selected = (KathruMini) arg0.getAdapter().getItem(arg2);
+                        autoTextView.setText(selected.getName());
+                    }
+                });
+            }
         }
     }
     @Override

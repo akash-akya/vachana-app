@@ -125,7 +125,6 @@ public class VachanaListFragment extends Fragment {
                 if (adapter != null && recyclerView != null) {
                     adapter.filter(newText);
                     recyclerView.invalidate();
-                    Log.d(TAG, "onQueryTextChange: "+newText);
                     return true;
                 }
                 return false;
