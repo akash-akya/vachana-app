@@ -92,8 +92,7 @@ public class VachanaListFragment extends Fragment {
             progressBar.setVisibility(View.VISIBLE);
             new VachanaListTask().execute(getArguments().getInt("id"));
         } else {
-            recyclerView.setAdapter(new MyVachanaListRecyclerViewAdapter(vachanaMinis,
-                    listener));
+            recyclerView.setAdapter(adapter);
             progressBar.setVisibility(View.INVISIBLE);
             recyclerView.setVisibility(View.VISIBLE);
             if (title != null)

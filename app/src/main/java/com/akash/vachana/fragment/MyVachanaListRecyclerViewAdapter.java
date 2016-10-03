@@ -71,7 +71,6 @@ public class MyVachanaListRecyclerViewAdapter extends RecyclerView.Adapter<MyVac
         vachanaMinis.clear();
         if (charText.length() == 0) {
             vachanaMinis.addAll(dupVachanaMinis);
-
         } else {
             for (VachanaMini kathruMini : dupVachanaMinis) {
                 if (charText.length() != 0 && (kathruMini.getTitle().contains(charText))) {
