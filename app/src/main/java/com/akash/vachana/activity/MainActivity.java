@@ -48,7 +48,7 @@ public class MainActivity extends AppCompatActivity
             "com.akash.vachana.fragment.SearchFragment"
     };
 
-    public MainDbHelper db;
+    public static MainDbHelper db;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -277,7 +277,7 @@ public class MainActivity extends AppCompatActivity
         return db.getAllKathruMinis();
     }
 
-    public class UpdateVachanaFavorite extends AsyncTask {
+    public static class UpdateVachanaFavorite extends AsyncTask {
         @Override
         protected Void doInBackground(Object[] objects) {
             if ((boolean)objects[1])
@@ -288,7 +288,7 @@ public class MainActivity extends AppCompatActivity
         }
     }
 
-    public class UpdateKathruFavorite extends AsyncTask {
+    public static class UpdateKathruFavorite extends AsyncTask {
         @Override
         protected Void doInBackground(Object[] objects) {
             if ((boolean)objects[1])

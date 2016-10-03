@@ -238,7 +238,7 @@ public class VachanaFragment extends Fragment {
             }
         }
 
-        class StyleCallback implements ActionMode.Callback {
+        class StyleCallback implements ActionMode.Callback, Serializable {
             private TextView bodyView;
             private static final String wikiLink = "https://kn.m.wiktionary.org/wiki/";
 

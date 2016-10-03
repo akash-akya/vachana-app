@@ -25,6 +25,7 @@ import android.widget.RadioButton;
 import android.widget.SearchView;
 
 import com.akash.vachana.R;
+import com.akash.vachana.Util.SearchButtonListener;
 import com.akash.vachana.activity.MainActivity;
 import com.akash.vachana.dbUtil.KathruMini;
 import com.akash.vachana.dbUtil.MainDbHelper;
@@ -62,18 +63,16 @@ public class SearchFragment extends Fragment implements Serializable{
         final RadioButton radioPartial = (RadioButton) view.findViewById(R.id.radio_partial);
         final Button resetButton = (Button) view.findViewById(R.id.reset_button);
         final Button searchButton = (Button) view.findViewById(R.id.search_button);
-
-
         searchButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                InputMethodManager inputMethodManager = (InputMethodManager) getActivity().getSystemService(Context.INPUT_METHOD_SERVICE);
+                final InputMethodManager inputMethodManager = (InputMethodManager) getActivity().getSystemService(Context.INPUT_METHOD_SERVICE);
                 inputMethodManager.hideSoftInputFromWindow(getActivity().getCurrentFocus().getWindowToken(), 0);
 
-                Bundle bundle = new Bundle();
+                final Bundle bundle = new Bundle();
                 final MainActivity mainActivity = (MainActivity) getActivity();
-                FragmentManager fragmentManager = mainActivity.getSupportFragmentManager();
-                Fragment fragment = Fragment.instantiate(mainActivity, MainActivity.fragments[1]);
+                final FragmentManager fragmentManager = mainActivity.getSupportFragmentManager();
+                final Fragment fragment = Fragment.instantiate(mainActivity, MainActivity.fragments[1]);
                 final String query = textSearchView.getText().toString();
                 final String kathruString = autoCompleteTextView.getText().toString();
                 final Boolean isPartialSearch = radioPartial.isChecked();
@@ -81,9 +80,10 @@ public class SearchFragment extends Fragment implements Serializable{
                 if (query.length() < 3)
                     return;
 
-                Log.d("Search Fragment", "onClick: "+query+" "+kathruString);
+//                Log.d("Search Fragment", "onClick: "+query+" "+kathruString);
                 bundle.putString("title", "ಹುಡುಕು");
-                bundle.putSerializable("listener", new VachanaListFragment.OnListFragmentInteractionListener() {
+                bundle.putSerializable("listener", new SearchButtonListener(getContext(), isPartialSearch,query,kathruString));
+                       /* new VachanaListFragment.OnListFragmentInteractionListener() {
                     public static final String TAG = "VachanaListFragment" ;
 
                     @Override
@@ -137,6 +137,7 @@ public class SearchFragment extends Fragment implements Serializable{
                         return mainActivity.db.query( query_text, parameters);
                     }
                 });
+                */
 
                 fragment.setArguments(bundle);
                 fragmentManager.popBackStack("search_fragment", FragmentManager.POP_BACK_STACK_INCLUSIVE);
@@ -214,10 +215,7 @@ public class SearchFragment extends Fragment implements Serializable{
     public void onResume() {
         super.onResume();
 
-        if (kathruListTask == null)
-            kathruListTask = new KathruListTask();
-
-        if (kathruListTask.isCancelled()) {
+        if (kathruListTask == null || kathruListTask.isCancelled()) {
             kathruListTask = new KathruListTask();
             kathruListTask.execute();
         }
