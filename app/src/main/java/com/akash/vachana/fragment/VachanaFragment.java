@@ -226,9 +226,6 @@ public class VachanaFragment extends Fragment {
                 final MainActivity mainActivity = (MainActivity) getActivity();
 //                kathruTextView.setOnClickListener(mainActivity.getKathruOnClickListener(vachana.getKathruId()));
                 final KathruMini kathruMini = MainActivity.db.getKathruMiniById(vachana.getKathruId());
-                final ArrayList<VachanaMini> vachanaMinis = MainActivity.db.getVachanaMinisByKathruId(kathruMini.getId());
-                final Fragment fragment = Fragment.instantiate(mainActivity, MainActivity.fragments[1]);
-                final FragmentManager fragmentManager = (mainActivity).getSupportFragmentManager();
 
                 final int id = vachana.getKathruId();
                 kathruTextView.setOnClickListener(new View.OnClickListener() {
@@ -240,10 +237,10 @@ public class VachanaFragment extends Fragment {
                         FragmentManager fragmentManager = (mainActivity).getSupportFragmentManager();
                         Fragment fragment = Fragment.instantiate(mainActivity, MainActivity.fragments[1]);
                         fragment.setArguments(bundle);
-                        fragmentManager.popBackStack(null, FragmentManager.POP_BACK_STACK_INCLUSIVE);
+//                        fragmentManager.popBackStack("test_kathru_list" , FragmentManager.POP_BACK_STACK_INCLUSIVE);
                         fragmentManager.beginTransaction()
                                 .replace(R.id.main_content, fragment)
-                                .addToBackStack( "kathru_list" )
+//                                .addToBackStack( "test_kathru_list" )
                                 .commit();
                     }
                 });

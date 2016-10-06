@@ -21,6 +21,7 @@ import android.support.v7.widget.Toolbar;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
+import android.view.inputmethod.InputMethodManager;
 import android.widget.ShareActionProvider;
 
 import com.akash.vachana.R;
@@ -78,6 +79,32 @@ public class MainActivity extends AppCompatActivity
         drawer.setDrawerListener(toggle);
         toggle.syncState();
 
+        drawer.addDrawerListener(new DrawerLayout.DrawerListener() {
+            @Override
+            public void onDrawerSlide(View drawerView, float slideOffset) {
+
+            }
+
+            @Override
+            public void onDrawerOpened(View drawerView) {
+                InputMethodManager inputMethodManager = (InputMethodManager)
+                        getSystemService(Context.INPUT_METHOD_SERVICE);
+                inputMethodManager.hideSoftInputFromWindow(getCurrentFocus().getWindowToken(), 0);
+            }
+
+            @Override
+            public void onDrawerClosed(View drawerView) {
+
+            }
+
+            @Override
+            public void onDrawerStateChanged(int newState) {
+                InputMethodManager inputMethodManager = (InputMethodManager)
+                        getSystemService(Context.INPUT_METHOD_SERVICE);
+                inputMethodManager.hideSoftInputFromWindow(getCurrentFocus().getWindowToken(), 0);
+            }
+        });
+
         selectItem(R.id.nav_vachana);
 
         NavigationView navigationView = (NavigationView) findViewById(R.id.nav_view);
@@ -118,10 +145,12 @@ public class MainActivity extends AppCompatActivity
     public boolean onOptionsItemSelected(MenuItem item) {
         int id = item.getItemId();
 
+/*
         switch (id) {
             case R.id.action_settings:
                 return true;
         }
+*/
         return super.onOptionsItemSelected(item);
     }
 
@@ -252,12 +281,14 @@ public class MainActivity extends AppCompatActivity
                 } catch (NullPointerException e){
                     Log.d(TAG, "selectItem: Fragment is null!!");
                 }
+                fragmentManager.popBackStack("List", FragmentManager.POP_BACK_STACK_INCLUSIVE);
                 fragmentManager.beginTransaction()
                         .replace(R.id.main_content, fragment)
+                        .addToBackStack( "List" )
                         .commit();
                 return;
-            case R.id.nav_settings:
-                return;
+//            case R.id.nav_settings:
+//                return;
             default:
                 Log.e(TAG, "selectItem: Error, Wrong id");
         }

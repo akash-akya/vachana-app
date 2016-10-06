@@ -26,23 +26,23 @@
             android:icon="@drawable/ic_favorite_black_24dp"
             android:title="ನೆಚ್ಚಿನ ವಚನಕಾರರು" />
 
-        <item
+       <!-- <item
             android:id="@+id/nav_settings"
             android:icon="@drawable/ic_settings_black_24dp"
-            android:title="ಅಳವಡಿಕೆಗಳು" />
+            android:title="ಅಳವಡಿಕೆಗಳು" />-->
     </group>
 
-    <item android:title="Communicate">
+    <!--<item android:title="Communicate">
         <menu>
             <item
                 android:id="@+id/nav_share"
                 android:icon="@drawable/ic_menu_share"
                 android:title="Share" />
- <!--           <item
+ &lt;!&ndash;           <item
                 android:id="@+id/nav_send"
                 android:icon="@drawable/ic_menu_send"
-                android:title="Send" />-->
+                android:title="Send" />&ndash;&gt;
         </menu>
-    </item>
+    </item>-->
 
 </menu>
