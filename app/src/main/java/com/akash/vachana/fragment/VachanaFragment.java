@@ -9,6 +9,7 @@ import android.os.AsyncTask;
 import android.os.Bundle;
 import android.support.annotation.IntegerRes;
 import android.support.design.widget.AppBarLayout;
+import android.support.v4.app.FragmentActivity;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentPagerAdapter;
 import android.support.v4.view.PagerAdapter;
@@ -30,6 +31,7 @@ import android.widget.ProgressBar;
 import android.widget.TextView;
 
 import com.akash.vachana.R;
+import com.akash.vachana.Util.VachanaKathruViewListener;
 import com.akash.vachana.activity.MainActivity;
 import com.akash.vachana.dbUtil.KathruMini;
 import com.akash.vachana.dbUtil.MainDbHelper;
@@ -158,7 +160,7 @@ public class VachanaFragment extends Fragment {
         }
 
         @Override
-        public Object instantiateItem(final ViewGroup container, int position)  {
+        public Object instantiateItem(final ViewGroup container, int position) {
             layoutInflater = (LayoutInflater) getActivity().getSystemService(Context.LAYOUT_INFLATER_SERVICE);
             final View view = layoutInflater.inflate(R.layout.vachana_text_view, container, false);
             new GetVachanaFromDb(view, position).execute();
@@ -205,9 +207,9 @@ public class VachanaFragment extends Fragment {
             @Override
             protected void onPostExecute(Object o) {
                 super.onPostExecute(o);
-                Vachana vachana = (Vachana)o;
+                final Vachana vachana = (Vachana) o;
                 MenuItem item = menu.findItem(R.id.action_favorite);
-                if (item != null){
+                if (item != null) {
                     if (vachana.getFavorite()) {
                         menu.findItem(R.id.action_favorite).setIcon(R.drawable.ic_star_20dp);
                     } else {
@@ -221,62 +223,84 @@ public class VachanaFragment extends Fragment {
                 vachanaTextView.setCustomSelectionActionModeCallback(new StyleCallback(vachanaTextView));
                 kathruTextView.setText(vachana.getKathru());
                 kathruTextView.setVisibility(View.VISIBLE);
-                MainActivity mainActivity = (MainActivity) getActivity();
-                kathruTextView.setOnClickListener(mainActivity.getKathruOnClickListener(vachana.getKathruId()));
+                final MainActivity mainActivity = (MainActivity) getActivity();
+//                kathruTextView.setOnClickListener(mainActivity.getKathruOnClickListener(vachana.getKathruId()));
+                final KathruMini kathruMini = MainActivity.db.getKathruMiniById(vachana.getKathruId());
+                final ArrayList<VachanaMini> vachanaMinis = MainActivity.db.getVachanaMinisByKathruId(kathruMini.getId());
+                final Fragment fragment = Fragment.instantiate(mainActivity, MainActivity.fragments[1]);
+                final FragmentManager fragmentManager = (mainActivity).getSupportFragmentManager();
+
+                final int id = vachana.getKathruId();
+                kathruTextView.setOnClickListener(new View.OnClickListener() {
+                    @Override
+                    public void onClick(View v) {
+                        Bundle bundle = new Bundle();
+                        bundle.putString("title", kathruMini.getName());
+                        bundle.putSerializable("listener", new VachanaKathruViewListener(id, getContext()));
+                        FragmentManager fragmentManager = (mainActivity).getSupportFragmentManager();
+                        Fragment fragment = Fragment.instantiate(mainActivity, MainActivity.fragments[1]);
+                        fragment.setArguments(bundle);
+                        fragmentManager.popBackStack(null, FragmentManager.POP_BACK_STACK_INCLUSIVE);
+                        fragmentManager.beginTransaction()
+                                .replace(R.id.main_content, fragment)
+                                .addToBackStack( "kathru_list" )
+                                .commit();
+                    }
+                });
                 vachanaHashMap.put(position, vachana);
+
             }
 
-        }
-
-        void updateActionBarTitle(Vachana vachana) {
-            if (vachana!= null) {
-                try {
-                    ((MainActivity) getActivity()).getSupportActionBar().setTitle(vachana.getKathru());
-                } catch (NullPointerException e){
-                    Log.d(  TAG, "onCreate: Actionbar not found");
+            void updateActionBarTitle(Vachana vachana) {
+                if (vachana != null) {
+                    try {
+                        ((MainActivity) getActivity()).getSupportActionBar().setTitle(vachana.getKathru());
+                    } catch (NullPointerException e) {
+                        Log.d(TAG, "onCreate: Actionbar not found");
+                    }
                 }
             }
-        }
 
-        class StyleCallback implements ActionMode.Callback, Serializable {
-            private TextView bodyView;
-            private static final String wikiLink = "https://kn.m.wiktionary.org/wiki/";
+            class StyleCallback implements ActionMode.Callback, Serializable {
+                private TextView bodyView;
+                private static final String wikiLink = "https://kn.m.wiktionary.org/wiki/";
 
-            public StyleCallback(TextView bodyView) {
-                this.bodyView = bodyView;
-            }
-
-            @Override
-            public boolean onCreateActionMode(ActionMode mode, Menu menu) {
-                MenuInflater inflater = mode.getMenuInflater();
-                inflater.inflate(R.menu.vachana_select, menu);
-                menu.removeItem(android.R.id.selectAll);
-                return true;
-            }
-
-            @Override
-            public boolean onPrepareActionMode(ActionMode mode, Menu menu) {
-                return false;
-            }
-
-            @Override
-            public boolean onActionItemClicked(ActionMode mode, MenuItem item) {
-                Log.d(TAG, String.format("onActionItemClicked item=%s/%d", item.toString(), item.getItemId()));
-                int startSelection=bodyView.getSelectionStart();
-                int endSelection=bodyView.getSelectionEnd();
-                String selectedText = bodyView.getText().toString().substring(startSelection, endSelection);
-
-                switch(item.getItemId()) {
-                    case R.id.wiki:
-                        Intent browserIntent = new Intent(Intent.ACTION_VIEW, Uri.parse(wikiLink+selectedText));
-                        startActivity(browserIntent);
-                        return true;
+                public StyleCallback(TextView bodyView) {
+                    this.bodyView = bodyView;
                 }
-                return false;
-            }
 
-            @Override
-            public void onDestroyActionMode(ActionMode mode) {
+                @Override
+                public boolean onCreateActionMode(ActionMode mode, Menu menu) {
+                    MenuInflater inflater = mode.getMenuInflater();
+                    inflater.inflate(R.menu.vachana_select, menu);
+                    menu.removeItem(android.R.id.selectAll);
+                    return true;
+                }
+
+                @Override
+                public boolean onPrepareActionMode(ActionMode mode, Menu menu) {
+                    return false;
+                }
+
+                @Override
+                public boolean onActionItemClicked(ActionMode mode, MenuItem item) {
+                    Log.d(TAG, String.format("onActionItemClicked item=%s/%d", item.toString(), item.getItemId()));
+                    int startSelection = bodyView.getSelectionStart();
+                    int endSelection = bodyView.getSelectionEnd();
+                    String selectedText = bodyView.getText().toString().substring(startSelection, endSelection);
+
+                    switch (item.getItemId()) {
+                        case R.id.wiki:
+                            Intent browserIntent = new Intent(Intent.ACTION_VIEW, Uri.parse(wikiLink + selectedText));
+                            startActivity(browserIntent);
+                            return true;
+                    }
+                    return false;
+                }
+
+                @Override
+                public void onDestroyActionMode(ActionMode mode) {
+                }
             }
         }
     }
