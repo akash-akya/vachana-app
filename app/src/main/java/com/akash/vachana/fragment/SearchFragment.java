@@ -77,67 +77,11 @@ public class SearchFragment extends Fragment implements Serializable{
                 final String kathruString = autoCompleteTextView.getText().toString();
                 final Boolean isPartialSearch = radioPartial.isChecked();
 
-                if (query.length() < 3)
+                if (query.length() <= 1)
                     return;
 
-//                Log.d("Search Fragment", "onClick: "+query+" "+kathruString);
                 bundle.putString("title", "ಹುಡುಕು");
                 bundle.putSerializable("listener", new SearchButtonListener(getContext(), isPartialSearch,query,kathruString));
-                       /* new VachanaListFragment.OnListFragmentInteractionListener() {
-                    public static final String TAG = "VachanaListFragment" ;
-
-                    @Override
-                    public void onListFragmentInteraction(ArrayList<VachanaMini> vachanaMinis, int position) {
-                        FragmentManager fragmentManager = mainActivity.getSupportFragmentManager();
-                        Fragment fragment = Fragment.instantiate(mainActivity, MainActivity.fragments[0]);
-
-                        mainActivity.getIntent().putExtra("vachanas", vachanaMinis);
-                        mainActivity.getIntent().putExtra("current_position", position);
-                        fragment.setArguments(mainActivity.getIntent().getExtras());
-
-                        fragmentManager.popBackStack("search_vachana_list", FragmentManager.POP_BACK_STACK_INCLUSIVE);
-                        fragmentManager.beginTransaction()
-                                .replace(R.id.main_content, fragment)
-                                .addToBackStack( "search_vachana_list" )
-                                .commit();
-                    }
-
-                    @Override
-                    public void onFavoriteButton(int vachanaId, boolean checked) {
-                        new UpdateVachanaFavorite().execute(vachanaId, checked);
-                    }
-
-                    @Override
-                    public ArrayList<VachanaMini> getVachanaMinis() {
-                        String query_text = "SELECT " +
-                                MainDbHelper.KEY_VACHANA_ID + ", "+
-                                MainDbHelper.KEY_TITLE + ", "+
-                                MainDbHelper.FOREIGN_KEY_KATHRU_ID + ", "+
-                                MainDbHelper.KEY_FAVORITE;
-                        String[] parameters;
-
-                        query_text += " FROM " + MainDbHelper.TABLE_VACHANA;
-
-                        query_text += " WHERE " +
-                                MainDbHelper.KEY_TITLE + " LIKE ? "; // + "%"+query+"%";
-
-                        String query_text_parameter = isPartialSearch? "%"+query+"%" : query;
-
-                        if (!kathruString.isEmpty()) {
-                            query_text += " AND " +
-                                    MainDbHelper.FOREIGN_KEY_KATHRU_ID + " IN " +
-                                    " ( SELECT " + MainDbHelper.KEY_KATHRU_ID +
-                                    " FROM " + MainDbHelper.TABLE_KATHRU +
-                                    " WHERE " + MainDbHelper.KEY_NAME + " LIKE ? )"; // + "%"+kathruString+"% ) ";
-                            parameters = new  String[]{query_text_parameter, "%"+kathruString+"%"};
-                        } else {
-                            parameters = new  String[]{query_text_parameter};
-                        }
-
-                        return mainActivity.db.query( query_text, parameters);
-                    }
-                });
-                */
 
                 fragment.setArguments(bundle);
                 fragmentManager.popBackStack("search_fragment", FragmentManager.POP_BACK_STACK_INCLUSIVE);
