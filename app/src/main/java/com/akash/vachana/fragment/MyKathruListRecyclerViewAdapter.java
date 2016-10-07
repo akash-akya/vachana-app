@@ -7,6 +7,7 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.CheckBox;
 import android.widget.CompoundButton;
+import android.widget.SectionIndexer;
 import android.widget.TextView;
 
 import com.akash.vachana.R;
@@ -18,9 +19,11 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Locale;
 
-public class MyKathruListRecyclerViewAdapter extends RecyclerView.Adapter<MyKathruListRecyclerViewAdapter.ViewHolder> {
+public class MyKathruListRecyclerViewAdapter extends RecyclerView.Adapter<MyKathruListRecyclerViewAdapter.ViewHolder>
+        implements SectionIndexer {
 
     private static final String TAG = "MyKathruListRecyclerViewAdapter";
+    private String[] names;
     private List<KathruMini> kathruMinis;
     private ArrayList<KathruMini> dupKathruMinis = new ArrayList<>();
     private final OnKathruListFragmentInteractionListener mListener;
@@ -29,6 +32,12 @@ public class MyKathruListRecyclerViewAdapter extends RecyclerView.Adapter<MyKath
         kathruMinis = items;
         mListener = listener;
         dupKathruMinis.addAll(kathruMinis);
+        names = new String[kathruMinis.size()];
+        int i = 0;
+        for (KathruMini k : kathruMinis) {
+            names[i] = k.getName();
+            i++;
+        }
     }
 
     @Override
@@ -89,6 +98,24 @@ public class MyKathruListRecyclerViewAdapter extends RecyclerView.Adapter<MyKath
     @Override
     public int getItemCount() {
         return kathruMinis.size();
+    }
+
+    @Override
+    public Object[] getSections() {
+        return kathruMinis.toArray();
+    }
+
+    @Override
+    public int getPositionForSection(int sectionIndex) {
+        return 0;
+    }
+
+    @Override
+    public int getSectionForPosition(int position) {
+        if (position >= kathruMinis.size()) {
+            position = kathruMinis.size() - 1;
+        }
+        return position;
     }
 
     public class ViewHolder extends RecyclerView.ViewHolder {
