@@ -6,9 +6,11 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.CheckBox;
 import android.widget.CompoundButton;
+import android.widget.SectionIndexer;
 import android.widget.TextView;
 
 import com.akash.vachana.R;
+import com.akash.vachana.dbUtil.KathruMini;
 import com.akash.vachana.dbUtil.VachanaMini;
 import com.akash.vachana.fragment.VachanaListFragment.OnListFragmentInteractionListener;
 
@@ -17,8 +19,10 @@ import java.util.List;
 
 import static android.widget.CompoundButton.*;
 
-public class MyVachanaListRecyclerViewAdapter extends RecyclerView.Adapter<MyVachanaListRecyclerViewAdapter.ViewHolder> {
+public class MyVachanaListRecyclerViewAdapter extends RecyclerView.Adapter<MyVachanaListRecyclerViewAdapter.ViewHolder>
+        implements SectionIndexer {
 
+    private final String[] names;
     private List<VachanaMini> vachanaMinis;
     private ArrayList<VachanaMini> dupVachanaMinis = new ArrayList<>();
     private OnListFragmentInteractionListener mListener;
@@ -27,6 +31,12 @@ public class MyVachanaListRecyclerViewAdapter extends RecyclerView.Adapter<MyVac
         vachanaMinis = items;
         mListener = listener;
         dupVachanaMinis.addAll(vachanaMinis);
+        names = new String[vachanaMinis.size()];
+        int i = 0;
+        for (VachanaMini k : vachanaMinis) {
+            names[i] = k.getTitle();
+            i++;
+        }
     }
 
     @Override
@@ -84,6 +94,24 @@ public class MyVachanaListRecyclerViewAdapter extends RecyclerView.Adapter<MyVac
     @Override
     public int getItemCount() {
         return vachanaMinis.size();
+    }
+
+    @Override
+    public Object[] getSections() {
+            return names;
+    }
+
+    @Override
+    public int getPositionForSection(int sectionIndex) {
+        return 0;
+    }
+
+    @Override
+    public int getSectionForPosition(int position) {
+        if (position >= vachanaMinis.size()) {
+            position = vachanaMinis.size() - 1;
+        }
+        return position;
     }
 
     public class ViewHolder extends RecyclerView.ViewHolder {

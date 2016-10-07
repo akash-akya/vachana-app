@@ -14,22 +14,22 @@ import xyz.danoz.recyclerviewfastscroller.sectionindicator.title.SectionTitleInd
 /**
  * Indicator for sections of type {@link com.akash.vachana.dbUtil.KathruMini}
  */
-public class ColorGroupSectionTitleIndicator extends SectionTitleIndicator<KathruMini> {
+public class ListScrollIndicator extends SectionTitleIndicator<String> {
 
-    public ColorGroupSectionTitleIndicator(Context context) {
+    public ListScrollIndicator(Context context) {
         super(context);
     }
 
-    public ColorGroupSectionTitleIndicator(Context context, AttributeSet attrs) {
+    public ListScrollIndicator(Context context, AttributeSet attrs) {
         super(context, attrs);
     }
 
-    public ColorGroupSectionTitleIndicator(Context context, AttributeSet attrs, int defStyleAttr) {
+    public ListScrollIndicator(Context context, AttributeSet attrs, int defStyleAttr) {
         super(context, attrs, defStyleAttr);
     }
 
     @Override
-    public void setSection(KathruMini kathruMini) {
-        setTitleText(kathruMini.getName().charAt(0) + "");
+    public void setSection(String name) {
+        setTitleText(name.charAt(0) + "");
     }
 }

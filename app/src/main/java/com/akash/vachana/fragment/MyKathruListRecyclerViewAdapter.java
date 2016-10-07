@@ -102,7 +102,7 @@ public class MyKathruListRecyclerViewAdapter extends RecyclerView.Adapter<MyKath
 
     @Override
     public Object[] getSections() {
-        return kathruMinis.toArray();
+        return names;
     }
 
     @Override

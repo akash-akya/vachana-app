@@ -24,6 +24,9 @@ import com.akash.vachana.dbUtil.VachanaMini;
 import java.io.Serializable;
 import java.util.ArrayList;
 
+import xyz.danoz.recyclerviewfastscroller.sectionindicator.title.SectionTitleIndicator;
+import xyz.danoz.recyclerviewfastscroller.vertical.VerticalRecyclerViewFastScroller;
+
 
 /**
  * A fragment representing a list of Items.
@@ -40,6 +43,8 @@ public class VachanaListFragment extends Fragment {
     private RecyclerView recyclerView;
     private OnListFragmentInteractionListener listener;
     private MyVachanaListRecyclerViewAdapter adapter;
+    private VerticalRecyclerViewFastScroller fastScroller;
+    private SectionTitleIndicator sectionTitleIndicator;
 
     public VachanaListFragment() { }
 
@@ -60,6 +65,8 @@ public class VachanaListFragment extends Fragment {
             super.onPreExecute();
             progressBar = (ProgressBar) getActivity().findViewById(R.id.vachana_list_progressBar);
             recyclerView = (RecyclerView) getActivity().findViewById(R.id.list);
+            fastScroller = (VerticalRecyclerViewFastScroller) getActivity().findViewById(R.id.vachana_fast_scroller);
+            sectionTitleIndicator = (SectionTitleIndicator) getActivity().findViewById(R.id.vachan_fast_scroller_section_indicator);
             progressBar.setVisibility(View.VISIBLE);
             recyclerView.setVisibility(View.INVISIBLE);
         }
@@ -76,6 +83,14 @@ public class VachanaListFragment extends Fragment {
             if (progressBar != null && recyclerView != null) {
                 adapter = new MyVachanaListRecyclerViewAdapter(vachanaMinis, listener);
                 recyclerView.setAdapter(adapter);
+
+                // Connect the recycler to the scroller (to let the scroller scroll the list)
+                fastScroller.setRecyclerView(recyclerView);
+                // Connect the scroller to the recycler (to let the recycler scroll the scroller's handle)
+                recyclerView.addOnScrollListener(fastScroller.getOnScrollListener());
+                // Connect the section indicator to the scroller
+                fastScroller.setSectionIndicator(sectionTitleIndicator);
+
                 progressBar.setVisibility(View.INVISIBLE);
                 recyclerView.setVisibility(View.VISIBLE);
                 mainActivity.getSupportActionBar().setTitle(title);
@@ -141,6 +156,17 @@ public class VachanaListFragment extends Fragment {
 
         recyclerView = (RecyclerView) view.findViewById(R.id.list);
         recyclerView.setLayoutManager(new LinearLayoutManager(view.getContext()));
+
+        fastScroller = (VerticalRecyclerViewFastScroller) view.findViewById(R.id.vachana_fast_scroller);
+        sectionTitleIndicator = (SectionTitleIndicator) view.findViewById(R.id.vachan_fast_scroller_section_indicator);
+        // Connect the recycler to the scroller (to let the scroller scroll the list)
+        fastScroller.setRecyclerView(recyclerView);
+
+        // Connect the scroller to the recycler (to let the recycler scroll the scroller's handle)
+        recyclerView.addOnScrollListener(fastScroller.getOnScrollListener());
+
+        // Connect the section indicator to the scroller
+        fastScroller.setSectionIndicator(sectionTitleIndicator);
 
         return view;
     }
