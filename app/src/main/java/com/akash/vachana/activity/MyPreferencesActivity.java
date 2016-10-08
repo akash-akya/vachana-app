@@ -1,8 +1,11 @@
 package com.akash.vachana.activity;
 
+import android.os.Build;
 import android.os.Bundle;
+import android.os.Handler;
 import android.support.v4.app.FragmentActivity;
 import android.support.v7.app.AppCompatDelegate;
+import android.support.v7.preference.ListPreference;
 import android.support.v7.preference.Preference;
 import android.support.v7.preference.PreferenceFragmentCompat;
 import android.support.v7.preference.SwitchPreferenceCompat;
@@ -24,10 +27,11 @@ public class MyPreferencesActivity extends FragmentActivity {
     }
 
     public static class MyPreferenceFragment extends PreferenceFragmentCompat {
-        SwitchPreferenceCompat darkThemeSwitch;
-
         public static final String TAG = "MyPreferenceFragment";
+
+        private SwitchPreferenceCompat darkThemeSwitch;
         private ColorPreferenceCompat themeChooser;
+        private ListPreference fontSize;
 
         @Override
         public void onCreatePreferences(Bundle savedInstanceState, String rootKey) {
@@ -36,7 +40,6 @@ public class MyPreferencesActivity extends FragmentActivity {
             darkThemeSwitch.setOnPreferenceChangeListener(new Preference.OnPreferenceChangeListener() {
                 @Override
                 public boolean onPreferenceChange(Preference preference, Object newValue) {
-                    Log.d(TAG, "onPreferenceChange: ");
                     if ((boolean) newValue)
                         AppCompatDelegate.setDefaultNightMode(AppCompatDelegate.MODE_NIGHT_YES);
                     else
@@ -46,17 +49,19 @@ public class MyPreferencesActivity extends FragmentActivity {
             });
 
             themeChooser = (ColorPreferenceCompat) getPreferenceManager().findPreference("themeColor");
-/*
 
             themeChooser.setOnPreferenceChangeListener(new Preference.OnPreferenceChangeListener() {
                 @Override
                 public boolean onPreferenceChange(Preference preference, Object newValue) {
-
-                    return false;
+                    if (darkThemeSwitch.isEnabled())
+                        AppCompatDelegate.setDefaultNightMode(AppCompatDelegate.MODE_NIGHT_YES);
+                    else
+                        AppCompatDelegate.setDefaultNightMode(AppCompatDelegate.MODE_NIGHT_NO);
+                    return true;
                 }
             });
-*/
+
+            fontSize = (ListPreference) getPreferenceManager().findPreference("font_size");
         }
     }
-
 }

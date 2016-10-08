@@ -4,9 +4,12 @@ import android.app.ActionBar;
 import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.net.Uri;
 import android.os.AsyncTask;
 import android.os.Bundle;
+import android.os.Handler;
+import android.preference.PreferenceManager;
 import android.support.annotation.IntegerRes;
 import android.support.design.widget.AppBarLayout;
 import android.support.v4.app.FragmentActivity;
@@ -15,6 +18,7 @@ import android.support.v4.app.FragmentPagerAdapter;
 import android.support.v4.view.PagerAdapter;
 import android.support.v4.view.ViewPager;
 import android.support.v4.app.Fragment;
+import android.util.TypedValue;
 import android.view.ActionMode;
 import android.text.Selection;
 import android.text.SpannableStringBuilder;
@@ -53,11 +57,12 @@ public class VachanaFragment extends Fragment {
     private ViewPager viewPager;
     private MyViewPagerAdapter myViewPagerAdapter;
     private Menu menu;
+    private int textSize = 16;
 
     public VachanaFragment() {}
 
     @Override
-    public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
+    public View onCreateView(LayoutInflater inflater, final ViewGroup container, Bundle savedInstanceState) {
         setHasOptionsMenu(true);
 
         ViewGroup root = (ViewGroup) inflater.inflate(R.layout.vachana_pager_layout, null);
@@ -72,6 +77,17 @@ public class VachanaFragment extends Fragment {
         viewPager.setOffscreenPageLimit(2);
         viewPager.setAdapter(myViewPagerAdapter);
         viewPager.setCurrentItem((int) extra.getSerializable("current_position"), true);
+
+        new Handler().postDelayed(new Runnable() {
+            @Override
+            public void run() {
+                SharedPreferences sharedPreferences =
+                        PreferenceManager.getDefaultSharedPreferences(container.getContext());
+                textSize = Integer.parseInt(sharedPreferences.getString("font_size", "16"));
+                Log.d(TAG, "run: "+textSize);
+            }
+        }, 0);
+
         return root;
     }
 
@@ -220,6 +236,7 @@ public class VachanaFragment extends Fragment {
                 }
                 updateActionBarTitle(myViewPagerAdapter.vachanaHashMap.get(viewPager.getCurrentItem()));
                 progressBar.setVisibility(View.GONE);
+                vachanaTextView.setTextSize(TypedValue.COMPLEX_UNIT_SP, textSize);
                 vachanaTextView.setText(vachana.getText());
                 vachanaTextView.setVisibility(View.VISIBLE);
                 vachanaTextView.setCustomSelectionActionModeCallback(new StyleCallback(vachanaTextView));

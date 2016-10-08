@@ -4,16 +4,24 @@
     xmlns:android="http://schemas.android.com/apk/res/android">
 
   <android.support.v7.preference.SwitchPreferenceCompat
-      android:title="Theme"
+      android:title="ಘಾಡ ಸ್ಕಿನ್"
       android:defaultValue="false"
-      android:summary="Use this option to set the theme of the application to set dark"
+      android:summary="ಈ ಆಪ್ಶನ್ ಬಳಸುವ ಮೂಲಕ ಘಾಡ ಸ್ಕಿನ್ ಸೆಟ್ ಮಾಡಬಹುದು"
       android:key="theme"/>
 
   <com.kizitonwose.colorpreferencecompat.ColorPreferenceCompat
-      android:title="Theme Chooser"
+      android:title="ಸ್ಕಿನ್ ಬಣ್ಣ"
       android:defaultValue="@string/color_set_5_primary"
       app:colorChoices="@array/color_choices"
-      android:summary="Use this option to set the theme of the application to set dark"
+      android:summary="ಅ್ಯಪನ ಸ್ಕಿನ್ ಬಣ್ಣವನ್ನು ಬದಲಿಸಿ"
       android:key="themeColor" />
+
+    <android.support.v7.preference.ListPreference
+        android:key="font_size"
+        android:title="ಅಕ್ಷರದ ಗಾತ್ರ"
+        android:defaultValue="16"
+        android:summary="ವಚನಗಳ ಅಕ್ಷರಗಳ ಗಾತ್ರವನ್ನು ಬದಲಾಯಿಸಿ"
+        android:entries="@array/font_size"
+        android:entryValues="@array/font_size_values" />
 
 </android.support.v7.preference.PreferenceScreen>
