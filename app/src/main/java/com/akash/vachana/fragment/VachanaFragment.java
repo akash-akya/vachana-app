@@ -186,6 +186,7 @@ public class VachanaFragment extends Fragment {
         }
 
         private class GetVachanaFromDb extends AsyncTask {
+            private final TextView vachanaNumber;
             private ProgressBar progressBar;
             private TextView vachanaTextView;
             private TextView kathruTextView;
@@ -194,6 +195,7 @@ public class VachanaFragment extends Fragment {
             public GetVachanaFromDb(View view, int position) {
                 vachanaTextView = (TextView) view.findViewById(R.id.vachana_text);
                 kathruTextView = (TextView) view.findViewById(R.id.vachana_kathru_text);
+                vachanaNumber = (TextView) view.findViewById(R.id.vachana_number);
                 progressBar = (ProgressBar) view.findViewById(R.id.progressBar);
                 this.position = position;
             }
@@ -223,6 +225,8 @@ public class VachanaFragment extends Fragment {
                 vachanaTextView.setCustomSelectionActionModeCallback(new StyleCallback(vachanaTextView));
                 kathruTextView.setText(vachana.getKathru());
                 kathruTextView.setVisibility(View.VISIBLE);
+                vachanaNumber.setText(String.format("%d/%d",position+1,vachanaMinis.size()));
+                vachanaNumber.setVisibility(View.VISIBLE);
                 final MainActivity mainActivity = (MainActivity) getActivity();
 //                kathruTextView.setOnClickListener(mainActivity.getKathruOnClickListener(vachana.getKathruId()));
                 final KathruMini kathruMini = MainActivity.db.getKathruMiniById(vachana.getKathruId());
