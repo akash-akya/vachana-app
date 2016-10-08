@@ -116,6 +116,7 @@ public class VachanaListFragment extends Fragment {
         if (vachanaMinis == null || vachanaMinis.size() <= 0){
             new VachanaListTask().execute();
         } else {
+            adapter.notifyDataSetChanged();
             ProgressBar progressBar = (ProgressBar) getActivity().findViewById(R.id.vachana_list_progressBar);
             recyclerView.setAdapter(adapter);
             fastScroller.setRecyclerView(recyclerView);
