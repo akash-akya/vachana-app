@@ -24,7 +24,7 @@ android:layout_width="match_parent"
         android:paddingRight="@dimen/margin_small"
         android:paddingEnd="@dimen/margin_small"
 
-        recyclerviewfastscroller:rfs_barColor="#eeeeee"
+        recyclerviewfastscroller:rfs_barColor="@color/scrollLineColor"
         recyclerviewfastscroller:rfs_handleBackground="@drawable/fast_scroller_handle"
         />
 
@@ -34,11 +34,11 @@ android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_toLeftOf="@id/fast_scroller"
         android:layout_toStartOf="@id/fast_scroller"
-        android:layout_marginRight="40dp"
-        android:layout_marginEnd="40dp"
+        android:layout_marginRight="35dp"
+        android:layout_marginEnd="35dp"
         android:paddingBottom="40dp"
 
-        recyclerviewfastscroller:rfs_backgroundColor="@color/colorPrimaryDark"
+        recyclerviewfastscroller:rfs_backgroundColor="?attr/colorPrimaryDark"
         recyclerviewfastscroller:rfs_textColor="@android:color/primary_text_dark"
         />
 

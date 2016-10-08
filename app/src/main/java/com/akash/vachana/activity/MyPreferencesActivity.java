@@ -1,42 +1,39 @@
 package com.akash.vachana.activity;
 
 import android.os.Bundle;
-import android.preference.CheckBoxPreference;
-import android.preference.Preference;
-import android.preference.PreferenceActivity;
-import android.preference.PreferenceFragment;
-import android.preference.SwitchPreference;
+import android.support.v4.app.FragmentActivity;
 import android.support.v7.app.AppCompatDelegate;
+import android.support.v7.preference.Preference;
+import android.support.v7.preference.PreferenceFragmentCompat;
+import android.support.v7.preference.SwitchPreferenceCompat;
 import android.util.Log;
-import android.view.LayoutInflater;
-import android.view.View;
-import android.view.ViewGroup;
 
 import com.akash.vachana.R;
+import com.kizitonwose.colorpreferencecompat.ColorPreferenceCompat;
 
 /**
  * Created by akash on 8/10/16.
  */
 
-public class MyPreferencesActivity extends PreferenceActivity {
+public class MyPreferencesActivity extends FragmentActivity {
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        getFragmentManager().beginTransaction().replace(android.R.id.content, new MyPreferenceFragment()).commit();
+        getSupportFragmentManager().beginTransaction().replace(android.R.id.content, new MyPreferenceFragment()).commit();
     }
 
-    public static class MyPreferenceFragment extends PreferenceFragment {
-        SwitchPreference darkThemeSwitch;
+    public static class MyPreferenceFragment extends PreferenceFragmentCompat {
+        SwitchPreferenceCompat darkThemeSwitch;
+
         public static final String TAG = "MyPreferenceFragment";
+        private ColorPreferenceCompat themeChooser;
 
         @Override
-        public void onCreate(final Bundle savedInstanceState) {
-            super.onCreate(savedInstanceState);
+        public void onCreatePreferences(Bundle savedInstanceState, String rootKey) {
             addPreferencesFromResource(R.xml.preferences);
-            darkThemeSwitch = (SwitchPreference) getPreferenceManager().findPreference("theme");
+            darkThemeSwitch = (SwitchPreferenceCompat) getPreferenceManager().findPreference("theme");
             darkThemeSwitch.setOnPreferenceChangeListener(new Preference.OnPreferenceChangeListener() {
-
                 @Override
                 public boolean onPreferenceChange(Preference preference, Object newValue) {
                     Log.d(TAG, "onPreferenceChange: ");
@@ -47,20 +44,19 @@ public class MyPreferencesActivity extends PreferenceActivity {
                     return true;
                 }
             });
-        }
 
- /*       @Override
-        public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
-            darkThemeSwitch = (SwitchPreference) getPreferenceManager().findPreference("preference_key");
-            darkThemeSwitch.setOnPreferenceChangeListener(new Preference.OnPreferenceChangeListener() {
+            themeChooser = (ColorPreferenceCompat) getPreferenceManager().findPreference("themeColor");
+/*
+
+            themeChooser.setOnPreferenceChangeListener(new Preference.OnPreferenceChangeListener() {
                 @Override
                 public boolean onPreferenceChange(Preference preference, Object newValue) {
-                    return true;
+
+                    return false;
                 }
             });
-            return inflater.inflate(R.layout.fragment_settings, container, false);
+*/
         }
-        */
     }
 
 }

@@ -47,7 +47,7 @@
                         android:singleLine="true"
                         android:background="@drawable/kathru_count_background"
                         android:text="235"
-                        android:textColor="#858585"
+                        android:textColor="@color/vachana_count_color"
                         android:gravity="center"
                         android:layout_gravity="center_vertical"
 
@@ -81,8 +81,8 @@
                 android:layout_width="0dp"
                 android:layout_height="match_parent"
                 android:layout_weight="0.1"
-                android:layout_marginRight="20dp"
-                android:layout_marginEnd="20dp"
+                android:layout_marginRight="15dp"
+                android:layout_marginEnd="15dp"
                 android:orientation="vertical">
 
                 <CheckBox

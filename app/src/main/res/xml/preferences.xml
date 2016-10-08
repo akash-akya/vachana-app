@@ -1,7 +1,19 @@
 <?xml version="1.0" encoding="utf-8"?>
-<PreferenceScreen xmlns:android="http://schemas.android.com/apk/res/android">
-  <SwitchPreference android:title="Theme"
+<android.support.v7.preference.PreferenceScreen
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:android="http://schemas.android.com/apk/res/android">
+
+  <android.support.v7.preference.SwitchPreferenceCompat
+      android:title="Theme"
       android:defaultValue="false"
       android:summary="Use this option to set the theme of the application to set dark"
       android:key="theme"/>
-</PreferenceScreen>
+
+  <com.kizitonwose.colorpreferencecompat.ColorPreferenceCompat
+      android:title="Theme Chooser"
+      android:defaultValue="@string/color_set_5_primary"
+      app:colorChoices="@array/color_choices"
+      android:summary="Use this option to set the theme of the application to set dark"
+      android:key="themeColor" />
+
+</android.support.v7.preference.PreferenceScreen>

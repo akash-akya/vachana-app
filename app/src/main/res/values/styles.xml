@@ -1,15 +1,43 @@
 <resources>
 
-    <style name="AppTheme" parent="Theme.AppCompat.DayNight.DarkActionBar">
-        <item name="colorPrimary">@color/colorPrimary</item>
-        <item name="colorPrimaryDark">@color/colorPrimaryDark</item>
-        <item name="colorAccent">@color/colorAccent</item>
-        <item name="windowActionBarOverlay">true</item>
-    </style>
-
-    <style name="AppTheme.NoActionBar">
+    <style name="AppTheme.NoActionBar" parent="MyTheme">
         <item name="windowActionBar">false</item>
         <item name="windowNoTitle">true</item>
+    </style>
+
+    <style name="theme1" parent="AppTheme.NoActionBar">
+        <item name="colorPrimary">@color/color_set_1_primary</item>
+        <item name="colorPrimaryDark">@color/color_set_1_primary_dark</item>
+        <item name="colorControlActivated">@color/color_set_1_accent</item>
+        <item name="colorAccent">@color/color_set_1_accent</item>
+    </style>
+
+    <style name="theme2" parent="AppTheme.NoActionBar">
+        <item name="colorPrimary">@color/color_set_2_primary</item>
+        <item name="colorPrimaryDark">@color/color_set_2_primary_dark</item>
+        <item name="colorControlActivated">@color/color_set_2_accent</item>
+        <item name="colorAccent">@color/color_set_2_accent</item>
+    </style>
+
+    <style name="theme3" parent="AppTheme.NoActionBar">
+        <item name="colorPrimary">@color/color_set_3_primary</item>
+        <item name="colorPrimaryDark">@color/color_set_3_primary_dark</item>
+        <item name="colorControlActivated">@color/color_set_3_accent</item>
+        <item name="colorAccent">@color/color_set_3_accent</item>
+    </style>
+
+    <style name="theme4" parent="AppTheme.NoActionBar">
+        <item name="colorPrimary">@color/color_set_4_primary</item>
+        <item name="colorPrimaryDark">@color/color_set_4_primary_dark</item>
+        <item name="colorControlActivated">@color/color_set_4_accent</item>
+        <item name="colorAccent">@color/color_set_4_accent</item>
+    </style>
+
+    <style name="theme5" parent="AppTheme.NoActionBar">
+        <item name="colorPrimary">@color/color_set_5_primary</item>
+        <item name="colorPrimaryDark">@color/color_set_5_primary_dark</item>
+        <item name="colorControlActivated">@color/color_set_5_accent</item>
+        <item name="colorAccent">@color/color_set_5_accent</item>
     </style>
 
     <style name="AppTheme.AppBarOverlay" parent="ThemeOverlay.AppCompat.Dark.ActionBar" />

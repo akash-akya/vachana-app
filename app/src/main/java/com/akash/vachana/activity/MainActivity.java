@@ -35,6 +35,7 @@ import com.akash.vachana.dbUtil.VachanaMini;
 import com.akash.vachana.fragment.KathruListFragment;
 import com.akash.vachana.fragment.SearchFragment;
 import com.akash.vachana.fragment.VachanaListFragment;
+import com.kizitonwose.colorpreferencecompat.ColorPreferenceCompat;
 
 import java.io.IOException;
 import java.io.Serializable;
@@ -59,6 +60,9 @@ public class MainActivity extends AppCompatActivity
     protected void onCreate(Bundle savedInstanceState) {
         SharedPreferences sharedPreferences = PreferenceManager.getDefaultSharedPreferences(this);
         boolean value = sharedPreferences.getBoolean("theme", false);
+//        String hexColor = String.format("#%06X", (0xFFFFFF & color));
+        int color = sharedPreferences.getInt("themeColor", 0);
+        matchColor(0xFFFFFF & color);
         AppCompatDelegate.setDefaultNightMode(value? AppCompatDelegate.MODE_NIGHT_YES : AppCompatDelegate.MODE_NIGHT_NO);
 
         super.onCreate(savedInstanceState);
@@ -436,4 +440,15 @@ public class MainActivity extends AppCompatActivity
             return db.getFavoriteKathruMinis();
         }
     };
+
+    void matchColor(int id){
+        switch (id) {
+            case 0x4fc3f7: Log.d(TAG, "Color: Theme1"); setTheme(R.style.theme1); break;
+            case 0x42bd41: Log.d(TAG, "Color: Theme2"); setTheme(R.style.theme2); break;
+            case 0xffb74d: Log.d(TAG, "Color: Theme3"); setTheme(R.style.theme3); break;
+            case 0xff8a65: Log.d(TAG, "Color: Theme4"); setTheme(R.style.theme4); break;
+            case 0x3F51B5: Log.d(TAG, "Color: Theme5"); setTheme(R.style.theme5); break;
+            default: Log.d(TAG, "Color: unknown theme");
+        }
+    }
 }

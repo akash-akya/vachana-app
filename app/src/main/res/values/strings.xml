@@ -10,4 +10,11 @@
 
     <!-- TODO: Remove or change this placeholder text -->
     <string name="hello_blank_fragment">Hello blank fragment</string>
+
+    <string name="color_set_1_primary">#4fc3f7</string>
+    <string name="color_set_2_primary">#42bd41</string>
+    <string name="color_set_3_primary">#ffb74d</string>
+    <string name="color_set_4_primary">#ff8a65</string>
+    <string name="color_set_5_primary">#3F51B5</string>
+
 </resources>
