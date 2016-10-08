@@ -3,6 +3,7 @@ package com.akash.vachana.fragment;
 import android.content.Context;
 import android.os.AsyncTask;
 import android.os.Bundle;
+import android.support.annotation.Nullable;
 import android.support.design.widget.AppBarLayout;
 import android.support.v4.app.Fragment;
 import android.support.v7.widget.LinearLayoutManager;
@@ -83,14 +84,9 @@ public class VachanaListFragment extends Fragment {
             if (progressBar != null && recyclerView != null) {
                 adapter = new MyVachanaListRecyclerViewAdapter(vachanaMinis, listener);
                 recyclerView.setAdapter(adapter);
-
-                // Connect the recycler to the scroller (to let the scroller scroll the list)
                 fastScroller.setRecyclerView(recyclerView);
-                // Connect the scroller to the recycler (to let the recycler scroll the scroller's handle)
                 recyclerView.addOnScrollListener(fastScroller.getOnScrollListener());
-                // Connect the section indicator to the scroller
                 fastScroller.setSectionIndicator(sectionTitleIndicator);
-
                 progressBar.setVisibility(View.INVISIBLE);
                 recyclerView.setVisibility(View.VISIBLE);
                 mainActivity.getSupportActionBar().setTitle(title);
@@ -102,12 +98,18 @@ public class VachanaListFragment extends Fragment {
     public void onResume() {
         super.onResume();
 
-        ProgressBar progressBar = (ProgressBar) getActivity().findViewById(R.id.vachana_list_progressBar);
+        mainActivity = (MainActivity) getContext();
+        title = getArguments().getString("title");
+        listener = (OnListFragmentInteractionListener) getArguments().getSerializable("listener");
+
         if (vachanaMinis == null){
-            progressBar.setVisibility(View.VISIBLE);
-            new VachanaListTask().execute(getArguments().getInt("id"));
+            new VachanaListTask().execute();
         } else {
+            ProgressBar progressBar = (ProgressBar) getActivity().findViewById(R.id.vachana_list_progressBar);
             recyclerView.setAdapter(adapter);
+            fastScroller.setRecyclerView(recyclerView);
+            recyclerView.addOnScrollListener(fastScroller.getOnScrollListener());
+            fastScroller.setSectionIndicator(sectionTitleIndicator);
             progressBar.setVisibility(View.INVISIBLE);
             recyclerView.setVisibility(View.VISIBLE);
             if (title != null)
@@ -155,20 +157,19 @@ public class VachanaListFragment extends Fragment {
         View view = inflater.inflate(R.layout.fragment_vachana_list, container, false);
 
         recyclerView = (RecyclerView) view.findViewById(R.id.list);
-        recyclerView.setLayoutManager(new LinearLayoutManager(view.getContext()));
-
         fastScroller = (VerticalRecyclerViewFastScroller) view.findViewById(R.id.vachana_fast_scroller);
         sectionTitleIndicator = (SectionTitleIndicator) view.findViewById(R.id.vachan_fast_scroller_section_indicator);
-        // Connect the recycler to the scroller (to let the scroller scroll the list)
         fastScroller.setRecyclerView(recyclerView);
-
-        // Connect the scroller to the recycler (to let the recycler scroll the scroller's handle)
         recyclerView.addOnScrollListener(fastScroller.getOnScrollListener());
-
-        // Connect the section indicator to the scroller
         fastScroller.setSectionIndicator(sectionTitleIndicator);
 
         return view;
+    }
+
+    @Override
+    public void onActivityCreated(@Nullable Bundle savedInstanceState) {
+        super.onActivityCreated(savedInstanceState);
+        onResume();
     }
 
     @Override
