@@ -84,10 +84,10 @@ public class SearchFragment extends Fragment implements Serializable{
                 bundle.putSerializable("listener", new SearchButtonListener(getContext(), isPartialSearch,query,kathruString));
 
                 fragment.setArguments(bundle);
-                fragmentManager.popBackStack("search_fragment", FragmentManager.POP_BACK_STACK_INCLUSIVE);
+//                fragmentManager.popBackStack(null, FragmentManager.POP_BACK_STACK_INCLUSIVE);
                 fragmentManager.beginTransaction()
                         .replace(R.id.main_content, fragment)
-                        .addToBackStack( "search_fragment")
+//                        .addToBackStack( "search_fragment")
                         .commit();
             }
         });

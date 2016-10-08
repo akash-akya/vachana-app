@@ -209,13 +209,13 @@ public class MainActivity extends AppCompatActivity
                 break;
             case R.id.nav_kathru:
                 fragment = Fragment.instantiate(MainActivity.this, fragments[2]);
-                fragmentManager.popBackStack(null, FragmentManager.POP_BACK_STACK_INCLUSIVE);
                 bundle.putSerializable("listener", allKathruListListener);
                 try {
                     fragment.setArguments(bundle);
                 } catch (NullPointerException e){
                     Log.d(TAG, "selectItem: Fragment is null!!");
                 }
+                fragmentManager.popBackStack(null, FragmentManager.POP_BACK_STACK_INCLUSIVE);
                 fragmentManager.beginTransaction()
                         .replace(R.id.main_content, fragment)
 //                        .addToBackStack( "kathru_list" )
@@ -281,7 +281,7 @@ public class MainActivity extends AppCompatActivity
                 } catch (NullPointerException e){
                     Log.d(TAG, "selectItem: Fragment is null!!");
                 }
-                fragmentManager.popBackStack("List", FragmentManager.POP_BACK_STACK_INCLUSIVE);
+//                fragmentManager.popBackStack(null, FragmentManager.POP_BACK_STACK_INCLUSIVE);
                 fragmentManager.beginTransaction()
                         .replace(R.id.main_content, fragment)
                         .addToBackStack( "List" )
@@ -349,10 +349,10 @@ public class MainActivity extends AppCompatActivity
                     getIntent().putExtra("current_position", position);
                     fragment.setArguments(getIntent().getExtras());
 
-                    fragmentManager.popBackStack("vachana_list", FragmentManager.POP_BACK_STACK_INCLUSIVE);
+                    fragmentManager.popBackStack("search_vachana_list", FragmentManager.POP_BACK_STACK_INCLUSIVE);
                     fragmentManager.beginTransaction()
                             .replace(R.id.main_content, fragment)
-                            .addToBackStack( "vachana_list" )
+                            .addToBackStack( "search_vachana_list" )
                             .commit();
                 }
 
