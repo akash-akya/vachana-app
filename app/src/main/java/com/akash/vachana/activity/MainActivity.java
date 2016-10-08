@@ -273,8 +273,10 @@ public class MainActivity extends AppCompatActivity
                         .addToBackStack( "List" )
                         .commit();
                 return;
-//            case R.id.nav_settings:
-//                return;
+            case R.id.nav_settings:
+                Intent intent = new Intent(this, MyPreferencesActivity.class);
+                startActivity(intent);
+                return;
             default:
                 Log.e(TAG, "selectItem: Error, Wrong id");
         }
