@@ -1,41 +1,34 @@
 package com.akash.vachana.activity;
 
-import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
-import android.net.Uri;
 import android.os.AsyncTask;
+import android.os.Handler;
 import android.preference.PreferenceManager;
-import android.preference.SwitchPreference;
 import android.support.v4.app.FragmentManager;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
-import android.support.v4.app.FragmentTransaction;
 import android.support.v7.app.ActionBar;
+import android.support.v7.app.ActionBarDrawerToggle;
 import android.support.v7.app.AppCompatDelegate;
-import android.support.v7.widget.SearchView;
 import android.util.Log;
 import android.support.design.widget.NavigationView;
 import android.support.v4.view.GravityCompat;
 import android.support.v4.widget.DrawerLayout;
-import android.support.v7.app.ActionBarDrawerToggle;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.inputmethod.InputMethodManager;
-import android.widget.ShareActionProvider;
 
 import com.akash.vachana.R;
 import com.akash.vachana.dbUtil.KathruMini;
 import com.akash.vachana.dbUtil.MainDbHelper;
 import com.akash.vachana.dbUtil.VachanaMini;
 import com.akash.vachana.fragment.KathruListFragment;
-import com.akash.vachana.fragment.SearchFragment;
 import com.akash.vachana.fragment.VachanaListFragment;
-import com.kizitonwose.colorpreferencecompat.ColorPreferenceCompat;
 
 import java.io.IOException;
 import java.io.Serializable;
@@ -53,6 +46,7 @@ public class MainActivity extends AppCompatActivity
             "com.akash.vachana.fragment.KathruListFragment",
             "com.akash.vachana.fragment.SearchFragment"
     };
+    private static final long SMOOTH_DRAWER_DELAY = 175;
 
     public static MainDbHelper db;
 
@@ -89,9 +83,10 @@ public class MainActivity extends AppCompatActivity
         }
 
         DrawerLayout drawer = (DrawerLayout) findViewById(R.id.drawer_layout);
+
         ActionBarDrawerToggle toggle = new ActionBarDrawerToggle(
                 this, drawer, toolbar, R.string.navigation_drawer_open, R.string.navigation_drawer_close);
-        drawer.setDrawerListener(toggle);
+        drawer.addDrawerListener(toggle);
         toggle.syncState();
 
         drawer.addDrawerListener(new DrawerLayout.DrawerListener() {
@@ -157,12 +152,16 @@ public class MainActivity extends AppCompatActivity
 
     @SuppressWarnings("StatementWithEmptyBody")
     @Override
-    public boolean onNavigationItemSelected(MenuItem item) {
-        int id = item.getItemId();
-        selectItem(id);
-
+    public boolean onNavigationItemSelected(final MenuItem item) {
         DrawerLayout drawer = (DrawerLayout) findViewById(R.id.drawer_layout);
         drawer.closeDrawer(GravityCompat.START);
+        new Handler().postDelayed(new Runnable() {
+            @Override
+            public void run() {
+                selectItem(item.getItemId());
+            }
+        },SMOOTH_DRAWER_DELAY);
+
         return true;
     }
 

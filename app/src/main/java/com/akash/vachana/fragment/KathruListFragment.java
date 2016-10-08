@@ -3,6 +3,7 @@ package com.akash.vachana.fragment;
 import android.content.Context;
 import android.os.AsyncTask;
 import android.os.Bundle;
+import android.support.annotation.Nullable;
 import android.support.design.widget.AppBarLayout;
 import android.support.v4.app.Fragment;
 import android.support.v7.widget.GridLayoutManager;
@@ -18,6 +19,7 @@ import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ProgressBar;
+import android.widget.TextView;
 
 import com.akash.vachana.R;
 import com.akash.vachana.activity.MainActivity;
@@ -54,8 +56,13 @@ public class KathruListFragment extends Fragment {
     public void onResume() {
         super.onResume();
 
+        mListener = (OnKathruListFragmentInteractionListener) getArguments().getSerializable("listener");
+
+        new KathruListTask().execute();
+
         AppBarLayout appBarLayout = (AppBarLayout)getActivity().findViewById(R.id.app_bar);
         appBarLayout.setExpanded(true, true);
+
 
         try {
             ((MainActivity)getActivity()).getSupportActionBar().setTitle("ವಚನಕಾರರು");
@@ -68,19 +75,12 @@ public class KathruListFragment extends Fragment {
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         setHasOptionsMenu(true);
-        //        mListener = (KathruListFragment.OnKathruListFragmentInteractionListener) view.getContext();
         View view =  inflater.inflate(R.layout.fragment_kathru_list, container, false);
         recyclerView = (RecyclerView) view.findViewById(R.id.kathru_recycler_view);
-
         fastScroller = (VerticalRecyclerViewFastScroller) view.findViewById(R.id.fast_scroller);
         sectionTitleIndicator = (SectionTitleIndicator) view.findViewById(R.id.fast_scroller_section_title_indicator);
-        // Connect the recycler to the scroller (to let the scroller scroll the list)
         fastScroller.setRecyclerView(recyclerView);
-
-        // Connect the scroller to the recycler (to let the recycler scroll the scroller's handle)
         recyclerView.addOnScrollListener(fastScroller.getOnScrollListener());
-
-        // Connect the section indicator to the scroller
         fastScroller.setSectionIndicator(sectionTitleIndicator);
         return view;
     }
@@ -88,6 +88,7 @@ public class KathruListFragment extends Fragment {
     private class KathruListTask extends AsyncTask {
 
         private ProgressBar progressBar;
+        private View noDataTv;
 
         @Override
         protected void onPreExecute() {
@@ -96,8 +97,13 @@ public class KathruListFragment extends Fragment {
             recyclerView = (RecyclerView) getActivity().findViewById(R.id.kathru_recycler_view);
             fastScroller = (VerticalRecyclerViewFastScroller) getActivity().findViewById(R.id.fast_scroller);
             sectionTitleIndicator = (SectionTitleIndicator) getActivity().findViewById(R.id.fast_scroller_section_title_indicator);
+            noDataTv = getActivity().findViewById(R.id.no_data_kathru);
+
             progressBar.setVisibility(View.VISIBLE);
             recyclerView.setVisibility(View.INVISIBLE);
+            fastScroller.setVisibility(View.INVISIBLE);
+            sectionTitleIndicator.setVisibility(View.INVISIBLE);
+            noDataTv.setVisibility(View.INVISIBLE);
         }
 
         @Override
@@ -110,19 +116,20 @@ public class KathruListFragment extends Fragment {
             super.onPostExecute(o);
             ArrayList<KathruMini> kathruMinis = (ArrayList<KathruMini>) o;
             if (progressBar != null && recyclerView != null) {
-                myAdapter = new MyKathruListRecyclerViewAdapter(kathruMinis, mListener);
-                recyclerView.setAdapter(myAdapter);
-                // Connect the recycler to the scroller (to let the scroller scroll the list)
-                fastScroller.setRecyclerView(recyclerView);
-
-                // Connect the scroller to the recycler (to let the recycler scroll the scroller's handle)
-                recyclerView.addOnScrollListener(fastScroller.getOnScrollListener());
-
-                // Connect the section indicator to the scroller
-                fastScroller.setSectionIndicator(sectionTitleIndicator);
-
                 progressBar.setVisibility(View.INVISIBLE);
-                recyclerView.setVisibility(View.VISIBLE);
+
+                if (kathruMinis.size() > 0){
+                    myAdapter = new MyKathruListRecyclerViewAdapter(kathruMinis, mListener);
+                    recyclerView.setAdapter(myAdapter);
+                    fastScroller.setRecyclerView(recyclerView);
+                    recyclerView.addOnScrollListener(fastScroller.getOnScrollListener());
+                    fastScroller.setSectionIndicator(sectionTitleIndicator);
+                    recyclerView.setVisibility(View.VISIBLE);
+                    fastScroller.setVisibility(View.VISIBLE);
+                    sectionTitleIndicator.setVisibility(View.VISIBLE);
+                } else {
+                    noDataTv.findViewById(R.id.no_data_kathru).setVisibility(View.VISIBLE);
+                }
             }
         }
     }
@@ -154,7 +161,12 @@ public class KathruListFragment extends Fragment {
                 return false;
             }
         });
-        new KathruListTask().execute();
+    }
+
+    @Override
+    public void onActivityCreated(@Nullable Bundle savedInstanceState) {
+        super.onActivityCreated(savedInstanceState);
+        onResume();
     }
 
     @Override
@@ -165,7 +177,6 @@ public class KathruListFragment extends Fragment {
     @Override
     public void onDetach() {
         super.onDetach();
-        mListener = null;
     }
 
     public interface OnKathruListFragmentInteractionListener extends Serializable {

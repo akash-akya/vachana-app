@@ -15,6 +15,7 @@
 
     <xyz.danoz.recyclerviewfastscroller.vertical.VerticalRecyclerViewFastScroller
         android:id="@+id/vachana_fast_scroller"
+        android:visibility="invisible"
         android:layout_width="24dp"
         android:layout_height="match_parent"
         android:layout_alignParentRight="true"
@@ -29,6 +30,7 @@
 
     <com.akash.vachana.Util.ListScrollIndicator
         android:id="@+id/vachan_fast_scroller_section_indicator"
+        android:visibility="invisible"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_toLeftOf="@id/vachana_fast_scroller"
@@ -40,6 +42,17 @@
         recyclerviewfastscroller:rfs_backgroundColor="?attr/colorPrimaryDark"
         recyclerviewfastscroller:rfs_textColor="@android:color/primary_text_dark"
         />
+
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:visibility="invisible"
+        android:id="@+id/no_data_vachana"
+        android:text="ಯಾವುದೇ ಡೇಟಾ ಸಿಕ್ಕಿಲ್ಲ"
+        android:layout_marginTop="80dp"
+        android:textSize="19sp"
+        android:textStyle="bold"
+        android:layout_centerHorizontal="true"/>
 
     <ProgressBar
         style="?android:attr/progressBarStyleLarge"

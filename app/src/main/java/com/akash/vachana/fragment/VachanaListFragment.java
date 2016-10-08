@@ -60,6 +60,7 @@ public class VachanaListFragment extends Fragment {
     private class VachanaListTask extends AsyncTask {
 
         private ProgressBar progressBar;
+        private View noDataTv;
 
         @Override
         protected void onPreExecute() {
@@ -68,8 +69,12 @@ public class VachanaListFragment extends Fragment {
             recyclerView = (RecyclerView) getActivity().findViewById(R.id.list);
             fastScroller = (VerticalRecyclerViewFastScroller) getActivity().findViewById(R.id.vachana_fast_scroller);
             sectionTitleIndicator = (SectionTitleIndicator) getActivity().findViewById(R.id.vachan_fast_scroller_section_indicator);
+            noDataTv = getActivity().findViewById(R.id.no_data_vachana);
+
             progressBar.setVisibility(View.VISIBLE);
             recyclerView.setVisibility(View.INVISIBLE);
+            fastScroller.setVisibility(View.INVISIBLE);
+            noDataTv.setVisibility(View.INVISIBLE);
         }
 
         @Override
@@ -81,15 +86,21 @@ public class VachanaListFragment extends Fragment {
         protected void onPostExecute(Object o) {
             super.onPostExecute(o);
             vachanaMinis = (ArrayList<VachanaMini>) o;
-            if (progressBar != null && recyclerView != null) {
-                adapter = new MyVachanaListRecyclerViewAdapter(vachanaMinis, listener);
-                recyclerView.setAdapter(adapter);
-                fastScroller.setRecyclerView(recyclerView);
-                recyclerView.addOnScrollListener(fastScroller.getOnScrollListener());
-                fastScroller.setSectionIndicator(sectionTitleIndicator);
+            if (progressBar != null &&   recyclerView != null) {
                 progressBar.setVisibility(View.INVISIBLE);
-                recyclerView.setVisibility(View.VISIBLE);
-                mainActivity.getSupportActionBar().setTitle(title);
+                if (vachanaMinis.size() > 0) {
+                    adapter = new MyVachanaListRecyclerViewAdapter(vachanaMinis, listener);
+                    recyclerView.setAdapter(adapter);
+                    fastScroller.setRecyclerView(recyclerView);
+                    recyclerView.addOnScrollListener(fastScroller.getOnScrollListener());
+                    fastScroller.setSectionIndicator(sectionTitleIndicator);
+                    recyclerView.setVisibility(View.VISIBLE);
+                    fastScroller.setVisibility(View.VISIBLE);
+                    sectionTitleIndicator.setVisibility(View.VISIBLE);
+                    mainActivity.getSupportActionBar().setTitle(title);
+                } else {
+                    noDataTv.setVisibility(View.VISIBLE);
+                }
             }
         }
     }
@@ -102,7 +113,7 @@ public class VachanaListFragment extends Fragment {
         title = getArguments().getString("title");
         listener = (OnListFragmentInteractionListener) getArguments().getSerializable("listener");
 
-        if (vachanaMinis == null){
+        if (vachanaMinis == null || vachanaMinis.size() <= 0){
             new VachanaListTask().execute();
         } else {
             ProgressBar progressBar = (ProgressBar) getActivity().findViewById(R.id.vachana_list_progressBar);
