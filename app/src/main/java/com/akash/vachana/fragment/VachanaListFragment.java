@@ -123,6 +123,8 @@ public class VachanaListFragment extends Fragment {
             fastScroller.setSectionIndicator(sectionTitleIndicator);
             progressBar.setVisibility(View.INVISIBLE);
             recyclerView.setVisibility(View.VISIBLE);
+            fastScroller.setVisibility(View.VISIBLE);
+            sectionTitleIndicator.setVisibility(View.VISIBLE);
             if (title != null)
                 mainActivity.getSupportActionBar().setTitle(title);
         }
