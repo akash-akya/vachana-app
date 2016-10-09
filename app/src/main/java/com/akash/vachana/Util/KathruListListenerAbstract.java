@@ -1,5 +1,6 @@
 package com.akash.vachana.Util;
 
+import android.os.AsyncTask;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentActivity;
@@ -29,10 +30,10 @@ public abstract class KathruListListenerAbstract implements KathruListFragment.O
         Fragment fragment = Fragment.instantiate(activity, MainActivity.fragments[1]);
 
         fragment.setArguments(getBundle(item));
-        fragmentManager.popBackStack("vachana_list_vertical", FragmentManager.POP_BACK_STACK_INCLUSIVE);
+        fragmentManager.popBackStack("kathru_list_vertical", FragmentManager.POP_BACK_STACK_INCLUSIVE);
         fragmentManager.beginTransaction()
-                .replace(R.id.main_content, fragment)
-                .addToBackStack( "vachana_list_vertical" )
+                .replace(R.id.main_content, fragment, "kathru_list_vertical")
+                .addToBackStack("kathru_list_vertical")
                 .commit();
     }
 
@@ -40,6 +41,6 @@ public abstract class KathruListListenerAbstract implements KathruListFragment.O
 
     @Override
     public void onFavoriteButton(int kathruId, boolean checked) {
-        new MainActivity.UpdateKathruFavorite().execute(kathruId, checked);
+        new UpdateKathruFavorite().execute(kathruId, checked, activity);
     }
 }

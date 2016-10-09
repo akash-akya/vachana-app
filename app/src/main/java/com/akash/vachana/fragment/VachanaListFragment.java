@@ -40,13 +40,12 @@ public class VachanaListFragment extends Fragment {
 
     private static final String TAG = "VachanaListFragment";
     private String title =null;
-//    private ArrayList<VachanaMini> vachanaMinis = null;
-//    private MainActivity mainActivity;
     private RecyclerView recyclerView;
     private OnListFragmentInteractionListener listener;
     private MyVachanaListRecyclerViewAdapter adapter;
     private VerticalRecyclerViewFastScroller fastScroller;
     private SectionTitleIndicator sectionTitleIndicator;
+    public boolean needToUpdate = false;
 
     public VachanaListFragment() { }
 
@@ -100,11 +99,11 @@ public class VachanaListFragment extends Fragment {
                     recyclerView.setVisibility(View.VISIBLE);
                     fastScroller.setVisibility(View.VISIBLE);
                     sectionTitleIndicator.setVisibility(View.VISIBLE);
-                    if (getActivity() != null)
-                        ((AppCompatActivity)getActivity()).getSupportActionBar().setTitle(title);
                 } else {
                     noDataTv.setVisibility(View.VISIBLE);
                 }
+                if (getActivity() != null)
+                    ((AppCompatActivity)getActivity()).getSupportActionBar().setTitle(title);
             }
         }
     }
@@ -119,8 +118,8 @@ public class VachanaListFragment extends Fragment {
             new VachanaListTask().execute();
             Log.d(TAG, "onResume: This is called");
         } else {
-            adapter.notifyDataSetChanged();
             ProgressBar progressBar = (ProgressBar) getActivity().findViewById(R.id.vachana_list_progressBar);
+            adapter.notifyDataSetChanged();
             recyclerView.setAdapter(adapter);
             fastScroller.setRecyclerView(recyclerView);
             recyclerView.addOnScrollListener(fastScroller.getOnScrollListener());
@@ -183,6 +182,17 @@ public class VachanaListFragment extends Fragment {
         fastScroller.setSectionIndicator(sectionTitleIndicator);
 
         return view;
+    }
+
+    @Override
+    public void onActivityCreated(@Nullable Bundle savedInstanceState) {
+        super.onActivityCreated(savedInstanceState);
+
+        if(needToUpdate){
+            new VachanaListTask().execute();
+            Log.d(TAG, "onActivityCreated: needToReload");
+            needToUpdate = false;
+        }
     }
 
     @Override

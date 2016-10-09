@@ -277,6 +277,26 @@ public class MainDbHelper extends SQLiteOpenHelper implements Serializable {
         return vachana;
     }
 
+    public VachanaMini getVachanaMiniById(int id) {
+        SQLiteDatabase db = this.getReadableDatabase();
+        Cursor cursor = db.query(TABLE_VACHANA, new String[] { KEY_VACHANA_ID, KEY_TITLE, KEY_FAVORITE, FOREIGN_KEY_KATHRU_ID},
+                KEY_VACHANA_ID+ "=?",
+                new String[] { String.valueOf(id) }, null, null, null, null);
+        if (cursor != null)
+            cursor.moveToFirst();
+
+        assert cursor != null;
+        int vid = Integer.parseInt(cursor.getString(0));
+        String title = cursor.getString(1);
+        int kathruId = Integer.parseInt(cursor.getString(3));
+        String kathruName = getKathruNameById(kathruId);
+
+        VachanaMini vachanaMini = new VachanaMini(id, kathruId, kathruName, title, cursor.getInt(2));
+        cursor.close();
+
+        return vachanaMini;
+    }
+
     public void addVachanaToFavorite(int vachanaId){
         SQLiteDatabase db = this.getReadableDatabase();
 

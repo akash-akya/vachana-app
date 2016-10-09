@@ -1,6 +1,7 @@
 package com.akash.vachana.Util;
 
 import android.content.Context;
+import android.os.AsyncTask;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentActivity;
@@ -38,8 +39,8 @@ public abstract class VachanaListListenerAbstract implements VachanaListFragment
 
         fragmentManager.popBackStack("vachana_list", FragmentManager.POP_BACK_STACK_INCLUSIVE);
         fragmentManager.beginTransaction()
-                .replace(R.id.main_content, fragment)
-                .addToBackStack( "vachana_list" )
+                .replace(R.id.main_content, fragment, "vachana_list")
+                .addToBackStack("vachana_list")
                 .commit();
     }
 
@@ -47,6 +48,6 @@ public abstract class VachanaListListenerAbstract implements VachanaListFragment
 
     @Override
     public void onFavoriteButton(int vachanaId, boolean checked) {
-        new MainActivity.UpdateVachanaFavorite().execute(vachanaId, checked);
+        new UpdateVachanaFavorite().execute(vachanaId, checked, activity);
     }
 }

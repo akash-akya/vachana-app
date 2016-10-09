@@ -26,6 +26,7 @@ import android.view.inputmethod.InputMethodManager;
 
 import com.akash.vachana.R;
 import com.akash.vachana.Util.KathruListListenerAbstract;
+import com.akash.vachana.Util.UpdateKathruFavorite;
 import com.akash.vachana.Util.VachanaListListenerAbstract;
 import com.akash.vachana.dbUtil.KathruMini;
 import com.akash.vachana.dbUtil.MainDbHelper;
@@ -39,7 +40,8 @@ import java.util.ArrayList;
 import java.util.Random;
 
 public class MainActivity extends AppCompatActivity
-        implements NavigationView.OnNavigationItemSelectedListener, Serializable {
+        implements NavigationView.OnNavigationItemSelectedListener,
+        UpdateKathruFavorite.INotifyActivityChange, Serializable {
 
     private static final String TAG = "MainActivity";
 
@@ -52,6 +54,8 @@ public class MainActivity extends AppCompatActivity
     private static final long SMOOTH_DRAWER_DELAY = 175;
 
     public static MainDbHelper db;
+    public static boolean vachanaFavoriteChanged = false;
+    public static boolean kathruFavoriteChanged = false;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -122,6 +126,48 @@ public class MainActivity extends AppCompatActivity
         navigationView.setNavigationItemSelectedListener(this);
     }
 
+    private void updateBackStack() {
+        if (vachanaFavoriteChanged){
+            FragmentManager fm = getSupportFragmentManager();
+            for(int entry = 0; entry < fm.getBackStackEntryCount(); entry++){
+                String name = fm.getBackStackEntryAt(entry).getName();
+                Fragment fragment = getSupportFragmentManager().findFragmentByTag(name);
+
+/*
+                if (fragment == null)
+                    Log.d(TAG, "updateBackStack: NULL!!!");
+*/
+
+                if (fragment instanceof VachanaListFragment){
+//                    Log.d(TAG, "onBackStackChanged: !!!!!!!  "+name);
+                    VachanaListFragment fragment1 = (VachanaListFragment) fragment;
+                    fragment1.needToUpdate = true;
+                }
+            }
+            vachanaFavoriteChanged = false;
+        }
+        if (kathruFavoriteChanged){
+            Log.d(TAG, "onBackStackChanged: kathruFavoriteChanged");
+            FragmentManager fm = getSupportFragmentManager();
+            for(int entry = 0; entry < fm.getBackStackEntryCount(); entry++){
+                String name = fm.getBackStackEntryAt(entry).getName();
+                Fragment fragment = getSupportFragmentManager().findFragmentByTag(name);
+
+/*
+                if (fragment == null)
+                    Log.d(TAG, "updateBackStack: NULL!!!");
+*/
+
+                if (fragment instanceof KathruListFragment){
+//                    Log.d(TAG, "onBackStackChanged: !!!!!!!  "+name);
+                    KathruListFragment fragment1 = (KathruListFragment) fragment;
+                    fragment1.needToUpdate = true;
+                }
+            }
+            kathruFavoriteChanged = false;
+        }
+    }
+
     @Override
     public void onBackPressed() {
         DrawerLayout drawer = (DrawerLayout) findViewById(R.id.drawer_layout);
@@ -172,6 +218,7 @@ public class MainActivity extends AppCompatActivity
 
         Bundle bundle = new Bundle();
         switch (itemId){
+
             case R.id.nav_vachana:
                 Random r = new Random();
                 ArrayList<KathruMini> k = db.getAllKathruMinis();
@@ -191,9 +238,10 @@ public class MainActivity extends AppCompatActivity
 
                 fragmentManager.popBackStack(null, FragmentManager.POP_BACK_STACK_INCLUSIVE);
                 fragmentManager.beginTransaction()
-                        .replace(R.id.main_content, fragment)
+                        .replace(R.id.main_content, fragment, "vachana_list")
                         .commit();
                 return;
+
 
             case R.id.nav_kathru:
                 fragment = Fragment.instantiate(MainActivity.this, fragments[2]);
@@ -206,10 +254,12 @@ public class MainActivity extends AppCompatActivity
                 }
                 fragmentManager.popBackStack(null, FragmentManager.POP_BACK_STACK_INCLUSIVE);
                 fragmentManager.beginTransaction()
-                        .replace(R.id.main_content, fragment)
+                        .replace(R.id.main_content, fragment, "kathru_list")
                         .addToBackStack( "kathru_list" )
                         .commit();
                 return;
+
+
             case R.id.nav_favorite:
                 bundle.putString("title", "ನೆಚ್ಚಿನ ವಚನಗಳು");
                 bundle.putSerializable("listener", new VachanaListListenerAbstract(this) {
@@ -222,10 +272,12 @@ public class MainActivity extends AppCompatActivity
                 fragment.setArguments(bundle);
                 fragmentManager.popBackStack("fav_vachana_drawer", FragmentManager.POP_BACK_STACK_INCLUSIVE);
                 fragmentManager.beginTransaction()
-                        .replace(R.id.main_content, fragment)
+                        .replace(R.id.main_content, fragment, "fav_vachana_drawer")
                         .addToBackStack( "fav_vachana_drawer" )
                         .commit();
                 return;
+
+
             case R.id.nav_favorite_kathru:
                 fragment = Fragment.instantiate(MainActivity.this, fragments[2]);
                 fragmentManager.popBackStack(null, FragmentManager.POP_BACK_STACK_INCLUSIVE);
@@ -238,10 +290,12 @@ public class MainActivity extends AppCompatActivity
                 }
                 fragmentManager.popBackStack("kathru_favorite_drawer", FragmentManager.POP_BACK_STACK_INCLUSIVE);
                 fragmentManager.beginTransaction()
-                        .replace(R.id.main_content, fragment)
+                        .replace(R.id.main_content, fragment, "kathru_favorite_drawer")
                         .addToBackStack( "kathru_favorite_drawer" )
                         .commit();
                 return;
+
+
             case R.id.nav_search:
                 fragment = Fragment.instantiate(MainActivity.this, fragments[3]);
                 try {
@@ -251,14 +305,18 @@ public class MainActivity extends AppCompatActivity
                 }
                 fragmentManager.popBackStack("search_view_drawer", FragmentManager.POP_BACK_STACK_INCLUSIVE);
                 fragmentManager.beginTransaction()
-                        .replace(R.id.main_content, fragment)
+                        .replace(R.id.main_content, fragment, "search_view_drawer")
                         .addToBackStack( "search_view_drawer" )
                         .commit();
                 return;
+
+
             case R.id.nav_settings:
                 Intent intent = new Intent(this, MyPreferencesActivity.class);
                 startActivityForResult(intent, 0);
                 return;
+
+
             default:
                 Log.e(TAG, "selectItem: Error, Wrong id");
         }
@@ -266,28 +324,6 @@ public class MainActivity extends AppCompatActivity
 
     public ArrayList<KathruMini> getAllKathruMinis() {
         return db.getAllKathruMinis();
-    }
-
-    public static class UpdateVachanaFavorite extends AsyncTask {
-        @Override
-        protected Void doInBackground(Object[] objects) {
-            if ((boolean)objects[1])
-                db.addVachanaToFavorite((int)objects[0]);
-            else
-                db.removeVachanaFromFavorite((int)objects[0]);
-            return null;
-        }
-    }
-
-    public static class UpdateKathruFavorite extends AsyncTask {
-        @Override
-        protected Void doInBackground(Object[] objects) {
-            if ((boolean)objects[1])
-                db.addKathruToFavorite((int)objects[0]);
-            else
-                db.removeKathruFromFavorite((int)objects[0]);
-            return null;
-        }
     }
 
     private KathruListListenerAbstract allKathruListListener = new KathruListListenerAbstract(MainActivity.this) {
@@ -339,5 +375,10 @@ public class MainActivity extends AppCompatActivity
             case 0x3F51B5: Log.d(TAG, "Color: Theme5"); setTheme(R.style.theme5); break;
             default: Log.d(TAG, "Color: unknown theme");
         }
+    }
+
+    @Override
+    public void notifyChange() {
+        updateBackStack();
     }
 }

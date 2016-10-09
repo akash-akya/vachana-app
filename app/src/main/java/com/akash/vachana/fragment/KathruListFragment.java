@@ -42,6 +42,7 @@ public class KathruListFragment extends Fragment {
     private AbsRecyclerViewFastScroller fastScroller;
     private SectionTitleIndicator sectionTitleIndicator;
     private String title;
+    public boolean needToUpdate = false;
 
     public KathruListFragment() { }
 
@@ -92,6 +93,15 @@ public class KathruListFragment extends Fragment {
         recyclerView.addOnScrollListener(fastScroller.getOnScrollListener());
         fastScroller.setSectionIndicator(sectionTitleIndicator);
         return view;
+    }
+
+    @Override
+    public void onActivityCreated(@Nullable Bundle savedInstanceState) {
+        super.onActivityCreated(savedInstanceState);
+        if(needToUpdate){
+            new KathruListTask().execute();
+            needToUpdate = false;
+        }
     }
 
     private class KathruListTask extends AsyncTask {
