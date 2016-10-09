@@ -390,4 +390,8 @@ public class MainDbHelper extends SQLiteOpenHelper implements Serializable {
         String[] args = new String[]{String.valueOf(vachanaId)};
         db.update(TABLE_KATHRU, newValues, KEY_KATHRU_ID+"=?", args);
     }
+
+    public boolean getVachanaFavorite(int id) {
+        return getVachanaMiniById(id).getFavorite() == 1;
+    }
 }

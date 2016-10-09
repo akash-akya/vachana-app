@@ -1,10 +1,7 @@
 package com.akash.vachana.fragment;
 
-import android.app.ActionBar;
-import android.app.Activity;
 import android.app.Dialog;
 import android.content.Context;
-import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.net.Uri;
@@ -12,29 +9,19 @@ import android.os.AsyncTask;
 import android.os.Bundle;
 import android.os.Handler;
 import android.preference.PreferenceManager;
-import android.support.annotation.IntegerRes;
 import android.support.annotation.Nullable;
 import android.support.design.widget.AppBarLayout;
-import android.support.v4.app.FragmentActivity;
 import android.support.v4.app.FragmentManager;
-import android.support.v4.app.FragmentPagerAdapter;
 import android.support.v4.view.PagerAdapter;
 import android.support.v4.view.ViewPager;
 import android.support.v4.app.Fragment;
-import android.support.v7.app.AlertDialog;
-import android.text.Spannable;
 import android.util.TypedValue;
 import android.view.ActionMode;
-import android.text.Selection;
-import android.text.SpannableStringBuilder;
-import android.text.style.CharacterStyle;
-import android.text.style.StyleSpan;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
-import android.view.MotionEvent;
 import android.view.View;
 import android.view.ViewGroup;
 import android.webkit.WebView;
@@ -44,20 +31,16 @@ import android.widget.ProgressBar;
 import android.widget.TextView;
 
 import com.akash.vachana.R;
-import com.akash.vachana.Util.KathruListListenerAbstract;
-import com.akash.vachana.Util.UpdateKathruFavorite;
 import com.akash.vachana.Util.UpdateVachanaFavorite;
 import com.akash.vachana.Util.VachanaListListenerAbstract;
 import com.akash.vachana.activity.MainActivity;
 import com.akash.vachana.dbUtil.KathruMini;
-import com.akash.vachana.dbUtil.MainDbHelper;
 import com.akash.vachana.dbUtil.Vachana;
 import com.akash.vachana.dbUtil.VachanaMini;
 
 import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.HashMap;
-import java.util.Map;
 
 /**
  * Created by akash on 9/2/16.
@@ -80,11 +63,33 @@ public class VachanaFragment extends Fragment {
 
         View root = inflater.inflate(R.layout.vachana_pager_layout, container, false);
 
-//        Bundle extra = getArguments();
-//        myViewPagerAdapter = new MyViewPagerAdapter((ArrayList<VachanaMini>) extra.getSerializable("vachanas"));
-
+        Bundle extra = getArguments();
+        myViewPagerAdapter = new MyViewPagerAdapter((ArrayList<VachanaMini>) extra.getSerializable("vachanas"));
         viewPager = (ViewPager) root.findViewById(R.id.vachana_view_pager);
-        setDataFromDb();
+
+        viewPager.setAdapter(myViewPagerAdapter);
+        viewPager.setOffscreenPageLimit(2);
+        viewPager.setCurrentItem((int)extra.getSerializable("current_position"));
+
+        viewPager.addOnPageChangeListener(new ViewPager.OnPageChangeListener() {
+            @Override
+            public void onPageScrolled(int position, float positionOffset, int positionOffsetPixels) { }
+
+            @Override
+            public void onPageSelected(int position) {
+                Vachana vachana = myViewPagerAdapter.vachanaHashMap.get(position);
+                if (vachana != null) {
+                    updateActionBarTitle(vachana);
+                    updateActionBarFavorite(vachana);
+                }
+            }
+
+            @Override
+            public void onPageScrollStateChanged(int state) {
+
+            }
+        });
+
         return root;
     }
 
@@ -120,6 +125,7 @@ public class VachanaFragment extends Fragment {
                 case R.id.action_favorite:
                     boolean new_state = !vachana.getFavorite();
                     vachana.setFavorite(new_state);
+                    myViewPagerAdapter.vachanaHashMap.put(viewPager.getCurrentItem(), vachana);
                     if (new_state)
                         item.setIcon(R.drawable.ic_star_20dp);
                     else
@@ -137,45 +143,6 @@ public class VachanaFragment extends Fragment {
 
         AppBarLayout appBarLayout = (AppBarLayout)getActivity().findViewById(R.id.app_bar);
         appBarLayout.setExpanded(true, true);
-    }
-
-    void setDataFromDb(){
-        Bundle extra = getArguments();
-        int position = (int) extra.getSerializable("current_position");
-        if (viewPager.getAdapter()!=null)
-            position = viewPager.getCurrentItem();
-
-        ArrayList<VachanaMini> vachanaMinis = (ArrayList<VachanaMini>) extra.getSerializable("vachanas");
-        ArrayList<VachanaMini> newVachanaMinis = new ArrayList<>(vachanaMinis.size());
-
-        for (int i = 0; i < vachanaMinis.size(); i++) {
-            newVachanaMinis.add(i, MainActivity.db.getVachanaMiniById(vachanaMinis.get(i).getId()));
-        }
-
-        myViewPagerAdapter = new MyViewPagerAdapter(newVachanaMinis);
-        viewPager.setAdapter(myViewPagerAdapter);
-        viewPager.setOffscreenPageLimit(2);
-        viewPager.setAdapter(myViewPagerAdapter);
-        viewPager.setCurrentItem(position, true);
-        viewPager.addOnPageChangeListener(new ViewPager.OnPageChangeListener() {
-            @Override
-            public void onPageScrolled(int position, float positionOffset, int positionOffsetPixels) { }
-
-            @Override
-            public void onPageSelected(int position) {
-                Vachana vachana = myViewPagerAdapter.vachanaHashMap.get(position);
-                if (vachana != null) {
-                    updateActionBarTitle(vachana);
-                    updateActionBarFavorite(vachana);
-                }
-            }
-
-            @Override
-            public void onPageScrollStateChanged(int state) {
-
-            }
-        });
-        Log.d(TAG, "Text changed: " + textSize);
     }
 
     private void updateActionBarFavorite(Vachana vachana) {
@@ -206,7 +173,10 @@ public class VachanaFragment extends Fragment {
 
                 if (newTextSize != textSize || needToUpdate) {
                     textSize = newTextSize;
-                    setDataFromDb();
+                    if (myViewPagerAdapter != null){
+                        myViewPagerAdapter.notifyDataSetChanged();
+                        myViewPagerAdapter.cleanCacheMap();
+                    }
                 }
                 needToUpdate = false;
             }
@@ -259,6 +229,11 @@ public class VachanaFragment extends Fragment {
             View view = (View) object;
             container.removeView(view);
             vachanaHashMap.remove(position);
+        }
+
+        public void cleanCacheMap(){
+            notifyDataSetChanged();
+            vachanaHashMap.clear();
         }
 
         private class GetVachanaFromDb extends AsyncTask {
@@ -374,8 +349,7 @@ public class VachanaFragment extends Fragment {
                 }
 
                 @Override
-                public void onDestroyActionMode(ActionMode mode) {
-                }
+                public void onDestroyActionMode(ActionMode mode) { }
             }
         }
     }

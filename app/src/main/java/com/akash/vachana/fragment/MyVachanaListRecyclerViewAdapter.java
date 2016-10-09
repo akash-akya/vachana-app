@@ -10,7 +10,6 @@ import android.widget.SectionIndexer;
 import android.widget.TextView;
 
 import com.akash.vachana.R;
-import com.akash.vachana.dbUtil.KathruMini;
 import com.akash.vachana.dbUtil.VachanaMini;
 import com.akash.vachana.fragment.VachanaListFragment.OnListFragmentInteractionListener;
 
