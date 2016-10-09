@@ -21,9 +21,11 @@ import android.widget.EditText;
 import android.widget.RadioButton;
 
 import com.akash.vachana.R;
-import com.akash.vachana.Util.SearchButtonListener;
+import com.akash.vachana.Util.VachanaListListenerAbstract;
 import com.akash.vachana.activity.MainActivity;
 import com.akash.vachana.dbUtil.KathruMini;
+import com.akash.vachana.dbUtil.MainDbHelper;
+import com.akash.vachana.dbUtil.VachanaMini;
 
 import java.io.Serializable;
 import java.util.ArrayList;
@@ -74,7 +76,35 @@ public class SearchFragment extends Fragment implements Serializable{
                     return;
 
                 bundle.putString("title", "ಹುಡುಕು");
-                bundle.putSerializable("listener", new SearchButtonListener(getContext(), isPartialSearch,query,kathruString));
+                bundle.putSerializable("listener", new VachanaListListenerAbstract(getActivity()) {
+                    @Override
+                    public ArrayList<VachanaMini> getVachanaMinis() {
+                        String query_text = "SELECT " +
+                                MainDbHelper.KEY_VACHANA_ID + ", "+
+                                MainDbHelper.KEY_TITLE + ", "+
+                                MainDbHelper.FOREIGN_KEY_KATHRU_ID + ", "+
+                                MainDbHelper.KEY_FAVORITE;
+                        String[] parameters;
+
+                        query_text += " FROM " + MainDbHelper.TABLE_VACHANA;
+                        query_text += " WHERE " +
+                                MainDbHelper.KEY_TITLE + " LIKE ? "; // + "%"+query+"%";
+
+                        String query_text_parameter = isPartialSearch? "%"+query+"%" : query;
+                        if (!kathruString.isEmpty()) {
+                            query_text += " AND " +
+                                    MainDbHelper.FOREIGN_KEY_KATHRU_ID + " IN " +
+                                    " ( SELECT " + MainDbHelper.KEY_KATHRU_ID +
+                                    " FROM " + MainDbHelper.TABLE_KATHRU +
+                                    " WHERE " + MainDbHelper.KEY_NAME + " LIKE ? )"; // + "%"+kathruString+"% ) ";
+                            parameters = new  String[]{query_text_parameter, "%"+kathruString+"%"};
+                        } else {
+                            parameters = new  String[]{query_text_parameter};
+                        }
+
+                        return MainActivity.db.query( query_text, parameters);
+                    }
+                });
 
                 fragment.setArguments(bundle);
                 fragmentManager.popBackStack("search_button", FragmentManager.POP_BACK_STACK_INCLUSIVE);

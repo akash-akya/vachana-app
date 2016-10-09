@@ -43,7 +43,7 @@ import android.widget.ProgressBar;
 import android.widget.TextView;
 
 import com.akash.vachana.R;
-import com.akash.vachana.Util.VachanaKathruViewListener;
+import com.akash.vachana.Util.VachanaListListenerAbstract;
 import com.akash.vachana.activity.MainActivity;
 import com.akash.vachana.dbUtil.KathruMini;
 import com.akash.vachana.dbUtil.MainDbHelper;
@@ -280,7 +280,13 @@ public class VachanaFragment extends Fragment {
                     public void onClick(View v) {
                         Bundle bundle = new Bundle();
                         bundle.putString("title", kathruMini.getName());
-                        bundle.putSerializable("listener", new VachanaKathruViewListener(id, getContext()));
+                        bundle.putSerializable("listener", new VachanaListListenerAbstract(getActivity()) {
+                            @Override
+                            public ArrayList<VachanaMini> getVachanaMinis() {
+                                return MainActivity.db.getVachanaMinisByKathruId(id);
+                            }
+                        });
+
                         FragmentManager fragmentManager = (mainActivity).getSupportFragmentManager();
                         Fragment fragment = Fragment.instantiate(mainActivity, MainActivity.fragments[1]);
                         fragment.setArguments(bundle);
