@@ -144,22 +144,11 @@ public class VachanaFragment extends Fragment {
                         item.setIcon(R.drawable.ic_star_20dp);
                     else
                         item.setIcon(R.drawable.ic_star_outline_20dp);
-                    new UpdateVachanaFavorite().execute(vachana.getId(), new_state);
+                    new MainActivity.UpdateVachanaFavorite().execute(vachana.getId(), new_state);
                     return true;
             }
         }
         return super.onOptionsItemSelected(item);
-    }
-
-    public class UpdateVachanaFavorite extends AsyncTask {
-        @Override
-        protected Void doInBackground(Object[] objects) {
-            if ((boolean)objects[1])
-                ((MainActivity) getActivity()).db.addVachanaToFavorite((int)objects[0]);
-            else
-                ((MainActivity) getActivity()).db.removeVachanaFromFavorite((int)objects[0]);
-            return null;
-        }
     }
 
     @Override
