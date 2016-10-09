@@ -2,7 +2,9 @@ package com.akash.vachana.fragment;
 
 import android.app.ActionBar;
 import android.app.Activity;
+import android.app.Dialog;
 import android.content.Context;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.net.Uri;
@@ -18,6 +20,8 @@ import android.support.v4.app.FragmentPagerAdapter;
 import android.support.v4.view.PagerAdapter;
 import android.support.v4.view.ViewPager;
 import android.support.v4.app.Fragment;
+import android.support.v7.app.AlertDialog;
+import android.text.Spannable;
 import android.util.TypedValue;
 import android.view.ActionMode;
 import android.text.Selection;
@@ -29,8 +33,12 @@ import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
+import android.view.MotionEvent;
 import android.view.View;
 import android.view.ViewGroup;
+import android.webkit.WebView;
+import android.webkit.WebViewClient;
+import android.widget.EditText;
 import android.widget.ProgressBar;
 import android.widget.TextView;
 
@@ -320,17 +328,17 @@ public class VachanaFragment extends Fragment {
 
                 @Override
                 public boolean onActionItemClicked(ActionMode mode, MenuItem item) {
-                    Log.d(TAG, String.format("onActionItemClicked item=%s/%d", item.toString(), item.getItemId()));
                     int startSelection = bodyView.getSelectionStart();
                     int endSelection = bodyView.getSelectionEnd();
                     String selectedText = bodyView.getText().toString().substring(startSelection, endSelection);
 
                     switch (item.getItemId()) {
                         case R.id.wiki:
-                            Intent browserIntent = new Intent(Intent.ACTION_VIEW, Uri.parse(wikiLink + selectedText));
-                            startActivity(browserIntent);
+                            showMeaningPopup(getContext(), wikiLink+selectedText);
+                            bodyView.clearFocus();
                             return true;
                     }
+
                     return false;
                 }
 
@@ -339,5 +347,34 @@ public class VachanaFragment extends Fragment {
                 }
             }
         }
+    }
+
+    public void showMeaningPopup(Context context, String url){
+
+        Dialog alert = new Dialog(context);
+        alert.setContentView(R.layout.word_meaning_wv);
+
+        WebView wv = (WebView) alert.findViewById(R.id.web);
+        EditText edit = (EditText) alert.findViewById(R.id.edit);
+        edit.setFocusable(true);
+        edit.requestFocus();
+
+        alert.setTitle("Meaning");
+
+        wv.loadUrl(url);
+        wv.setWebViewClient(new WebViewClient() {
+            @Override
+            public boolean shouldOverrideUrlLoading(WebView view, String url) {
+                if (url.contains("kn.m.wiktionary.org/")){
+                    view.loadUrl(url);
+                } else {
+                    Intent browserIntent = new Intent(Intent.ACTION_VIEW, Uri.parse(url));
+                    startActivity(browserIntent);
+                }
+                return true;
+            }
+        });
+
+        alert.show();
     }
 }
