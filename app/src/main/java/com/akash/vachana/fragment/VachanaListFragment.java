@@ -6,6 +6,7 @@ import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.design.widget.AppBarLayout;
 import android.support.v4.app.Fragment;
+import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.SearchView;
@@ -39,8 +40,6 @@ public class VachanaListFragment extends Fragment {
 
     private static final String TAG = "VachanaListFragment";
     private String title =null;
-    private ArrayList<VachanaMini> vachanaMinis = null;
-    private MainActivity mainActivity;
     private RecyclerView recyclerView;
     private OnListFragmentInteractionListener listener;
     private MyVachanaListRecyclerViewAdapter adapter;
@@ -52,7 +51,6 @@ public class VachanaListFragment extends Fragment {
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        mainActivity = (MainActivity) getContext();
         title = getArguments().getString("title");
         listener = (OnListFragmentInteractionListener) getArguments().getSerializable("listener");
     }
@@ -85,7 +83,7 @@ public class VachanaListFragment extends Fragment {
         @Override
         protected void onPostExecute(Object o) {
             super.onPostExecute(o);
-            vachanaMinis = (ArrayList<VachanaMini>) o;
+            ArrayList<VachanaMini> vachanaMinis = (ArrayList<VachanaMini>) o;
             if (progressBar != null &&   recyclerView != null) {
                 progressBar.setVisibility(View.INVISIBLE);
                 if (vachanaMinis.size() > 0) {
@@ -97,7 +95,8 @@ public class VachanaListFragment extends Fragment {
                     recyclerView.setVisibility(View.VISIBLE);
                     fastScroller.setVisibility(View.VISIBLE);
                     sectionTitleIndicator.setVisibility(View.VISIBLE);
-                    mainActivity.getSupportActionBar().setTitle(title);
+                    if (getActivity() != null)
+                        ((AppCompatActivity)getActivity()).getSupportActionBar().setTitle(title);
                 } else {
                     noDataTv.setVisibility(View.VISIBLE);
                 }
@@ -109,11 +108,9 @@ public class VachanaListFragment extends Fragment {
     public void onResume() {
         super.onResume();
 
-        mainActivity = (MainActivity) getContext();
-        title = getArguments().getString("title");
-        listener = (OnListFragmentInteractionListener) getArguments().getSerializable("listener");
-
-        if (vachanaMinis == null || vachanaMinis.size() <= 0){
+        if (adapter == null){
+            title = getArguments().getString("title");
+            listener = (OnListFragmentInteractionListener) getArguments().getSerializable("listener");
             new VachanaListTask().execute();
         } else {
             adapter.notifyDataSetChanged();
@@ -126,8 +123,8 @@ public class VachanaListFragment extends Fragment {
             recyclerView.setVisibility(View.VISIBLE);
             fastScroller.setVisibility(View.VISIBLE);
             sectionTitleIndicator.setVisibility(View.VISIBLE);
-            if (title != null)
-                mainActivity.getSupportActionBar().setTitle(title);
+            if (getActivity() != null && title != null)
+                ((AppCompatActivity)getActivity()).getSupportActionBar().setTitle(title);
         }
 
         AppBarLayout appBarLayout = (AppBarLayout)getActivity().findViewById(R.id.app_bar);

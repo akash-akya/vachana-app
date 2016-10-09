@@ -62,8 +62,6 @@ public class MainActivity extends AppCompatActivity
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
-//        getSupportFragmentManager().popBackStack(null, FragmentManager.POP_BACK_STACK_INCLUSIVE);
-
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
 
@@ -209,6 +207,7 @@ public class MainActivity extends AppCompatActivity
                 break;
             case R.id.nav_kathru:
                 fragment = Fragment.instantiate(MainActivity.this, fragments[2]);
+                bundle.putString("title", "ವಚನಕಾರರು");
                 bundle.putSerializable("listener", allKathruListListener);
                 try {
                     fragment.setArguments(bundle);
@@ -263,6 +262,7 @@ public class MainActivity extends AppCompatActivity
                 fragment = Fragment.instantiate(MainActivity.this, fragments[2]);
                 fragmentManager.popBackStack(null, FragmentManager.POP_BACK_STACK_INCLUSIVE);
                 bundle.putSerializable("listener", favoriteKathruListListener);
+                bundle.putString("title", "ನೆಚ್ಚಿನ ವಚನಕಾರರು");
                 try {
                     fragment.setArguments(bundle);
                 } catch (NullPointerException e){

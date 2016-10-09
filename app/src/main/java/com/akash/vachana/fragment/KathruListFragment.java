@@ -41,31 +41,38 @@ public class KathruListFragment extends Fragment {
     private RecyclerView recyclerView;
     private AbsRecyclerViewFastScroller fastScroller;
     private SectionTitleIndicator sectionTitleIndicator;
-//    private String title;
+    private String title;
 
     public KathruListFragment() { }
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-//        title = getArguments().getString("title");
-        mListener = (OnKathruListFragmentInteractionListener) getArguments().getSerializable("listener");
     }
 
     @Override
     public void onResume() {
         super.onResume();
 
-        mListener = (OnKathruListFragmentInteractionListener) getArguments().getSerializable("listener");
-
-        new KathruListTask().execute();
+        if (myAdapter == null){
+            title = getArguments().getString("title");
+            mListener = (OnKathruListFragmentInteractionListener) getArguments().getSerializable("listener");
+            new KathruListTask().execute();
+        } else {
+            recyclerView.setAdapter(myAdapter);
+            fastScroller.setRecyclerView(recyclerView);
+            recyclerView.addOnScrollListener(fastScroller.getOnScrollListener());
+            fastScroller.setSectionIndicator(sectionTitleIndicator);
+            recyclerView.setVisibility(View.VISIBLE);
+            fastScroller.setVisibility(View.VISIBLE);
+            sectionTitleIndicator.setVisibility(View.VISIBLE);
+        }
 
         AppBarLayout appBarLayout = (AppBarLayout)getActivity().findViewById(R.id.app_bar);
         appBarLayout.setExpanded(true, true);
 
-
         try {
-            ((MainActivity)getActivity()).getSupportActionBar().setTitle("ವಚನಕಾರರು");
+            ((MainActivity)getActivity()).getSupportActionBar().setTitle(title);
         } catch (NullPointerException e){
             Log.d(TAG, "onCreate: Actionbar not found");
         }
