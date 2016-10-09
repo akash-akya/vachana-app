@@ -31,7 +31,6 @@ public class MyPreferencesActivity extends FragmentActivity {
 
         private SwitchPreferenceCompat darkThemeSwitch;
         private ColorPreferenceCompat themeChooser;
-        private ListPreference fontSize;
 
         @Override
         public void onCreatePreferences(Bundle savedInstanceState, String rootKey) {
@@ -60,8 +59,6 @@ public class MyPreferencesActivity extends FragmentActivity {
                     return true;
                 }
             });
-
-            fontSize = (ListPreference) getPreferenceManager().findPreference("font_size");
         }
     }
 }

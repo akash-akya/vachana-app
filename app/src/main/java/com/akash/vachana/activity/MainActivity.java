@@ -6,6 +6,7 @@ import android.content.SharedPreferences;
 import android.os.AsyncTask;
 import android.os.Handler;
 import android.preference.PreferenceManager;
+import android.support.annotation.NonNull;
 import android.support.v4.app.FragmentManager;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
@@ -74,7 +75,7 @@ public class MainActivity extends AppCompatActivity
 
         db = new MainDbHelper(this);
         try {
-            db.createDataBase();
+            db.getDataBase();
             Log.d(TAG, "onCreate: Database Created\n");
         } catch (IOException ioe) {
             //throw new Error("Unable to create database");
@@ -150,7 +151,7 @@ public class MainActivity extends AppCompatActivity
 
     @SuppressWarnings("StatementWithEmptyBody")
     @Override
-    public boolean onNavigationItemSelected(final MenuItem item) {
+    public boolean onNavigationItemSelected(@NonNull final MenuItem item) {
         DrawerLayout drawer = (DrawerLayout) findViewById(R.id.drawer_layout);
         drawer.closeDrawer(GravityCompat.START);
         new Handler().postDelayed(new Runnable() {
@@ -295,11 +296,8 @@ public class MainActivity extends AppCompatActivity
                 Log.e(TAG, "selectItem: Error, Wrong id");
         }
 
-        try {
-            fragment.setArguments(bundle);
-        } catch (NullPointerException e){
-            Log.d(TAG, "selectItem: Fragment is null!!");
-        }
+        assert fragment != null;
+        fragment.setArguments(bundle);
 
         fragmentManager.beginTransaction()
                     .replace(R.id.main_content, fragment)

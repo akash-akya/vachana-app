@@ -65,10 +65,7 @@ public class VachanaFragment extends Fragment {
     public View onCreateView(LayoutInflater inflater, final ViewGroup container, Bundle savedInstanceState) {
         setHasOptionsMenu(true);
 
-        ViewGroup root = (ViewGroup) inflater.inflate(R.layout.vachana_pager_layout, null);
-
-        CharSequence text = getActivity().getIntent()
-                .getCharSequenceExtra(Intent.EXTRA_PROCESS_TEXT);
+        View root = inflater.inflate(R.layout.vachana_pager_layout, container, false);
 
         Bundle extra = getArguments();
         myViewPagerAdapter = new MyViewPagerAdapter((ArrayList<VachanaMini>) extra.getSerializable("vachanas"));
@@ -239,8 +236,7 @@ public class VachanaFragment extends Fragment {
 
             @Override
             protected Vachana doInBackground(Object[] objects) {
-                Vachana vachana = ((MainActivity) getActivity()).db.getVachana(vachanaMinis.get(position).getId());
-                return vachana;
+                return ((MainActivity) getActivity()).db.getVachana(vachanaMinis.get(position).getId());
             }
 
             @Override

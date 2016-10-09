@@ -40,6 +40,8 @@ public class VachanaListFragment extends Fragment {
 
     private static final String TAG = "VachanaListFragment";
     private String title =null;
+//    private ArrayList<VachanaMini> vachanaMinis = null;
+//    private MainActivity mainActivity;
     private RecyclerView recyclerView;
     private OnListFragmentInteractionListener listener;
     private MyVachanaListRecyclerViewAdapter adapter;
@@ -51,6 +53,7 @@ public class VachanaListFragment extends Fragment {
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+//        mainActivity = (MainActivity) getContext();
         title = getArguments().getString("title");
         listener = (OnListFragmentInteractionListener) getArguments().getSerializable("listener");
     }
@@ -88,6 +91,8 @@ public class VachanaListFragment extends Fragment {
                 progressBar.setVisibility(View.INVISIBLE);
                 if (vachanaMinis.size() > 0) {
                     adapter = new MyVachanaListRecyclerViewAdapter(vachanaMinis, listener);
+//                    adapter.addVachanas(vachanaMinis);
+//                    adapter.notifyDataSetChanged();
                     recyclerView.setAdapter(adapter);
                     fastScroller.setRecyclerView(recyclerView);
                     recyclerView.addOnScrollListener(fastScroller.getOnScrollListener());
@@ -112,6 +117,7 @@ public class VachanaListFragment extends Fragment {
             title = getArguments().getString("title");
             listener = (OnListFragmentInteractionListener) getArguments().getSerializable("listener");
             new VachanaListTask().execute();
+            Log.d(TAG, "onResume: This is called");
         } else {
             adapter.notifyDataSetChanged();
             ProgressBar progressBar = (ProgressBar) getActivity().findViewById(R.id.vachana_list_progressBar);
@@ -168,8 +174,10 @@ public class VachanaListFragment extends Fragment {
         View view = inflater.inflate(R.layout.fragment_vachana_list, container, false);
 
         recyclerView = (RecyclerView) view.findViewById(R.id.list);
+//        adapter = new MyVachanaListRecyclerViewAdapter(new ArrayList<VachanaMini>(), listener);
         fastScroller = (VerticalRecyclerViewFastScroller) view.findViewById(R.id.vachana_fast_scroller);
         sectionTitleIndicator = (SectionTitleIndicator) view.findViewById(R.id.vachan_fast_scroller_section_indicator);
+        recyclerView.setAdapter(adapter);
         fastScroller.setRecyclerView(recyclerView);
         recyclerView.addOnScrollListener(fastScroller.getOnScrollListener());
         fastScroller.setSectionIndicator(sectionTitleIndicator);
@@ -180,7 +188,9 @@ public class VachanaListFragment extends Fragment {
     @Override
     public void onActivityCreated(@Nullable Bundle savedInstanceState) {
         super.onActivityCreated(savedInstanceState);
-        onResume();
+//        title = getArguments().getString("title");
+//        listener = (OnListFragmentInteractionListener) getArguments().getSerializable("listener");
+//        new VachanaListTask().execute();
     }
 
     @Override

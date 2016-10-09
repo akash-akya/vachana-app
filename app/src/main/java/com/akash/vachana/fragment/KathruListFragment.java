@@ -54,6 +54,8 @@ public class KathruListFragment extends Fragment {
     public void onResume() {
         super.onResume();
 
+//        mListener = (OnKathruListFragmentInteractionListener) getArguments().getSerializable("listener");
+
         if (myAdapter == null){
             title = getArguments().getString("title");
             mListener = (OnKathruListFragmentInteractionListener) getArguments().getSerializable("listener");

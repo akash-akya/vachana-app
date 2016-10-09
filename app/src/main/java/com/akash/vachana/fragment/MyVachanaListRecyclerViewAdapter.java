@@ -22,7 +22,7 @@ import static android.widget.CompoundButton.*;
 public class MyVachanaListRecyclerViewAdapter extends RecyclerView.Adapter<MyVachanaListRecyclerViewAdapter.ViewHolder>
         implements SectionIndexer {
 
-    private final String[] names;
+    private String[] names;
     private List<VachanaMini> vachanaMinis;
     private ArrayList<VachanaMini> dupVachanaMinis = new ArrayList<>();
     private OnListFragmentInteractionListener mListener;
@@ -31,12 +31,6 @@ public class MyVachanaListRecyclerViewAdapter extends RecyclerView.Adapter<MyVac
         vachanaMinis = items;
         mListener = listener;
         dupVachanaMinis.addAll(vachanaMinis);
-        names = new String[vachanaMinis.size()];
-        int i = 0;
-        for (VachanaMini k : vachanaMinis) {
-            names[i] = k.getTitle();
-            i++;
-        }
     }
 
     @Override
@@ -98,7 +92,15 @@ public class MyVachanaListRecyclerViewAdapter extends RecyclerView.Adapter<MyVac
 
     @Override
     public Object[] getSections() {
-            return names;
+        if (names == null) {
+            names = new String[vachanaMinis.size()];
+            int i = 0;
+            for (VachanaMini k : vachanaMinis) {
+                names[i] = k.getTitle();
+                i++;
+            }
+        }
+        return names;
     }
 
     @Override
@@ -112,6 +114,11 @@ public class MyVachanaListRecyclerViewAdapter extends RecyclerView.Adapter<MyVac
             position = vachanaMinis.size() - 1;
         }
         return position;
+    }
+
+    public void addVachanas(ArrayList<VachanaMini> vachanaMinis) {
+        this.vachanaMinis = vachanaMinis;
+        dupVachanaMinis.addAll(vachanaMinis);
     }
 
     public class ViewHolder extends RecyclerView.ViewHolder {

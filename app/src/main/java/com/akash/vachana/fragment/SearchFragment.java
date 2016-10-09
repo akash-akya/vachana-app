@@ -1,13 +1,11 @@
 package com.akash.vachana.fragment;
 
 import android.content.Context;
-import android.net.Uri;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.support.design.widget.AppBarLayout;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
-import android.support.v7.widget.RecyclerView;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.Menu;
@@ -20,16 +18,12 @@ import android.widget.ArrayAdapter;
 import android.widget.AutoCompleteTextView;
 import android.widget.Button;
 import android.widget.EditText;
-import android.widget.ProgressBar;
 import android.widget.RadioButton;
-import android.widget.SearchView;
 
 import com.akash.vachana.R;
 import com.akash.vachana.Util.SearchButtonListener;
 import com.akash.vachana.activity.MainActivity;
 import com.akash.vachana.dbUtil.KathruMini;
-import com.akash.vachana.dbUtil.MainDbHelper;
-import com.akash.vachana.dbUtil.VachanaMini;
 
 import java.io.Serializable;
 import java.util.ArrayList;
@@ -37,7 +31,6 @@ import java.util.ArrayList;
 public class SearchFragment extends Fragment implements Serializable{
 
     private static final String TAG = "SearchFragment";
-    private ArrayList<KathruMini> kathruMinis;
     private KathruListTask kathruListTask;
 
     public SearchFragment() {
@@ -117,9 +110,9 @@ public class SearchFragment extends Fragment implements Serializable{
 
         @Override
         protected void onPostExecute(Object o) {
+            super.onPostExecute(o);
             if (!kathruListTask.isCancelled()) {
-                super.onPostExecute(o);
-                kathruMinis = (ArrayList<KathruMini>) o;
+                ArrayList<KathruMini> kathruMinis = (ArrayList<KathruMini>) o;
                 final AutoCompleteTextView autoTextView = (AutoCompleteTextView) getActivity().findViewById(R.id.auto_complete_kathru);
                 ArrayAdapter<KathruMini> adapter = new ArrayAdapter<KathruMini>(getActivity(), android.R.layout.simple_dropdown_item_1line,
                         kathruMinis);
@@ -142,17 +135,6 @@ public class SearchFragment extends Fragment implements Serializable{
     public void onCreateOptionsMenu(Menu menu, MenuInflater inflater) {
         menu.clear();
         inflater.inflate(R.menu.simple_menu, menu);
-    }
-
-    public class UpdateVachanaFavorite extends AsyncTask {
-        @Override
-        protected Void doInBackground(Object[] objects) {
-            if ((boolean)objects[1])
-                ((MainActivity) getActivity()).db.addVachanaToFavorite((int)objects[0]);
-            else
-                ((MainActivity) getActivity()).db.removeVachanaFromFavorite((int)objects[0]);
-            return null;
-        }
     }
 
     @Override

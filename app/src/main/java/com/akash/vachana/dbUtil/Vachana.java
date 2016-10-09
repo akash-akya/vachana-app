@@ -11,7 +11,6 @@ import java.io.Serializable;
  * Created by akash on 8/28/16.
  */
 public class Vachana implements Serializable {
-    final public String className = "Vachana";
     private boolean favorite;
     private int id;
     private String text;
