@@ -77,17 +77,29 @@ public class VachanaFragment extends Fragment {
         viewPager.setOffscreenPageLimit(2);
         viewPager.setAdapter(myViewPagerAdapter);
         viewPager.setCurrentItem((int) extra.getSerializable("current_position"), true);
-
-        new Handler().postDelayed(new Runnable() {
+        viewPager.addOnPageChangeListener(new ViewPager.OnPageChangeListener() {
             @Override
-            public void run() {
-                SharedPreferences sharedPreferences =
-                        PreferenceManager.getDefaultSharedPreferences(container.getContext());
-                textSize = Integer.parseInt(sharedPreferences.getString("font_size", "16"));
-                Log.d(TAG, "run: "+textSize);
-            }
-        }, 0);
+            public void onPageScrolled(int position, float positionOffset, int positionOffsetPixels) {
 
+            }
+
+            @Override
+            public void onPageSelected(int position) {
+                Vachana vachana = myViewPagerAdapter.vachanaHashMap.get(position);
+                if (vachana != null) {
+                    try {
+                        ((MainActivity) getActivity()).getSupportActionBar().setTitle(vachana.getKathru());
+                    } catch (NullPointerException e) {
+                        Log.d(TAG, "onCreate: Actionbar not found");
+                    }
+                }
+            }
+
+            @Override
+            public void onPageScrollStateChanged(int state) {
+
+            }
+        });
         return root;
     }
 
@@ -149,18 +161,27 @@ public class VachanaFragment extends Fragment {
     public void onResume() {
         super.onResume();
 
-        myViewPagerAdapter.notifyDataSetChanged();
+        new Handler().postDelayed(new Runnable() {
+            @Override
+            public void run() {
+                SharedPreferences sharedPreferences =
+                        PreferenceManager.getDefaultSharedPreferences(getContext());
+                int newTextSize = Integer.parseInt(sharedPreferences.getString("font_size", "16"));
+                if (newTextSize != textSize){
+                    textSize = newTextSize;
+                    Bundle extra = getArguments();
+                    int position = viewPager.getCurrentItem();
+                    myViewPagerAdapter =
+                            new MyViewPagerAdapter((ArrayList<VachanaMini>) extra.getSerializable("vachanas"));
+                    viewPager.setAdapter(myViewPagerAdapter);
+                    viewPager.setCurrentItem(position, true);
+                    Log.d(TAG, "Text changed: "+textSize);
+                }
+            }
+        }, 0);
+
         AppBarLayout appBarLayout = (AppBarLayout)getActivity().findViewById(R.id.app_bar);
         appBarLayout.setExpanded(true, true);
-
-        Vachana vachana = myViewPagerAdapter.vachanaHashMap.get(viewPager.getCurrentItem());
-        if (vachana!= null) {
-            try {
-                ((MainActivity) getActivity()).getSupportActionBar().setTitle(vachana.getKathru());
-            } catch (NullPointerException e){
-                Log.d(  TAG, "onCreate: Actionbar not found");
-            }
-        }
     }
 
     /**
@@ -234,7 +255,8 @@ public class VachanaFragment extends Fragment {
                         menu.findItem(R.id.action_favorite).setIcon(R.drawable.ic_star_outline_20dp);
                     }
                 }
-                updateActionBarTitle(myViewPagerAdapter.vachanaHashMap.get(viewPager.getCurrentItem()));
+                if (viewPager.getCurrentItem() == position)
+                    updateActionBarTitle(vachana);
                 progressBar.setVisibility(View.GONE);
                 vachanaTextView.setTextSize(TypedValue.COMPLEX_UNIT_SP, textSize);
                 vachanaTextView.setText(vachana.getText());
