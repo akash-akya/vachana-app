@@ -173,12 +173,6 @@ public class KathruListFragment extends Fragment {
     }
 
     @Override
-    public void onActivityCreated(@Nullable Bundle savedInstanceState) {
-        super.onActivityCreated(savedInstanceState);
-        onResume();
-    }
-
-    @Override
     public void onAttach(Context context) {
         super.onAttach(context);
     }

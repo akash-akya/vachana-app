@@ -204,7 +204,7 @@ public class MainActivity extends AppCompatActivity
                     }
                 });
                 fragment = Fragment.instantiate(MainActivity.this, fragments[1]);
-                fragmentManager.popBackStack("vachana_list", FragmentManager.POP_BACK_STACK_INCLUSIVE);
+                fragmentManager.popBackStack(null, FragmentManager.POP_BACK_STACK_INCLUSIVE);
                 break;
             case R.id.nav_kathru:
                 fragment = Fragment.instantiate(MainActivity.this, fragments[2]);
@@ -218,7 +218,7 @@ public class MainActivity extends AppCompatActivity
                 fragmentManager.popBackStack(null, FragmentManager.POP_BACK_STACK_INCLUSIVE);
                 fragmentManager.beginTransaction()
                         .replace(R.id.main_content, fragment)
-//                        .addToBackStack( "kathru_list" )
+                        .addToBackStack( "kathru_list" )
                         .commit();
                 return;
             case R.id.nav_favorite:
@@ -234,10 +234,10 @@ public class MainActivity extends AppCompatActivity
                         getIntent().putExtra("current_position", position);
                         fragment.setArguments(getIntent().getExtras());
 
-                        fragmentManager.popBackStack("favorite_vachana_list", FragmentManager.POP_BACK_STACK_INCLUSIVE);
+                        fragmentManager.popBackStack("vachana_list", FragmentManager.POP_BACK_STACK_INCLUSIVE);
                         fragmentManager.beginTransaction()
                                 .replace(R.id.main_content, fragment)
-                                .addToBackStack( "favorite_vachana_list" )
+                                .addToBackStack( "vachana_list" )
                                 .commit();
                     }
 
@@ -253,10 +253,10 @@ public class MainActivity extends AppCompatActivity
                 });
                 fragment = Fragment.instantiate(MainActivity.this, fragments[1]);
                 fragment.setArguments(bundle);
-                fragmentManager.popBackStack("vachana_list", FragmentManager.POP_BACK_STACK_INCLUSIVE);
+                fragmentManager.popBackStack("fav_vachana_drawer", FragmentManager.POP_BACK_STACK_INCLUSIVE);
                 fragmentManager.beginTransaction()
                         .replace(R.id.main_content, fragment)
-                        .addToBackStack( "vachana_list" )
+                        .addToBackStack( "fav_vachana_drawer" )
                         .commit();
                 return;
             case R.id.nav_favorite_kathru:
@@ -269,10 +269,10 @@ public class MainActivity extends AppCompatActivity
                 } catch (NullPointerException e){
                     Log.d(TAG, "selectItem: Fragment is null!!");
                 }
-                fragmentManager.popBackStack("kathru_favorite_list", FragmentManager.POP_BACK_STACK_INCLUSIVE);
+                fragmentManager.popBackStack("kathru_favorite_drawer", FragmentManager.POP_BACK_STACK_INCLUSIVE);
                 fragmentManager.beginTransaction()
                         .replace(R.id.main_content, fragment)
-                        .addToBackStack( "kathru_favorite_list" )
+                        .addToBackStack( "kathru_favorite_drawer" )
                         .commit();
                 return;
             case R.id.nav_search:
@@ -282,10 +282,10 @@ public class MainActivity extends AppCompatActivity
                 } catch (NullPointerException e){
                     Log.d(TAG, "selectItem: Fragment is null!!");
                 }
-//                fragmentManager.popBackStack(null, FragmentManager.POP_BACK_STACK_INCLUSIVE);
+                fragmentManager.popBackStack("search_view_drawer", FragmentManager.POP_BACK_STACK_INCLUSIVE);
                 fragmentManager.beginTransaction()
                         .replace(R.id.main_content, fragment)
-                        .addToBackStack( "List" )
+                        .addToBackStack( "search_view_drawer" )
                         .commit();
                 return;
             case R.id.nav_settings:
@@ -300,8 +300,8 @@ public class MainActivity extends AppCompatActivity
         fragment.setArguments(bundle);
 
         fragmentManager.beginTransaction()
-                    .replace(R.id.main_content, fragment)
-                    .commit();
+                .replace(R.id.main_content, fragment)
+                .commit();
     }
 
     public ArrayList<KathruMini> getAllKathruMinis() {
@@ -347,10 +347,10 @@ public class MainActivity extends AppCompatActivity
                     getIntent().putExtra("current_position", position);
                     fragment.setArguments(getIntent().getExtras());
 
-                    fragmentManager.popBackStack("search_vachana_list", FragmentManager.POP_BACK_STACK_INCLUSIVE);
+                    fragmentManager.popBackStack("vachana_list", FragmentManager.POP_BACK_STACK_INCLUSIVE);
                     fragmentManager.beginTransaction()
                             .replace(R.id.main_content, fragment)
-                            .addToBackStack( "search_vachana_list" )
+                            .addToBackStack( "vachana_list" )
                             .commit();
                 }
 
@@ -366,10 +366,10 @@ public class MainActivity extends AppCompatActivity
             });
 
             fragment.setArguments(bundle);
-            fragmentManager.popBackStack(null, FragmentManager.POP_BACK_STACK_INCLUSIVE);
+            fragmentManager.popBackStack("vachana_list_vertical", FragmentManager.POP_BACK_STACK_INCLUSIVE);
             fragmentManager.beginTransaction()
                     .replace(R.id.main_content, fragment)
-                    .addToBackStack( "kathru_list" )
+                    .addToBackStack( "vachana_list_vertical" )
                     .commit();
         }
 
@@ -420,10 +420,10 @@ public class MainActivity extends AppCompatActivity
             });
 
             fragment.setArguments(bundle);
-            fragmentManager.popBackStack(null, FragmentManager.POP_BACK_STACK_INCLUSIVE);
+            fragmentManager.popBackStack("vachana_list_vertical", FragmentManager.POP_BACK_STACK_INCLUSIVE);
             fragmentManager.beginTransaction()
                     .replace(R.id.main_content, fragment)
-                    .addToBackStack( "kathru_list" )
+                    .addToBackStack( "vachana_list_vertical" )
                     .commit();
         }
 

@@ -3,6 +3,7 @@
     xmlns:android="http://schemas.android.com/apk/res/android"
     android:id="@+id/vachana_view_pager"
     android:gravity="center"
+    android:background="?android:attr/windowBackground"
     android:includeFontPadding="false"
     android:layout_width="match_parent"
     android:layout_height="match_parent" />

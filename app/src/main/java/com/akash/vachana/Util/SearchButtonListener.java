@@ -44,10 +44,10 @@ public class SearchButtonListener implements VachanaListFragment.OnListFragmentI
         activity.getIntent().putExtra("current_position", position);
         fragment.setArguments(activity.getIntent().getExtras());
 
-        fragmentManager.popBackStack("search_vachana_list", FragmentManager.POP_BACK_STACK_INCLUSIVE);
+        fragmentManager.popBackStack("vachana_list", FragmentManager.POP_BACK_STACK_INCLUSIVE);
         fragmentManager.beginTransaction()
                 .replace(R.id.main_content, fragment)
-                .addToBackStack( "search_vachana_list" )
+                .addToBackStack( "vachana_list" )
                 .commit();
     }
 

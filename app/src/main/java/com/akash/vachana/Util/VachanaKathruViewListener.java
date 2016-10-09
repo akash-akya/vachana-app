@@ -41,7 +41,7 @@ public class VachanaKathruViewListener implements VachanaListFragment.OnListFrag
 
         fragmentManager.popBackStack("vachana_list", FragmentManager.POP_BACK_STACK_INCLUSIVE);
         fragmentManager.beginTransaction()
-                .replace(R.id.main_content, fragment)
+                .add(R.id.main_content, fragment)
                 .addToBackStack("vachana_list")
                 .commit();
     }

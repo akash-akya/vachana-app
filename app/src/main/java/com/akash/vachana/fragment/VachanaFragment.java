@@ -276,10 +276,10 @@ public class VachanaFragment extends Fragment {
                         FragmentManager fragmentManager = (mainActivity).getSupportFragmentManager();
                         Fragment fragment = Fragment.instantiate(mainActivity, MainActivity.fragments[1]);
                         fragment.setArguments(bundle);
-//                        fragmentManager.popBackStack("test_kathru_list" , FragmentManager.POP_BACK_STACK_INCLUSIVE);
+                        fragmentManager.popBackStack("vachana_list_vertical" , FragmentManager.POP_BACK_STACK_INCLUSIVE);
                         fragmentManager.beginTransaction()
                                 .replace(R.id.main_content, fragment)
-//                                .addToBackStack( "test_kathru_list" )
+                                .addToBackStack( "vachana_list_vertical" )
                                 .commit();
                     }
                 });

@@ -186,14 +186,6 @@ public class VachanaListFragment extends Fragment {
     }
 
     @Override
-    public void onActivityCreated(@Nullable Bundle savedInstanceState) {
-        super.onActivityCreated(savedInstanceState);
-//        title = getArguments().getString("title");
-//        listener = (OnListFragmentInteractionListener) getArguments().getSerializable("listener");
-//        new VachanaListTask().execute();
-    }
-
-    @Override
     public void onAttach(Context context) {
         super.onAttach(context);
     }
