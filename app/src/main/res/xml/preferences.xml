@@ -16,12 +16,18 @@
       android:summary="ಅ್ಯಪನ ಸ್ಕಿನ್ ಬಣ್ಣವನ್ನು ಬದಲಿಸಿ"
       android:key="themeColor" />
 
-    <android.support.v7.preference.ListPreference
+  <android.support.v7.preference.ListPreference
         android:key="font_size"
         android:title="ಅಕ್ಷರದ ಗಾತ್ರ"
         android:defaultValue="16"
         android:summary="ವಚನಗಳ ಅಕ್ಷರಗಳ ಗಾತ್ರವನ್ನು ಬದಲಾಯಿಸಿ"
         android:entries="@array/font_size"
         android:entryValues="@array/font_size_values" />
+
+  <android.support.v7.preference.SwitchPreferenceCompat
+      android:title="ಪದಕೋಶದ ಕೊಂಡಿ"
+      android:defaultValue="true"
+      android:summary="ಪದದ ಅರ್ಥದ ಕೊಂಡಿಯನ್ನು ಅ್ಯಪ್ನಲ್ಲಿಯೆ ತೆರೆಯಿರಿ"
+      android:key="dictionary"/>
 
 </android.support.v7.preference.PreferenceScreen>

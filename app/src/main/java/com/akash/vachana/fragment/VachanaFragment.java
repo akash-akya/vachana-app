@@ -334,7 +334,14 @@ public class VachanaFragment extends Fragment {
 
                     switch (item.getItemId()) {
                         case R.id.wiki:
-                            showMeaningPopup(getContext(), wikiLink+selectedText);
+                            SharedPreferences sharedPreferences = PreferenceManager.getDefaultSharedPreferences(getContext());
+                            boolean openable = sharedPreferences.getBoolean("dictionary", true);
+                            if (openable){
+                                showMeaningPopup(getContext(), wikiLink+selectedText);
+                            } else {
+                                Intent browserIntent = new Intent(Intent.ACTION_VIEW, Uri.parse(wikiLink+selectedText));
+                                startActivity(browserIntent);
+                            }
                             bodyView.clearFocus();
                             return true;
                     }
