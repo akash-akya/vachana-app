@@ -72,9 +72,9 @@ public class MyKathruListRecyclerViewAdapter extends RecyclerView.Adapter<MyKath
 
         holder.mFavorite.setOnCheckedChangeListener (null);
         if(holder.mItem.getFavorite() == 1) {
-            holder.mFavorite.setSelected(true);
+            holder.mFavorite.setChecked(true);
         } else {
-            holder.mFavorite.setSelected(false);
+            holder.mFavorite.setChecked(false);
         }
 
         holder.mFavorite.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
