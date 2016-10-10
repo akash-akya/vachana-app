@@ -16,6 +16,8 @@ public class UpdateKathruFavorite  extends AsyncTask {
     protected Void doInBackground(Object[] objects) {
         MainActivity.kathruFavoriteChanged = true;
 
+        Log.d(TAG, "doInBackground: kathruFavoriteChanged "+MainActivity.kathruFavoriteChanged);
+
         if (objects[2] instanceof INotifyActivityChange){
             listener = (INotifyActivityChange)objects[2];
             listener.notifyChange();

@@ -70,10 +70,12 @@ public class MyKathruListRecyclerViewAdapter extends RecyclerView.Adapter<MyKath
         holder.mName.setText(kathruMinis.get(position).getName());
         holder.mVachanaCount.setText(String.format("%d", kathruMinis.get(position).getCount()));
 
-        if(holder.mItem.getFavorite() == 1)
-            holder.mFavorite.setChecked(true);
-        else
-            holder.mFavorite.setChecked(false);
+        holder.mFavorite.setOnCheckedChangeListener (null);
+        if(holder.mItem.getFavorite() == 1) {
+            holder.mFavorite.setSelected(true);
+        } else {
+            holder.mFavorite.setSelected(false);
+        }
 
         holder.mFavorite.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
             @Override
