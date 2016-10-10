@@ -49,7 +49,8 @@ public class MainActivity extends AppCompatActivity
             "com.akash.vachana.fragment.VachanaFragment",
             "com.akash.vachana.fragment.VachanaListFragment",
             "com.akash.vachana.fragment.KathruListFragment",
-            "com.akash.vachana.fragment.SearchFragment"
+            "com.akash.vachana.fragment.SearchFragment",
+            "com.akash.vachana.fragment.KathruDetailsFragment"
     };
     private static final long SMOOTH_DRAWER_DELAY = 175;
 

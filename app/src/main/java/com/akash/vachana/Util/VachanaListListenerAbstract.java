@@ -12,12 +12,14 @@ import com.akash.vachana.activity.MainActivity;
 import com.akash.vachana.dbUtil.VachanaMini;
 import com.akash.vachana.fragment.VachanaListFragment;
 
+import java.io.Serializable;
 import java.util.ArrayList;
 
 /**
  * Created by akash on 9/10/16.
  */
-public abstract class VachanaListListenerAbstract implements VachanaListFragment.OnListFragmentInteractionListener {
+public abstract class VachanaListListenerAbstract implements VachanaListFragment.OnListFragmentInteractionListener,
+        Serializable {
 
     private FragmentActivity activity;
 

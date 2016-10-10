@@ -15,6 +15,7 @@ import java.io.OutputStream;
 import java.io.Serializable;
 import java.sql.SQLException;
 import java.util.ArrayList;
+import java.util.EnumMap;
 import java.util.List;
 import java.util.StringTokenizer;
 import java.util.TreeMap;
@@ -42,7 +43,26 @@ public class MainDbHelper extends SQLiteOpenHelper implements Serializable {
     public static final String KEY_TEXT = "Txt";
     public static final String KEY_TITLE = "Title";
     public static final String FOREIGN_KEY_KATHRU_ID = "KathruId";
-    public static final String KEY_FAVORITE = "Favorite";;
+    public static final String KEY_FAVORITE = "Favorite";
+
+    //// Kathru Details Table
+    private static final String TABLE_KATHRU_DETAILS = "KathruDetails";
+    private static final String KEY_SIBLINGS = "Siblings";
+    private static final String KEY_BIRTH_PLACE = "Birth_place";
+    private static final String KEY_MOTHER = "Mother";
+    private static final String KEY_PROVINCE = "Province";
+    private static final String KEY_DEATH_PLACE = "Death_place";
+    private static final String KEY_VILLAGE = "Village";
+    private static final String KEY_FATHER = "Father";
+    private static final String KEY_TIME = "Time";
+    private static final String KEY_OTHER_WORK = "Other_work";
+    private static final String KEY_CHILDREN = "Children";
+    private static final String KEY_WORK = "Work";
+    private static final String KEY_WIFE = "Wife";
+    private static final String KEY_AVAILABLE_VACHANA = "Available_vachana";
+    private static final String KEY_TALUK = "Taluk";
+    private static final String KEY_SPECIALITY = "Speciality";
+    private static final String KEY_TOMB_PLACE = "Tomb_place";
 
     private static Context mContext;
     private static SQLiteDatabase mDataBase;
@@ -389,6 +409,45 @@ public class MainDbHelper extends SQLiteOpenHelper implements Serializable {
 
         String[] args = new String[]{String.valueOf(vachanaId)};
         db.update(TABLE_KATHRU, newValues, KEY_KATHRU_ID+"=?", args);
+    }
+
+    public KathruDetails getKathruDetails (int kathruId) {
+        SQLiteDatabase db = this.getReadableDatabase();
+        Cursor cursor = db.query(TABLE_KATHRU_DETAILS,
+                new String[] { KEY_SIBLINGS, KEY_BIRTH_PLACE, KEY_MOTHER, KEY_PROVINCE, KEY_DEATH_PLACE,
+                        KEY_VILLAGE, KEY_FATHER, KEY_TIME, KEY_OTHER_WORK, KEY_CHILDREN, KEY_WORK, KEY_WIFE,
+                        KEY_AVAILABLE_VACHANA, KEY_ANKITHA, KEY_TALUK, KEY_SPECIALITY, KEY_TOMB_PLACE, KEY_NAME },
+                KEY_KATHRU_ID+ "=?",
+                new String[] { String.valueOf(kathruId) }, null, null, null, null);
+        if (cursor != null)
+            cursor.moveToFirst();
+
+        assert cursor != null;
+        EnumMap<KathruDetails.KEYS, String> kathruDetailsMap = new EnumMap<>(KathruDetails.KEYS.class);
+
+        kathruDetailsMap.put(KathruDetails.KEYS.SIBLINGS , cursor.getString(0));
+        kathruDetailsMap.put(KathruDetails.KEYS.BIRTH_PLACE , cursor.getString(1));
+        kathruDetailsMap.put(KathruDetails.KEYS.MOTHER , cursor.getString(2));
+        kathruDetailsMap.put(KathruDetails.KEYS.PROVINCE , cursor.getString(3));
+        kathruDetailsMap.put(KathruDetails.KEYS.DEATH_PLACE , cursor.getString(4));
+        kathruDetailsMap.put(KathruDetails.KEYS.VILLAGE , cursor.getString(5));
+        kathruDetailsMap.put(KathruDetails.KEYS.FATHER , cursor.getString(6));
+        kathruDetailsMap.put(KathruDetails.KEYS.TIME , cursor.getString(7));
+        kathruDetailsMap.put(KathruDetails.KEYS.OTHER_WORK , cursor.getString(8));
+        kathruDetailsMap.put(KathruDetails.KEYS.CHILDREN , cursor.getString(9));
+        kathruDetailsMap.put(KathruDetails.KEYS.WORK , cursor.getString(10));
+        kathruDetailsMap.put(KathruDetails.KEYS.WIFE , cursor.getString(11));
+        kathruDetailsMap.put(KathruDetails.KEYS.AVAILABLE_VACHANA , cursor.getString(12));
+        kathruDetailsMap.put(KathruDetails.KEYS.ANKITHA , cursor.getString(13));
+        kathruDetailsMap.put(KathruDetails.KEYS.TALUK , cursor.getString(14));
+        kathruDetailsMap.put(KathruDetails.KEYS.SPECIALITY , cursor.getString(15));
+        kathruDetailsMap.put(KathruDetails.KEYS.TOMB_PLACE , cursor.getString(16));
+        kathruDetailsMap.put(KathruDetails.KEYS.NAME , cursor.getString(17));
+
+        KathruDetails kathruDetails = new KathruDetails(kathruId, kathruDetailsMap);
+
+        cursor.close();
+        return kathruDetails;
     }
 
     public boolean getVachanaFavorite(int id) {

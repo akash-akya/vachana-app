@@ -34,6 +34,7 @@ import com.akash.vachana.R;
 import com.akash.vachana.Util.UpdateVachanaFavorite;
 import com.akash.vachana.Util.VachanaListListenerAbstract;
 import com.akash.vachana.activity.MainActivity;
+import com.akash.vachana.dbUtil.KathruDetails;
 import com.akash.vachana.dbUtil.KathruMini;
 import com.akash.vachana.dbUtil.Vachana;
 import com.akash.vachana.dbUtil.VachanaMini;
@@ -54,6 +55,12 @@ public class VachanaFragment extends Fragment {
     private Menu menu;
     private int textSize = 16;
     public  boolean needToUpdate = true;
+    private static KathruDetailsFragment.OnKathruDetailsInteractionListener kathruDetailsListener = new KathruDetailsFragment.OnKathruDetailsInteractionListener() {
+        @Override
+        public KathruDetails getKathruDetails(int kathruId) {
+            return MainActivity.db.getKathruDetails(kathruId);
+        }
+    };
 
     public VachanaFragment() {}
 
@@ -103,8 +110,8 @@ public class VachanaFragment extends Fragment {
 
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
-        int id = item.getItemId();
-        Vachana vachana = myViewPagerAdapter.vachanaHashMap.get(viewPager.getCurrentItem());
+        final int id = item.getItemId();
+        final Vachana vachana = myViewPagerAdapter.vachanaHashMap.get(viewPager.getCurrentItem());
         if (vachana != null) {
             switch (id) {
                 case R.id.action_share:
@@ -131,6 +138,21 @@ public class VachanaFragment extends Fragment {
                     else
                         item.setIcon(R.drawable.ic_star_outline_20dp);
                     new UpdateVachanaFavorite().execute(vachana.getId(), new_state, getActivity());
+                    return true;
+
+                case R.id.action_kathru_detail:
+                    Bundle bundle = new Bundle();
+                    bundle.putString("title", "ನೆಚ್ಚಿನ ವಚನಗಳು");
+                    bundle.putSerializable("kathru_id", vachana.getKathruId());
+                    bundle.putSerializable("listener", kathruDetailsListener);
+                    Fragment fragment = Fragment.instantiate(getActivity(), MainActivity.fragments[4]);
+                    fragment.setArguments(bundle);
+                    FragmentManager fragmentManager = getActivity().getSupportFragmentManager();
+                    fragmentManager.popBackStack("kathru_details", FragmentManager.POP_BACK_STACK_INCLUSIVE);
+                    fragmentManager.beginTransaction()
+                            .replace(R.id.main_content, fragment, "kathru_details")
+                            .addToBackStack( "kathru_details" )
+                            .commit();
                     return true;
             }
         }
