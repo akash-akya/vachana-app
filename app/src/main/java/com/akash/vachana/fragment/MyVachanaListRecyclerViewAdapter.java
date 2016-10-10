@@ -45,6 +45,8 @@ public class MyVachanaListRecyclerViewAdapter extends RecyclerView.Adapter<MyVac
         holder.mTitle.setText(holder.mItem.getTitle());
         holder.mKathru.setText(holder.mItem.getKathruName());
 
+        holder.mFavorite.setOnCheckedChangeListener(null);
+
         if(holder.mItem.getFavorite() == 1)
             holder.mFavorite.setChecked(true);
         else
