@@ -3,7 +3,6 @@ package com.akash.vachana.activity;
 import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
-import android.os.AsyncTask;
 import android.os.Handler;
 import android.preference.PreferenceManager;
 import android.support.annotation.NonNull;
@@ -25,13 +24,17 @@ import android.view.View;
 import android.view.inputmethod.InputMethodManager;
 
 import com.akash.vachana.R;
-import com.akash.vachana.Util.KathruListListenerAbstract;
 import com.akash.vachana.Util.UpdateKathruFavorite;
-import com.akash.vachana.Util.VachanaListListenerAbstract;
+import com.akash.vachana.Util.UpdateVachanaFavorite;
+import com.akash.vachana.dbUtil.KathruDetails;
 import com.akash.vachana.dbUtil.KathruMini;
 import com.akash.vachana.dbUtil.MainDbHelper;
+import com.akash.vachana.dbUtil.Vachana;
 import com.akash.vachana.dbUtil.VachanaMini;
+import com.akash.vachana.fragment.KathruDetailsFragment;
 import com.akash.vachana.fragment.KathruListFragment;
+import com.akash.vachana.fragment.SearchFragment;
+import com.akash.vachana.fragment.VachanaFragment;
 import com.akash.vachana.fragment.VachanaListFragment;
 
 import java.io.IOException;
@@ -39,9 +42,12 @@ import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.Random;
 
-public class MainActivity extends AppCompatActivity
-        implements NavigationView.OnNavigationItemSelectedListener,
-        UpdateKathruFavorite.INotifyActivityChange, Serializable {
+public class MainActivity extends AppCompatActivity implements NavigationView.OnNavigationItemSelectedListener,
+        UpdateKathruFavorite.INotifyActivityChange, Serializable,
+        KathruListFragment.OnKathruListFragmentListener,
+        VachanaListFragment.OnVachanaFragmentListListener,
+        KathruDetailsFragment.OnKathruDetailsInteractionListener,
+        SearchFragment.OnSearchFragmentListener {
 
     private static final String TAG = "MainActivity";
 
@@ -133,14 +139,7 @@ public class MainActivity extends AppCompatActivity
             for(int entry = 0; entry < fm.getBackStackEntryCount(); entry++){
                 String name = fm.getBackStackEntryAt(entry).getName();
                 Fragment fragment = getSupportFragmentManager().findFragmentByTag(name);
-
-/*
-                if (fragment == null)
-                    Log.d(TAG, "updateBackStack: NULL!!!");
-*/
-
                 if (fragment instanceof VachanaListFragment){
-//                    Log.d(TAG, "onBackStackChanged: !!!!!!!  "+name);
                     VachanaListFragment fragment1 = (VachanaListFragment) fragment;
                     fragment1.needToUpdate = true;
                 }
@@ -154,13 +153,7 @@ public class MainActivity extends AppCompatActivity
                 String name = fm.getBackStackEntryAt(entry).getName();
                 Fragment fragment = getSupportFragmentManager().findFragmentByTag(name);
 
-/*
-                if (fragment == null)
-                    Log.d(TAG, "updateBackStack: NULL!!!");
-*/
-
                 if (fragment instanceof KathruListFragment){
-//                    Log.d(TAG, "onBackStackChanged: !!!!!!!  "+name);
                     KathruListFragment fragment1 = (KathruListFragment) fragment;
                     fragment1.needToUpdate = true;
                 }
@@ -224,18 +217,9 @@ public class MainActivity extends AppCompatActivity
                 Random r = new Random();
                 ArrayList<KathruMini> k = db.getAllKathruMinis();
                 final int id = k.get(r.nextInt(247)).getId();
-                final KathruMini kathru = db.getKathruMiniById(id);
-                bundle.putString("title", kathru.getName());
-                bundle.putSerializable("listener", new VachanaListListenerAbstract(this) {
-                    @Override
-                    public ArrayList<VachanaMini> getVachanaMinis() {
-                        return db.getVachanaMinisByKathruId(id);
-                    }
-                });
+                final KathruMini kathruMini = db.getKathruMiniById(id);
 
-                fragment = Fragment.instantiate(MainActivity.this, fragments[1]);
-                assert fragment != null;
-                fragment.setArguments(bundle);
+                fragment = VachanaListFragment.newInstance(kathruMini, kathruMini.getName(), ListType.NORMAL_LIST);
 
                 fragmentManager.popBackStack(null, FragmentManager.POP_BACK_STACK_INCLUSIVE);
                 fragmentManager.beginTransaction()
@@ -245,14 +229,7 @@ public class MainActivity extends AppCompatActivity
 
 
             case R.id.nav_kathru:
-                fragment = Fragment.instantiate(MainActivity.this, fragments[2]);
-                bundle.putString("title", "ವಚನಕಾರರು");
-                bundle.putSerializable("listener", allKathruListListener);
-                try {
-                    fragment.setArguments(bundle);
-                } catch (NullPointerException e){
-                    Log.d(TAG, "selectItem: Fragment is null!!");
-                }
+                fragment = KathruListFragment.newInstance("ವಚನಕಾರರು", ListType.NORMAL_LIST);
                 fragmentManager.popBackStack(null, FragmentManager.POP_BACK_STACK_INCLUSIVE);
                 fragmentManager.beginTransaction()
                         .replace(R.id.main_content, fragment, "kathru_list")
@@ -262,15 +239,7 @@ public class MainActivity extends AppCompatActivity
 
 
             case R.id.nav_favorite:
-                bundle.putString("title", "ನೆಚ್ಚಿನ ವಚನಗಳು");
-                bundle.putSerializable("listener", new VachanaListListenerAbstract(this) {
-                    @Override
-                    public ArrayList<VachanaMini> getVachanaMinis() {
-                        return db.getFavoriteVachanaMinis();
-                    }
-                });
-                fragment = Fragment.instantiate(MainActivity.this, fragments[1]);
-                fragment.setArguments(bundle);
+                fragment = VachanaListFragment.newInstance(null, "ನೆಚ್ಚಿನ ವಚನಗಳು", ListType.FAVORITE_LIST);
                 fragmentManager.popBackStack("fav_vachana_drawer", FragmentManager.POP_BACK_STACK_INCLUSIVE);
                 fragmentManager.beginTransaction()
                         .replace(R.id.main_content, fragment, "fav_vachana_drawer")
@@ -280,15 +249,7 @@ public class MainActivity extends AppCompatActivity
 
 
             case R.id.nav_favorite_kathru:
-                fragment = Fragment.instantiate(MainActivity.this, fragments[2]);
-                fragmentManager.popBackStack(null, FragmentManager.POP_BACK_STACK_INCLUSIVE);
-                bundle.putSerializable("listener", favoriteKathruListListener);
-                bundle.putString("title", "ನೆಚ್ಚಿನ ವಚನಕಾರರು");
-                try {
-                    fragment.setArguments(bundle);
-                } catch (NullPointerException e){
-                    Log.d(TAG, "selectItem: Fragment is null!!");
-                }
+                fragment = KathruListFragment.newInstance("ನೆಚ್ಚಿನ ವಚನಕಾರರು", ListType.FAVORITE_LIST);
                 fragmentManager.popBackStack("kathru_favorite_drawer", FragmentManager.POP_BACK_STACK_INCLUSIVE);
                 fragmentManager.beginTransaction()
                         .replace(R.id.main_content, fragment, "kathru_favorite_drawer")
@@ -327,46 +288,6 @@ public class MainActivity extends AppCompatActivity
         return db.getAllKathruMinis();
     }
 
-    private KathruListListenerAbstract allKathruListListener = new KathruListListenerAbstract(MainActivity.this) {
-        @Override
-        protected Bundle getBundle(final KathruMini kathruMini) {
-            Bundle bundle = new Bundle();
-            bundle.putString("title", kathruMini.getName());
-            bundle.putSerializable("listener", new VachanaListListenerAbstract(MainActivity.this) {
-                @Override
-                public ArrayList<VachanaMini> getVachanaMinis() {
-                    return db.getVachanaMinisByKathruId(kathruMini.getId());
-                }
-            });
-            return bundle;
-        }
-
-        @Override
-        public ArrayList<KathruMini> getKathruMinis() {
-            return db.getAllKathruMinis();
-        }
-    };
-
-    private KathruListListenerAbstract favoriteKathruListListener = new KathruListListenerAbstract(MainActivity.this) {
-        @Override
-        protected Bundle getBundle(final KathruMini kathruMini) {
-            Bundle bundle = new Bundle();
-            bundle.putString("title", kathruMini.getName());
-            bundle.putSerializable("listener", new VachanaListListenerAbstract(MainActivity.this) {
-                @Override
-                public ArrayList<VachanaMini> getVachanaMinis() {
-                    return db.getVachanaMinisByKathruId(kathruMini.getId());
-                }
-            });
-            return bundle;
-        }
-
-        @Override
-        public ArrayList<KathruMini> getKathruMinis() {
-            return db.getFavoriteKathruMinis();
-        }
-    };
-
     void matchColor(int id){
         switch (id) {
             case 0x4fc3f7: Log.d(TAG, "Color: Theme1"); setTheme(R.style.theme1); break;
@@ -381,5 +302,125 @@ public class MainActivity extends AppCompatActivity
     @Override
     public void notifyChange() {
         updateBackStack();
+    }
+
+    @Override
+    public void onKathruListItemClick(KathruMini kathruMini) {
+        FragmentManager fragmentManager = getSupportFragmentManager();
+        Fragment fragment = VachanaListFragment.newInstance(kathruMini, kathruMini.getName(), ListType.NORMAL_LIST);
+
+        fragmentManager.popBackStack("kathru_list_vertical", FragmentManager.POP_BACK_STACK_INCLUSIVE);
+        fragmentManager.beginTransaction()
+                .replace(R.id.main_content, fragment, "kathru_list_vertical")
+                .addToBackStack("kathru_list_vertical")
+                .commit();
+    }
+
+    @Override
+    public void onFavoriteButton(int kathruId, boolean checked) {
+        new UpdateKathruFavorite().execute(kathruId, checked, this);
+    }
+
+    @Override
+    public ArrayList<KathruMini> getKathruMinis(ListType listType) {
+        ArrayList<KathruMini> kathruMinis = null;
+        switch (listType){
+            case NORMAL_LIST:
+                kathruMinis = db.getAllKathruMinis();
+                break;
+            case FAVORITE_LIST:
+                kathruMinis = db.getFavoriteKathruMinis();
+                break;
+        }
+        return kathruMinis;
+    }
+
+    @Override
+    public void OnVachanaListItemClick(ArrayList<VachanaMini> vachanaMinis, int position) {
+        FragmentManager fragmentManager = getSupportFragmentManager();
+        VachanaFragment fragment = VachanaFragment.newInstance(position, vachanaMinis);
+
+        fragmentManager.popBackStack("vachana_list", FragmentManager.POP_BACK_STACK_INCLUSIVE);
+        fragmentManager.beginTransaction()
+                .replace(R.id.main_content, fragment, "vachana_list")
+                .addToBackStack("vachana_list")
+                .commit();
+    }
+
+    @Override
+    public void onVachanaFavoriteButton(int vachanaId, boolean checked) {
+        new UpdateVachanaFavorite().execute(vachanaId, checked, this);
+    }
+
+    @Override
+    public ArrayList<VachanaMini> getVachanaMinis(KathruMini kathruMini, ListType listType) {
+        ArrayList<VachanaMini> vachanaMinis = null;
+        switch (listType){
+            case NORMAL_LIST:
+                vachanaMinis = db.getVachanaMinisByKathruId(kathruMini.getId(), kathruMini.getName());
+                break;
+            case FAVORITE_LIST:
+                vachanaMinis = db.getFavoriteVachanaMinis();
+                break;
+        }
+        return vachanaMinis;
+    }
+
+    @Override
+    public KathruDetails getKathruDetails(int kathruId) {
+        return db.getKathruDetails(kathruId);
+    }
+
+    @Override
+    public void onVachanaButtonClick (int kathruId) {
+        Fragment fragment = KathruListFragment.newInstance("something", ListType.NORMAL_LIST);
+
+        FragmentManager fragmentManager = getSupportFragmentManager();
+        fragmentManager.popBackStack(null, FragmentManager.POP_BACK_STACK_INCLUSIVE);
+        fragmentManager.beginTransaction()
+                .replace(R.id.main_content, fragment, "vachana_list")
+                .commit();
+    }
+
+    @Override
+    public void onSearchButtonClick(String text, String kathru, boolean isPartial) {
+
+        final FragmentManager fragmentManager = getSupportFragmentManager();
+        final VachanaListFragment fragment = VachanaListFragment.newInstance("ಹುಡುಕು", text, kathru,
+                isPartial, ListType.SEARCH);
+
+        fragmentManager.popBackStack("search_button", FragmentManager.POP_BACK_STACK_INCLUSIVE);
+        fragmentManager.beginTransaction()
+                .replace(R.id.main_content, fragment)
+                .addToBackStack( "search_button")
+                .commit();
+    }
+
+    @Override
+    public ArrayList<VachanaMini> getVachanaMinis(String text, String kathruString, boolean isPartialSearch) {
+        String query_text = "SELECT " +
+                MainDbHelper.KEY_VACHANA_ID + ", "+
+                MainDbHelper.KEY_TITLE + ", "+
+                MainDbHelper.FOREIGN_KEY_KATHRU_ID + ", "+
+                MainDbHelper.KEY_FAVORITE;
+        String[] parameters;
+
+        query_text += " FROM " + MainDbHelper.TABLE_VACHANA;
+        query_text += " WHERE " +
+                MainDbHelper.KEY_TITLE + " LIKE ? "; // + "%"+query+"%";
+
+        String query_text_parameter = isPartialSearch? "%"+text+"%" : text;
+        if (!kathruString.isEmpty()) {
+            query_text += " AND " +
+                    MainDbHelper.FOREIGN_KEY_KATHRU_ID + " IN " +
+                    " ( SELECT " + MainDbHelper.KEY_KATHRU_ID +
+                    " FROM " + MainDbHelper.TABLE_KATHRU +
+                    " WHERE " + MainDbHelper.KEY_NAME + " LIKE ? )"; // + "%"+kathruString+"% ) ";
+            parameters = new  String[]{query_text_parameter, "%"+kathruString+"%"};
+        } else {
+            parameters = new  String[]{query_text_parameter};
+        }
+
+        return MainActivity.db.query( query_text, parameters);
     }
 }

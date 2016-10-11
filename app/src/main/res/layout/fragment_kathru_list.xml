@@ -5,45 +5,50 @@ android:layout_width="match_parent"
     xmlns:recyclerviewfastscroller="http://schemas.android.com/apk/res-auto"
     xmlns:android="http://schemas.android.com/apk/res/android">
 
-    <android.support.v7.widget.RecyclerView xmlns:android="http://schemas.android.com/apk/res/android"
-        xmlns:app="http://schemas.android.com/apk/res-auto"
-        xmlns:tools="http://schemas.android.com/tools"
-        android:id="@+id/kathru_recycler_view"
-        android:name="com.akash.vachana.activity.KathruFragment"
+    <RelativeLayout
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        app:layoutManager="android.support.v7.widget.LinearLayoutManager"
-        />
+        android:id="@+id/kathru_list_container">
 
-    <xyz.danoz.recyclerviewfastscroller.vertical.VerticalRecyclerViewFastScroller
-        android:id="@+id/fast_scroller"
-        android:visibility="invisible"
-        android:layout_width="24dp"
-        android:layout_height="match_parent"
-        android:layout_alignParentRight="true"
-        android:layout_alignParentEnd="true"
-        android:focusable="true"
-        android:paddingRight="@dimen/margin_small"
-        android:paddingEnd="@dimen/margin_small"
+        <android.support.v7.widget.RecyclerView xmlns:android="http://schemas.android.com/apk/res/android"
+            xmlns:app="http://schemas.android.com/apk/res-auto"
+            xmlns:tools="http://schemas.android.com/tools"
+            android:id="@+id/kathru_recycler_view"
+            android:name="com.akash.vachana.activity.KathruFragment"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            app:layoutManager="android.support.v7.widget.LinearLayoutManager"
+            />
 
-        recyclerviewfastscroller:rfs_barColor="@color/scrollLineColor"
-        recyclerviewfastscroller:rfs_handleBackground="@drawable/fast_scroller_handle"
-        />
+        <xyz.danoz.recyclerviewfastscroller.vertical.VerticalRecyclerViewFastScroller
+            android:id="@+id/fast_scroller"
+            android:layout_width="24dp"
+            android:layout_height="match_parent"
+            android:layout_alignParentRight="true"
+            android:layout_alignParentEnd="true"
+            android:focusable="true"
+            android:paddingRight="@dimen/margin_small"
+            android:paddingEnd="@dimen/margin_small"
 
-    <com.akash.vachana.Util.ListScrollIndicator
-        android:id="@+id/fast_scroller_section_title_indicator"
-        android:visibility="invisible"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_toLeftOf="@id/fast_scroller"
-        android:layout_toStartOf="@id/fast_scroller"
-        android:layout_marginRight="35dp"
-        android:layout_marginEnd="35dp"
-        android:paddingBottom="40dp"
+            recyclerviewfastscroller:rfs_barColor="@color/scrollLineColor"
+            recyclerviewfastscroller:rfs_handleBackground="@drawable/fast_scroller_handle"
+            />
 
-        recyclerviewfastscroller:rfs_backgroundColor="?attr/colorPrimaryDark"
-        recyclerviewfastscroller:rfs_textColor="@android:color/primary_text_dark"
-        />
+        <com.akash.vachana.Util.ListScrollIndicator
+            android:id="@+id/fast_scroller_section_title_indicator"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_toLeftOf="@id/fast_scroller"
+            android:layout_toStartOf="@id/fast_scroller"
+            android:layout_marginRight="35dp"
+            android:layout_marginEnd="35dp"
+            android:paddingBottom="40dp"
+
+            recyclerviewfastscroller:rfs_backgroundColor="?attr/colorPrimaryDark"
+            recyclerviewfastscroller:rfs_textColor="@android:color/primary_text_dark"
+            />
+
+    </RelativeLayout>
 
     <TextView
         android:layout_width="wrap_content"

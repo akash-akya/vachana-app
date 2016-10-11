@@ -11,7 +11,6 @@ import android.widget.TextView;
 
 import com.akash.vachana.R;
 import com.akash.vachana.dbUtil.VachanaMini;
-import com.akash.vachana.fragment.VachanaListFragment.OnListFragmentInteractionListener;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -24,9 +23,9 @@ public class MyVachanaListRecyclerViewAdapter extends RecyclerView.Adapter<MyVac
     private String[] names;
     private List<VachanaMini> vachanaMinis;
     private ArrayList<VachanaMini> dupVachanaMinis = new ArrayList<>();
-    private OnListFragmentInteractionListener mListener;
+    private VachanaListFragment.OnVachanaFragmentListListener mListener;
 
-    public MyVachanaListRecyclerViewAdapter(List<VachanaMini> items, OnListFragmentInteractionListener listener) {
+    public MyVachanaListRecyclerViewAdapter(List<VachanaMini> items, VachanaListFragment.OnVachanaFragmentListListener listener) {
         vachanaMinis = items;
         mListener = listener;
         dupVachanaMinis.addAll(vachanaMinis);
@@ -55,7 +54,7 @@ public class MyVachanaListRecyclerViewAdapter extends RecyclerView.Adapter<MyVac
         holder.mFavorite.setOnCheckedChangeListener(new OnCheckedChangeListener() {
             @Override
             public void onCheckedChanged(CompoundButton compoundButton, boolean b) {
-                mListener.onFavoriteButton(holder.mItem.getId(), b);
+                mListener.onVachanaFavoriteButton(holder.mItem.getId(), b);
                 holder.mItem.setFavorite(b);
             }
         });
@@ -66,7 +65,7 @@ public class MyVachanaListRecyclerViewAdapter extends RecyclerView.Adapter<MyVac
                 if (null != mListener) {
                     // Notify the active callbacks interface (the activity, if the
                     // fragment is attached to one) that an item has been selected.
-                    mListener.onListFragmentInteraction((ArrayList<VachanaMini>) vachanaMinis, position);
+                    mListener.OnVachanaListItemClick((ArrayList<VachanaMini>) vachanaMinis, position);
                 }
             }
         });

@@ -5,7 +5,6 @@ import android.os.AsyncTask;
 import android.os.Bundle;
 import android.support.design.widget.AppBarLayout;
 import android.support.v4.app.Fragment;
-import android.support.v4.app.FragmentManager;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.Menu;
@@ -21,11 +20,8 @@ import android.widget.EditText;
 import android.widget.RadioButton;
 
 import com.akash.vachana.R;
-import com.akash.vachana.Util.VachanaListListenerAbstract;
 import com.akash.vachana.activity.MainActivity;
 import com.akash.vachana.dbUtil.KathruMini;
-import com.akash.vachana.dbUtil.MainDbHelper;
-import com.akash.vachana.dbUtil.VachanaMini;
 
 import java.io.Serializable;
 import java.util.ArrayList;
@@ -34,6 +30,7 @@ public class SearchFragment extends Fragment implements Serializable{
 
     private static final String TAG = "SearchFragment";
     private KathruListTask kathruListTask;
+    private OnSearchFragmentListener mListener;
 
     public SearchFragment() {
         // Required empty public constructor
@@ -64,54 +61,13 @@ public class SearchFragment extends Fragment implements Serializable{
                 final InputMethodManager inputMethodManager = (InputMethodManager) getActivity().getSystemService(Context.INPUT_METHOD_SERVICE);
                 inputMethodManager.hideSoftInputFromWindow(getActivity().getCurrentFocus().getWindowToken(), 0);
 
-                final Bundle bundle = new Bundle();
-                final MainActivity mainActivity = (MainActivity) getActivity();
-                final FragmentManager fragmentManager = mainActivity.getSupportFragmentManager();
-                final Fragment fragment = Fragment.instantiate(mainActivity, MainActivity.fragments[1]);
                 final String query = textSearchView.getText().toString();
                 final String kathruString = autoCompleteTextView.getText().toString();
                 final Boolean isPartialSearch = radioPartial.isChecked();
 
                 if (query.length() <= 1)
                     return;
-
-                bundle.putString("title", "ಹುಡುಕು");
-                bundle.putSerializable("listener", new VachanaListListenerAbstract(getActivity()) {
-                    @Override
-                    public ArrayList<VachanaMini> getVachanaMinis() {
-                        String query_text = "SELECT " +
-                                MainDbHelper.KEY_VACHANA_ID + ", "+
-                                MainDbHelper.KEY_TITLE + ", "+
-                                MainDbHelper.FOREIGN_KEY_KATHRU_ID + ", "+
-                                MainDbHelper.KEY_FAVORITE;
-                        String[] parameters;
-
-                        query_text += " FROM " + MainDbHelper.TABLE_VACHANA;
-                        query_text += " WHERE " +
-                                MainDbHelper.KEY_TITLE + " LIKE ? "; // + "%"+query+"%";
-
-                        String query_text_parameter = isPartialSearch? "%"+query+"%" : query;
-                        if (!kathruString.isEmpty()) {
-                            query_text += " AND " +
-                                    MainDbHelper.FOREIGN_KEY_KATHRU_ID + " IN " +
-                                    " ( SELECT " + MainDbHelper.KEY_KATHRU_ID +
-                                    " FROM " + MainDbHelper.TABLE_KATHRU +
-                                    " WHERE " + MainDbHelper.KEY_NAME + " LIKE ? )"; // + "%"+kathruString+"% ) ";
-                            parameters = new  String[]{query_text_parameter, "%"+kathruString+"%"};
-                        } else {
-                            parameters = new  String[]{query_text_parameter};
-                        }
-
-                        return MainActivity.db.query( query_text, parameters);
-                    }
-                });
-
-                fragment.setArguments(bundle);
-                fragmentManager.popBackStack("search_button", FragmentManager.POP_BACK_STACK_INCLUSIVE);
-                fragmentManager.beginTransaction()
-                        .replace(R.id.main_content, fragment)
-                        .addToBackStack( "search_button")
-                        .commit();
+                mListener.onSearchButtonClick(query, kathruString, isPartialSearch);
             }
         });
 
@@ -194,10 +150,21 @@ public class SearchFragment extends Fragment implements Serializable{
     @Override
     public void onAttach(Context context) {
         super.onAttach(context);
+        if (context instanceof OnSearchFragmentListener) {
+            mListener = (OnSearchFragmentListener) context;
+        } else {
+            throw new RuntimeException(context.toString()
+                    + " must implement OnFragmentInteractionListener");
+        }
     }
 
     @Override
     public void onDetach() {
         super.onDetach();
+        mListener = null;
+    }
+
+    public interface OnSearchFragmentListener {
+        void onSearchButtonClick(String text, String kathru, boolean isPartial);
     }
 }

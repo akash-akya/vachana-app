@@ -11,6 +11,7 @@ import android.os.Handler;
 import android.preference.PreferenceManager;
 import android.support.annotation.Nullable;
 import android.support.design.widget.AppBarLayout;
+import android.support.v4.app.FragmentActivity;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.view.PagerAdapter;
 import android.support.v4.view.ViewPager;
@@ -32,7 +33,7 @@ import android.widget.TextView;
 
 import com.akash.vachana.R;
 import com.akash.vachana.Util.UpdateVachanaFavorite;
-import com.akash.vachana.Util.VachanaListListenerAbstract;
+import com.akash.vachana.activity.ListType;
 import com.akash.vachana.activity.MainActivity;
 import com.akash.vachana.dbUtil.KathruDetails;
 import com.akash.vachana.dbUtil.KathruMini;
@@ -49,20 +50,39 @@ import java.util.HashMap;
 public class VachanaFragment extends Fragment {
 
     private static final String TAG = "VachanaFragment";
+    private static final String POSITION = "position";
+    private static final String VACHANA_MINIS = "vachana_minis";
 
     private ViewPager viewPager;
     private MyViewPagerAdapter myViewPagerAdapter;
     private Menu menu;
     private int textSize = 16;
     public  boolean needToUpdate = true;
-    private static KathruDetailsFragment.OnKathruDetailsInteractionListener kathruDetailsListener = new KathruDetailsFragment.OnKathruDetailsInteractionListener() {
-        @Override
-        public KathruDetails getKathruDetails(int kathruId) {
-            return MainActivity.db.getKathruDetails(kathruId);
-        }
-    };
+    private int position;
+    private ArrayList<VachanaMini> vachana_minis;
+
 
     public VachanaFragment() {}
+
+    public static VachanaFragment newInstance(int position, ArrayList<VachanaMini> vachanaMinis) {
+        VachanaFragment  fragment = new VachanaFragment();
+        Bundle args = new Bundle();
+        args.putInt(POSITION, position);
+        args.putSerializable(VACHANA_MINIS, vachanaMinis);
+        fragment.setArguments(args);
+        return fragment;
+    }
+
+    @Override
+    public void onCreate(Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
+        if (getArguments() != null) {
+            position = getArguments().getInt(POSITION);
+            vachana_minis = (ArrayList<VachanaMini>) getArguments().getSerializable(VACHANA_MINIS);
+        } else {
+            Log.e(TAG, "onCreate: No arguments!!!");
+        }
+    }
 
     @Override
     public View onCreateView(LayoutInflater inflater, final ViewGroup container, Bundle savedInstanceState) {
@@ -71,12 +91,12 @@ public class VachanaFragment extends Fragment {
         View root = inflater.inflate(R.layout.vachana_pager_layout, container, false);
 
         Bundle extra = getArguments();
-        myViewPagerAdapter = new MyViewPagerAdapter((ArrayList<VachanaMini>) extra.getSerializable("vachanas"));
+        myViewPagerAdapter = new MyViewPagerAdapter(vachana_minis);
         viewPager = (ViewPager) root.findViewById(R.id.vachana_view_pager);
 
         viewPager.setAdapter(myViewPagerAdapter);
         viewPager.setOffscreenPageLimit(2);
-        viewPager.setCurrentItem((int)extra.getSerializable("current_position"));
+        viewPager.setCurrentItem(position);
 
         viewPager.addOnPageChangeListener(new ViewPager.OnPageChangeListener() {
             @Override
@@ -92,9 +112,7 @@ public class VachanaFragment extends Fragment {
             }
 
             @Override
-            public void onPageScrollStateChanged(int state) {
-
-            }
+            public void onPageScrollStateChanged(int state) {         }
         });
 
         return root;
@@ -141,13 +159,10 @@ public class VachanaFragment extends Fragment {
                     return true;
 
                 case R.id.action_kathru_detail:
-                    Bundle bundle = new Bundle();
-                    bundle.putString("title", "ನೆಚ್ಚಿನ ವಚನಗಳು");
-                    bundle.putSerializable("kathru_id", vachana.getKathruId());
-                    bundle.putSerializable("listener", kathruDetailsListener);
-                    Fragment fragment = Fragment.instantiate(getActivity(), MainActivity.fragments[4]);
-                    fragment.setArguments(bundle);
-                    FragmentManager fragmentManager = getActivity().getSupportFragmentManager();
+                    FragmentManager fragmentManager = ((FragmentActivity)getActivity()).getSupportFragmentManager();
+                    KathruDetailsFragment fragment = KathruDetailsFragment.newInstance(vachana.getKathruId(),
+                            vachana.getKathru());
+
                     fragmentManager.popBackStack("kathru_details", FragmentManager.POP_BACK_STACK_INCLUSIVE);
                     fragmentManager.beginTransaction()
                             .replace(R.id.main_content, fragment, "kathru_details")
@@ -296,30 +311,21 @@ public class VachanaFragment extends Fragment {
                 vachanaNumber.setText(String.format("%d/%d",position+1,vachanaMinis.size()));
                 vachanaNumber.setVisibility(View.VISIBLE);
                 final MainActivity mainActivity = (MainActivity) getActivity();
-//                kathruTextView.setOnClickListener(mainActivity.getKathruOnClickListener(vachana.getKathruId()));
                 final KathruMini kathruMini = MainActivity.db.getKathruMiniById(vachana.getKathruId());
 
                 final int id = vachana.getKathruId();
                 kathruTextView.setOnClickListener(new View.OnClickListener() {
                     @Override
                     public void onClick(View v) {
-                        Bundle bundle = new Bundle();
-                        bundle.putString("title", kathruMini.getName());
-                        bundle.putSerializable("listener", new VachanaListListenerAbstract(getActivity()) {
-                            @Override
-                            public ArrayList<VachanaMini> getVachanaMinis() {
-                                return MainActivity.db.getVachanaMinisByKathruId(id);
-                            }
-                        });
+                    FragmentManager fragmentManager = (mainActivity).getSupportFragmentManager();
+                    VachanaListFragment fragment = VachanaListFragment.newInstance(kathruMini, "Vachana", ListType.NORMAL_LIST);
+                    assert fragment != null;
 
-                        FragmentManager fragmentManager = (mainActivity).getSupportFragmentManager();
-                        Fragment fragment = Fragment.instantiate(mainActivity, MainActivity.fragments[1]);
-                        fragment.setArguments(bundle);
-                        fragmentManager.popBackStack("vachana_list_vertical" , FragmentManager.POP_BACK_STACK_INCLUSIVE);
-                        fragmentManager.beginTransaction()
-                                .replace(R.id.main_content, fragment)
-                                .addToBackStack( "vachana_list_vertical" )
-                                .commit();
+                    fragmentManager.popBackStack(null, FragmentManager.POP_BACK_STACK_INCLUSIVE);
+                    fragmentManager.beginTransaction()
+                            .replace(R.id.main_content, fragment, "vachana_list")
+                            .commit();
+
                     }
                 });
                 vachanaHashMap.put(position, vachana);

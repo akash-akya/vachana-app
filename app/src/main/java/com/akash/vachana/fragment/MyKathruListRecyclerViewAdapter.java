@@ -13,7 +13,6 @@ import android.widget.TextView;
 import com.akash.vachana.R;
 import com.akash.vachana.dbUtil.KathruMini;
 import com.akash.vachana.dbUtil.VachanaMini;
-import com.akash.vachana.fragment.KathruListFragment.OnKathruListFragmentInteractionListener;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -26,9 +25,9 @@ public class MyKathruListRecyclerViewAdapter extends RecyclerView.Adapter<MyKath
     private String[] names;
     private List<KathruMini> kathruMinis;
     private ArrayList<KathruMini> dupKathruMinis = new ArrayList<>();
-    private final OnKathruListFragmentInteractionListener mListener;
+    private final KathruListFragment.OnKathruListFragmentListener mListener;
 
-    public MyKathruListRecyclerViewAdapter(List<KathruMini> items, OnKathruListFragmentInteractionListener listener) {
+    public MyKathruListRecyclerViewAdapter(List<KathruMini> items, KathruListFragment.OnKathruListFragmentListener listener) {
         kathruMinis = items;
         mListener = listener;
         dupKathruMinis.addAll(kathruMinis);
@@ -91,7 +90,7 @@ public class MyKathruListRecyclerViewAdapter extends RecyclerView.Adapter<MyKath
                 if (null != mListener) {
                     // Notify the active callbacks interface (the activity, if the
                     // fragment is attached to one) that an item has been selected.
-                    mListener.onListFragmentInteraction(holder.mItem);
+                    mListener.onKathruListItemClick(holder.mItem);
                 }
             }
         });

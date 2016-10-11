@@ -1,15 +1,13 @@
 package com.akash.vachana.fragment;
 
 import android.content.Context;
-import android.content.res.TypedArray;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
-import android.support.v4.app.FragmentManager;
 import android.text.Html;
 import android.text.Spanned;
-import android.util.TypedValue;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -18,49 +16,57 @@ import android.widget.TextView;
 
 import com.akash.vachana.R;
 import com.akash.vachana.Util.HtmlBuilder;
-import com.akash.vachana.Util.VachanaListListenerAbstract;
-import com.akash.vachana.activity.MainActivity;
+import com.akash.vachana.activity.ListType;
 import com.akash.vachana.dbUtil.KathruDetails;
-import com.akash.vachana.dbUtil.VachanaMini;
 
 import java.io.Serializable;
-import java.util.ArrayList;
 
 public class KathruDetailsFragment extends Fragment {
+    private static final String KATHRU_ID = "kathru_id";
+    private static final String TITLE = "title";
+    private static final String TAG = "KathruDetailsFragment";
     private OnKathruDetailsInteractionListener mListener;
+    private String title;
+    private int  kathru_id;
 
     public KathruDetailsFragment() {
         // Required empty public constructor
     }
 
-    public static KathruDetailsFragment newInstance(String param1, String param2) {
-        return new KathruDetailsFragment();
+    public static KathruDetailsFragment newInstance(int kathruId, String title) {
+        KathruDetailsFragment fragment = new KathruDetailsFragment();
+        Bundle args = new Bundle();
+        args.putInt(KATHRU_ID, kathruId);
+        args.putString(TITLE, title);
+        fragment.setArguments(args);
+        return fragment;
     }
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        if (getArguments() != null) {
+            title = getArguments().getString(TITLE);
+            kathru_id = getArguments().getInt(KATHRU_ID);
+        } else {
+            Log.e(TAG, "onCreate: No arguments!!!");
+        }
     }
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
-        // Inflate the layout for this fragment
         View view = inflater.inflate(R.layout.fragment_kathru_details, container, false);
-
-        mListener = (OnKathruDetailsInteractionListener) getArguments().getSerializable("listener");
-//        mListener.getKathruDetails((int) getArguments().getSerializable("kathru_id"));
         return view;
     }
 
     @Override
     public void onActivityCreated(@Nullable Bundle savedInstanceState) {
         super.onActivityCreated(savedInstanceState);
-        new GetKathruDetailsTask((int) getArguments().getSerializable("kathru_id")).execute();
+        new GetKathruDetailsTask(kathru_id).execute();
     }
 
     private class GetKathruDetailsTask extends AsyncTask{
-//        private TextView kathruNameTextView;
         private TextView kathruDetailsTextView;
         private Button vachanaLinkButton;
         private final int kathruId ;
@@ -72,7 +78,6 @@ public class KathruDetailsFragment extends Fragment {
         @Override
         protected void onPreExecute() {
             super.onPreExecute();
-//            kathruNameTextView = (TextView) getActivity().findViewById(R.id.tv_kathru_name);
             kathruDetailsTextView = (TextView) getActivity().findViewById(R.id.tv_kathru_details);
             vachanaLinkButton = (Button) getActivity().findViewById(R.id.btn_vachanas_link);
         }
@@ -86,29 +91,11 @@ public class KathruDetailsFragment extends Fragment {
         protected void onPostExecute(Object o) {
             super.onPostExecute(o);
             final KathruDetails kathruDetails = (KathruDetails)o;
-//            kathruNameTextView.setText(kathruDetails.getName());
             kathruDetailsTextView.setText(getDetailsInFormat(kathruDetails));
             vachanaLinkButton.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
-                    Bundle bundle = new Bundle();
-                    bundle.putString("title", kathruDetails.getName());
-                    bundle.putSerializable("listener", new VachanaListListenerAbstract(getActivity()) {
-                        @Override
-                        public ArrayList<VachanaMini> getVachanaMinis() {
-                            return MainActivity.db.getVachanaMinisByKathruId(kathruDetails.getId());
-                        }
-                    });
-
-                    Fragment fragment = Fragment.instantiate(getActivity(), MainActivity.fragments[1]);
-                    assert fragment != null;
-                    fragment.setArguments(bundle);
-
-                    FragmentManager fragmentManager = getActivity().getSupportFragmentManager();
-                    fragmentManager.popBackStack(null, FragmentManager.POP_BACK_STACK_INCLUSIVE);
-                    fragmentManager.beginTransaction()
-                            .replace(R.id.main_content, fragment, "vachana_list")
-                            .commit();
+                    mListener.onVachanaButtonClick(kathruDetails.getId());
                 }
             });
         }
@@ -121,14 +108,22 @@ public class KathruDetailsFragment extends Fragment {
     @Override
     public void onAttach(Context context) {
         super.onAttach(context);
+        if (context instanceof OnKathruDetailsInteractionListener) {
+            mListener = (OnKathruDetailsInteractionListener) context;
+        } else {
+            throw new RuntimeException(context.toString()
+                    + " must implement OnFragmentInteractionListener");
+        }
     }
 
     @Override
     public void onDetach() {
         super.onDetach();
+        mListener = null;
     }
 
     public interface OnKathruDetailsInteractionListener extends Serializable {
         KathruDetails getKathruDetails(int kathruId);
+        void onVachanaButtonClick (int kathruId);
     }
 }
