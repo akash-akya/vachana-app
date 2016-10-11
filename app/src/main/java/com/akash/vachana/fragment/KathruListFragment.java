@@ -78,6 +78,7 @@ public class KathruListFragment extends Fragment {
                 view.findViewById(R.id.fast_scroller);
         SectionTitleIndicator sectionTitleIndicator = (SectionTitleIndicator)
                 view.findViewById(R.id.fast_scroller_section_title_indicator);
+        recyclerView.setAdapter(myAdapter);
         fastScroller.setRecyclerView(recyclerView);
         recyclerView.addOnScrollListener(fastScroller.getOnScrollListener());
         fastScroller.setSectionIndicator(sectionTitleIndicator);

@@ -105,7 +105,6 @@ public class VachanaListFragment extends Fragment {
                              Bundle savedInstanceState) {
         setHasOptionsMenu(true);
         View view = inflater.inflate(R.layout.fragment_vachana_list, container, false);
-
         recyclerView = (RecyclerView) view.findViewById(R.id.list);
         VerticalRecyclerViewFastScroller fastScroller = (VerticalRecyclerViewFastScroller)
                 view.findViewById(R.id.vachana_fast_scroller);
@@ -199,6 +198,8 @@ public class VachanaListFragment extends Fragment {
     @Override
     public void onResume() {
         super.onResume();
+
+        ((AppCompatActivity) getActivity()).getSupportActionBar().setTitle(title);
 
         AppBarLayout appBarLayout = (AppBarLayout) getActivity().findViewById(R.id.app_bar);
         appBarLayout.setExpanded(true, true);

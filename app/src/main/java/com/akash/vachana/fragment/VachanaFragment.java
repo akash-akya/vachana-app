@@ -318,12 +318,13 @@ public class VachanaFragment extends Fragment {
                     @Override
                     public void onClick(View v) {
                     FragmentManager fragmentManager = (mainActivity).getSupportFragmentManager();
-                    VachanaListFragment fragment = VachanaListFragment.newInstance(kathruMini, "Vachana", ListType.NORMAL_LIST);
-                    assert fragment != null;
+                    VachanaListFragment fragment = VachanaListFragment.newInstance(kathruMini, kathruMini.getName(),
+                            ListType.NORMAL_LIST);
 
-                    fragmentManager.popBackStack(null, FragmentManager.POP_BACK_STACK_INCLUSIVE);
+                    fragmentManager.popBackStack("vachana_list", FragmentManager.POP_BACK_STACK_INCLUSIVE);
                     fragmentManager.beginTransaction()
                             .replace(R.id.main_content, fragment, "vachana_list")
+                            .addToBackStack( "vachana_list")
                             .commit();
 
                     }

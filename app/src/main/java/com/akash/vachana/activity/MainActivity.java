@@ -373,12 +373,14 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
 
     @Override
     public void onVachanaButtonClick (int kathruId) {
-        Fragment fragment = KathruListFragment.newInstance("something", ListType.NORMAL_LIST);
+        KathruMini kathruMini = db.getKathruMiniById(kathruId);
+        final FragmentManager fragmentManager = getSupportFragmentManager();
+        VachanaListFragment fragment = VachanaListFragment.newInstance(kathruMini, kathruMini.getName(), ListType.NORMAL_LIST);
 
-        FragmentManager fragmentManager = getSupportFragmentManager();
-        fragmentManager.popBackStack(null, FragmentManager.POP_BACK_STACK_INCLUSIVE);
+        fragmentManager.popBackStack("vachana_list", FragmentManager.POP_BACK_STACK_INCLUSIVE);
         fragmentManager.beginTransaction()
                 .replace(R.id.main_content, fragment, "vachana_list")
+                .addToBackStack( "vachana_list")
                 .commit();
     }
 
