@@ -7,7 +7,10 @@ import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteOpenHelper;
 import android.util.Log;
 
+import java.io.BufferedInputStream;
 import java.io.File;
+import java.io.FileInputStream;
+import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
@@ -19,15 +22,18 @@ import java.util.EnumMap;
 import java.util.List;
 import java.util.StringTokenizer;
 import java.util.TreeMap;
+import java.util.zip.ZipEntry;
+import java.util.zip.ZipInputStream;
 
 /**
  * Created by akash on 9/13/16.
  */
 public class MainDbHelper extends SQLiteOpenHelper implements Serializable {
     private static final String TAG = "MainDbHelper";
-    private static String DB_PATH;
-
     public static final String DATABASE_NAME = "main.db";
+    private static final String ZIP_FILE_NAME = DATABASE_NAME+".zip";
+
+    private static String DB_PATH;
     public static final int DATABASE_VERSION = 2;
 
     public static final String TABLE_KATHRU = "Kathru";
@@ -119,18 +125,37 @@ public class MainDbHelper extends SQLiteOpenHelper implements Serializable {
      * handled. This is done by transfering bytestream.
      */
     private void copyDataBase() throws IOException {
-        InputStream mInput = mContext.getAssets().open(DATABASE_NAME);
-        String outFileName = DB_PATH + DATABASE_NAME;
-        OutputStream mOutput = new FileOutputStream(outFileName);
-        byte[] mBuffer = new byte[1024];
-        int mLength;
-        while ((mLength = mInput.read(mBuffer)) > 0) {
-            mOutput.write(mBuffer, 0, mLength);
-        }
-        mOutput.flush();
-        mOutput.close();
-        mInput.close();
+        InputStream mInput = mContext.getAssets().open(ZIP_FILE_NAME);
+        File dbPath = new File(DB_PATH);
+        unzip(mInput, dbPath);
+    }
 
+    public static void unzip(InputStream zipFileStream, File targetDirectory) throws IOException {
+        ZipInputStream zis = new ZipInputStream(
+                new BufferedInputStream(zipFileStream));
+        try {
+            ZipEntry ze;
+            int count;
+            byte[] buffer = new byte[8192];
+            while ((ze = zis.getNextEntry()) != null) {
+                File file = new File(targetDirectory, ze.getName());
+                File dir = ze.isDirectory() ? file : file.getParentFile();
+                if (!dir.isDirectory() && !dir.mkdirs())
+                    throw new FileNotFoundException("Failed to ensure directory: " +
+                            dir.getAbsolutePath());
+                if (ze.isDirectory())
+                    continue;
+                FileOutputStream fout = new FileOutputStream(file);
+                try {
+                    while ((count = zis.read(buffer)) != -1)
+                        fout.write(buffer, 0, count);
+                } finally {
+                    fout.close();
+                }
+            }
+        } finally {
+            zis.close();
+        }
     }
 
     public void openDataBase() throws SQLException {
