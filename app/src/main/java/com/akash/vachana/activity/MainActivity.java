@@ -398,10 +398,12 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
                     " ( SELECT " + MainDbHelper.KEY_KATHRU_ID +
                     " FROM " + MainDbHelper.TABLE_KATHRU +
                     " WHERE " + MainDbHelper.KEY_NAME + " LIKE ? )"; // + "%"+kathruString+"% ) ";
-            parameters = new  String[]{query_text_parameter, "%"+kathruString+"%"};
+            parameters = new  String[]{query_text_parameter, kathruString};
         } else {
             parameters = new  String[]{query_text_parameter};
         }
+
+        query_text += " = 1 ORDER BY "+MainDbHelper.KEY_TITLE;
 
         return MainActivity.db.query( query_text, parameters);
     }
