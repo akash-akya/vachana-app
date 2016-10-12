@@ -11,8 +11,13 @@ import android.widget.SectionIndexer;
 import android.widget.TextView;
 
 import com.akash.vachana.R;
+import com.akash.vachana.activity.ListType;
 import com.akash.vachana.dbUtil.KathruMini;
 import com.akash.vachana.dbUtil.VachanaMini;
+
+import org.greenrobot.eventbus.EventBus;
+import org.greenrobot.eventbus.Subscribe;
+import org.greenrobot.eventbus.ThreadMode;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -26,10 +31,12 @@ public class MyKathruListRecyclerViewAdapter extends RecyclerView.Adapter<MyKath
     private List<KathruMini> kathruMinis;
     private ArrayList<KathruMini> dupKathruMinis = new ArrayList<>();
     private final KathruListFragment.OnKathruListFragmentListener mListener;
+    private ListType listType;
 
-    public MyKathruListRecyclerViewAdapter(List<KathruMini> items, KathruListFragment.OnKathruListFragmentListener listener) {
+    public MyKathruListRecyclerViewAdapter(List<KathruMini> items, KathruListFragment.OnKathruListFragmentListener listener, ListType listType) {
         kathruMinis = items;
         mListener = listener;
+        this.listType = listType;
         dupKathruMinis.addAll(kathruMinis);
         names = new String[kathruMinis.size()];
         int i = 0;
@@ -79,8 +86,9 @@ public class MyKathruListRecyclerViewAdapter extends RecyclerView.Adapter<MyKath
         holder.mFavorite.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
             @Override
             public void onCheckedChanged(CompoundButton compoundButton, boolean b) {
-                mListener.onFavoriteButton(holder.mItem.getId(), b);
                 holder.mItem.setFavorite(b);
+                EventBus.getDefault().post(holder.mItem);
+//                mListener.onFavoriteButton(holder.mItem.getId(), b);
             }
         });
 
@@ -94,6 +102,37 @@ public class MyKathruListRecyclerViewAdapter extends RecyclerView.Adapter<MyKath
                 }
             }
         });
+    }
+
+    @Override
+    public void onDetachedFromRecyclerView(RecyclerView recyclerView) {
+        super.onDetachedFromRecyclerView(recyclerView);
+        if (EventBus.getDefault().isRegistered(this))
+            EventBus.getDefault().unregister(this);
+    }
+
+    @Override
+    public void onAttachedToRecyclerView(RecyclerView recyclerView) {
+        super.onAttachedToRecyclerView(recyclerView);
+        if (!EventBus.getDefault().isRegistered(this)){
+            EventBus.getDefault().register(this);
+        }
+    }
+
+    @Subscribe(threadMode = ThreadMode.POSTING)
+    public void doThis(KathruMini kathruMini){
+        for (int i=0; i<kathruMinis.size(); i++){
+            if (kathruMinis.get(i).getId() == kathruMini.getId()){
+                if (listType == ListType.FAVORITE_LIST){
+                    kathruMinis.remove(i);
+                    notifyDataSetChanged();
+                }else {
+                    kathruMinis.set(i, kathruMini);
+                    notifyItemChanged(i);
+                }
+                break;
+            }
+        }
     }
 
     @Override

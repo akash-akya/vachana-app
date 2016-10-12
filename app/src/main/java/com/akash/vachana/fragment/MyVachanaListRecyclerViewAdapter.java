@@ -1,6 +1,7 @@
 package com.akash.vachana.fragment;
 
 import android.support.v7.widget.RecyclerView;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -10,7 +11,13 @@ import android.widget.SectionIndexer;
 import android.widget.TextView;
 
 import com.akash.vachana.R;
+import com.akash.vachana.activity.ListType;
+import com.akash.vachana.dbUtil.KathruMini;
 import com.akash.vachana.dbUtil.VachanaMini;
+
+import org.greenrobot.eventbus.EventBus;
+import org.greenrobot.eventbus.Subscribe;
+import org.greenrobot.eventbus.ThreadMode;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -20,14 +27,16 @@ import static android.widget.CompoundButton.*;
 public class MyVachanaListRecyclerViewAdapter extends RecyclerView.Adapter<MyVachanaListRecyclerViewAdapter.ViewHolder>
         implements SectionIndexer {
 
+    private final ListType listType;
     private String[] names;
     private List<VachanaMini> vachanaMinis;
     private ArrayList<VachanaMini> dupVachanaMinis = new ArrayList<>();
     private VachanaListFragment.OnVachanaFragmentListListener mListener;
 
-    public MyVachanaListRecyclerViewAdapter(List<VachanaMini> items, VachanaListFragment.OnVachanaFragmentListListener listener) {
+    public MyVachanaListRecyclerViewAdapter(List<VachanaMini> items, VachanaListFragment.OnVachanaFragmentListListener listener, ListType listType) {
         vachanaMinis = items;
         mListener = listener;
+        this.listType = listType;
         dupVachanaMinis.addAll(vachanaMinis);
     }
 
@@ -54,8 +63,9 @@ public class MyVachanaListRecyclerViewAdapter extends RecyclerView.Adapter<MyVac
         holder.mFavorite.setOnCheckedChangeListener(new OnCheckedChangeListener() {
             @Override
             public void onCheckedChanged(CompoundButton compoundButton, boolean b) {
-                mListener.onVachanaFavoriteButton(holder.mItem.getId(), b);
                 holder.mItem.setFavorite(b);
+                EventBus.getDefault().post(holder.mItem);
+//                mListener.onVachanaFavoriteButton(holder.mItem.getId(), b);
             }
         });
 
@@ -115,6 +125,39 @@ public class MyVachanaListRecyclerViewAdapter extends RecyclerView.Adapter<MyVac
         }
         return position;
     }
+
+    @Override
+    public void onDetachedFromRecyclerView(RecyclerView recyclerView) {
+        super.onDetachedFromRecyclerView(recyclerView);
+        if (EventBus.getDefault().isRegistered(this)){
+            EventBus.getDefault().unregister(this);
+        }
+    }
+
+    @Override
+    public void onAttachedToRecyclerView(RecyclerView recyclerView) {
+        super.onAttachedToRecyclerView(recyclerView);
+        if (!EventBus.getDefault().isRegistered(this)){
+            EventBus.getDefault().register(this);
+        }
+    }
+
+    @Subscribe(threadMode = ThreadMode.POSTING)
+    public void doThis(VachanaMini vachanaMini){
+        for (int i=0; i<vachanaMinis.size(); i++){
+            if (vachanaMinis.get(i).getId() == vachanaMini.getId()){
+                if (listType == ListType.FAVORITE_LIST){
+                    vachanaMinis.remove(vachanaMini);
+                    notifyDataSetChanged();
+                }else {
+                    vachanaMinis.set(i, vachanaMini);
+                    notifyItemChanged(i);
+                }
+                break;
+            }
+        }
+    }
+
 
     public void addVachanas(ArrayList<VachanaMini> vachanaMinis) {
         this.vachanaMinis = vachanaMinis;

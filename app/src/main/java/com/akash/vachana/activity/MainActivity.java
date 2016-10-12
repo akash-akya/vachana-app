@@ -3,6 +3,7 @@ package com.akash.vachana.activity;
 import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
+import android.os.AsyncTask;
 import android.os.Handler;
 import android.preference.PreferenceManager;
 import android.support.annotation.NonNull;
@@ -24,12 +25,9 @@ import android.view.View;
 import android.view.inputmethod.InputMethodManager;
 
 import com.akash.vachana.R;
-import com.akash.vachana.Util.UpdateKathruFavorite;
-import com.akash.vachana.Util.UpdateVachanaFavorite;
 import com.akash.vachana.dbUtil.KathruDetails;
 import com.akash.vachana.dbUtil.KathruMini;
 import com.akash.vachana.dbUtil.MainDbHelper;
-import com.akash.vachana.dbUtil.Vachana;
 import com.akash.vachana.dbUtil.VachanaMini;
 import com.akash.vachana.fragment.KathruDetailsFragment;
 import com.akash.vachana.fragment.KathruListFragment;
@@ -37,32 +35,24 @@ import com.akash.vachana.fragment.SearchFragment;
 import com.akash.vachana.fragment.VachanaFragment;
 import com.akash.vachana.fragment.VachanaListFragment;
 
+import org.greenrobot.eventbus.EventBus;
+import org.greenrobot.eventbus.Subscribe;
+import org.greenrobot.eventbus.ThreadMode;
+
 import java.io.IOException;
-import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.Random;
 
 public class MainActivity extends AppCompatActivity implements NavigationView.OnNavigationItemSelectedListener,
-        UpdateKathruFavorite.INotifyActivityChange, Serializable,
         KathruListFragment.OnKathruListFragmentListener,
         VachanaListFragment.OnVachanaFragmentListListener,
         KathruDetailsFragment.OnKathruDetailsInteractionListener,
         SearchFragment.OnSearchFragmentListener {
 
     private static final String TAG = "MainActivity";
-
-    public static final String[] fragments ={
-            "com.akash.vachana.fragment.VachanaFragment",
-            "com.akash.vachana.fragment.VachanaListFragment",
-            "com.akash.vachana.fragment.KathruListFragment",
-            "com.akash.vachana.fragment.SearchFragment",
-            "com.akash.vachana.fragment.KathruDetailsFragment"
-    };
     private static final long SMOOTH_DRAWER_DELAY = 175;
 
     public static MainDbHelper db;
-    public static boolean vachanaFavoriteChanged = false;
-    public static boolean kathruFavoriteChanged = false;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -131,33 +121,40 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
         navigationView.setNavigationItemSelectedListener(this);
     }
 
-    private void updateBackStack() {
-        if (vachanaFavoriteChanged){
-            FragmentManager fm = getSupportFragmentManager();
-            for(int entry = 0; entry < fm.getBackStackEntryCount(); entry++){
-                String name = fm.getBackStackEntryAt(entry).getName();
-                Fragment fragment = getSupportFragmentManager().findFragmentByTag(name);
-                if (fragment instanceof VachanaListFragment){
-                    VachanaListFragment fragment1 = (VachanaListFragment) fragment;
-                    fragment1.needToUpdate = true;
-                }
-            }
-            vachanaFavoriteChanged = false;
-        }
-        if (kathruFavoriteChanged){
-            Log.d(TAG, "onBackStackChanged: kathruFavoriteChanged");
-            FragmentManager fm = getSupportFragmentManager();
-            for(int entry = 0; entry < fm.getBackStackEntryCount(); entry++){
-                String name = fm.getBackStackEntryAt(entry).getName();
-                Fragment fragment = getSupportFragmentManager().findFragmentByTag(name);
+    @Override
+    protected void onResume() {
+        EventBus.getDefault().register(this);
+        super.onResume();
+    }
 
-                if (fragment instanceof KathruListFragment){
-                    KathruListFragment fragment1 = (KathruListFragment) fragment;
-                    fragment1.needToUpdate = true;
-                }
+    @Override
+    protected void onPause() {
+        EventBus.getDefault().unregister(this);
+        super.onPause();
+    }
+
+    @Subscribe(threadMode = ThreadMode.POSTING)
+    public void doThis(final KathruMini kathruMini){
+        new Thread(new Runnable() {
+            public void run(){
+                if (kathruMini.getFavorite() == 1)
+                    MainActivity.db.addKathruToFavorite(kathruMini.getId());
+                else
+                    MainActivity.db.removeKathruFromFavorite(kathruMini.getId());
             }
-            kathruFavoriteChanged = false;
-        }
+        }).start();
+    }
+
+    @Subscribe(threadMode = ThreadMode.POSTING)
+    public void doThis(final VachanaMini vachanaMini){
+        new Thread(new Runnable() {
+            public void run(){
+                if (vachanaMini.getFavorite() == 1)
+                    MainActivity.db.addVachanaToFavorite(vachanaMini.getId());
+                else
+                    MainActivity.db.removeVachanaFromFavorite(vachanaMini.getId());
+            }
+        }).start();
     }
 
     @Override
@@ -257,12 +254,12 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
 
 
             case R.id.nav_search:
-                fragment = Fragment.instantiate(MainActivity.this, fragments[3]);
-                try {
+                fragment = SearchFragment.newInstance();
+/*                try {
                     fragment.setArguments(bundle);
                 } catch (NullPointerException e){
                     Log.d(TAG, "selectItem: Fragment is null!!");
-                }
+                }*/
                 fragmentManager.popBackStack("search_view_drawer", FragmentManager.POP_BACK_STACK_INCLUSIVE);
                 fragmentManager.beginTransaction()
                         .replace(R.id.main_content, fragment, "search_view_drawer")
@@ -298,11 +295,6 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
     }
 
     @Override
-    public void notifyChange() {
-        updateBackStack();
-    }
-
-    @Override
     public void onKathruListItemClick(KathruMini kathruMini) {
         FragmentManager fragmentManager = getSupportFragmentManager();
         Fragment fragment = VachanaListFragment.newInstance(kathruMini, kathruMini.getName(), ListType.NORMAL_LIST);
@@ -312,11 +304,6 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
                 .replace(R.id.main_content, fragment, "kathru_list_vertical")
                 .addToBackStack("kathru_list_vertical")
                 .commit();
-    }
-
-    @Override
-    public void onFavoriteButton(int kathruId, boolean checked) {
-        new UpdateKathruFavorite().execute(kathruId, checked, this);
     }
 
     @Override
@@ -343,11 +330,6 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
                 .replace(R.id.main_content, fragment, "vachana_list")
                 .addToBackStack("vachana_list")
                 .commit();
-    }
-
-    @Override
-    public void onVachanaFavoriteButton(int vachanaId, boolean checked) {
-        new UpdateVachanaFavorite().execute(vachanaId, checked, this);
     }
 
     @Override

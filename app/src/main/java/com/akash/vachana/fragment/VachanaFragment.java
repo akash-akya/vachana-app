@@ -32,13 +32,13 @@ import android.widget.ProgressBar;
 import android.widget.TextView;
 
 import com.akash.vachana.R;
-import com.akash.vachana.Util.UpdateVachanaFavorite;
 import com.akash.vachana.activity.ListType;
 import com.akash.vachana.activity.MainActivity;
-import com.akash.vachana.dbUtil.KathruDetails;
 import com.akash.vachana.dbUtil.KathruMini;
 import com.akash.vachana.dbUtil.Vachana;
 import com.akash.vachana.dbUtil.VachanaMini;
+
+import org.greenrobot.eventbus.EventBus;
 
 import java.io.Serializable;
 import java.util.ArrayList;
@@ -57,7 +57,6 @@ public class VachanaFragment extends Fragment {
     private MyViewPagerAdapter myViewPagerAdapter;
     private Menu menu;
     private int textSize = 16;
-    public  boolean needToUpdate = true;
     private int position;
     private ArrayList<VachanaMini> vachana_minis;
 
@@ -128,7 +127,8 @@ public class VachanaFragment extends Fragment {
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
         final int id = item.getItemId();
-        final Vachana vachana = myViewPagerAdapter.vachanaHashMap.get(viewPager.getCurrentItem());
+        final int position = viewPager.getCurrentItem();
+        final Vachana vachana = myViewPagerAdapter.vachanaHashMap.get(position);
         if (vachana != null) {
             switch (id) {
                 case R.id.action_share:
@@ -149,12 +149,14 @@ public class VachanaFragment extends Fragment {
                 case R.id.action_favorite:
                     boolean new_state = !vachana.getFavorite();
                     vachana.setFavorite(new_state);
-                    myViewPagerAdapter.vachanaHashMap.put(viewPager.getCurrentItem(), vachana);
+                    myViewPagerAdapter.vachanaHashMap.put(position, vachana);
                     if (new_state)
                         item.setIcon(R.drawable.ic_star_20dp);
                     else
                         item.setIcon(R.drawable.ic_star_outline_20dp);
-                    new UpdateVachanaFavorite().execute(vachana.getId(), new_state, getActivity());
+
+                    vachana_minis.get(position).setFavorite(new_state);
+                    EventBus.getDefault().post(vachana_minis.get(position));
                     return true;
 
                 case R.id.action_kathru_detail:
@@ -207,14 +209,13 @@ public class VachanaFragment extends Fragment {
                     newTextSize = Integer.parseInt(sharedPreferences.getString("font_size", "16"));
                 }
 
-                if (newTextSize != textSize || needToUpdate) {
+                if (newTextSize != textSize) {
                     textSize = newTextSize;
                     if (myViewPagerAdapter != null){
                         myViewPagerAdapter.notifyDataSetChanged();
                         myViewPagerAdapter.cleanCacheMap();
                     }
                 }
-                needToUpdate = false;
             }
         }, 0);
     }
@@ -371,7 +372,6 @@ public class VachanaFragment extends Fragment {
                             bodyView.clearFocus();
                             return true;
                     }
-
                     return false;
                 }
 

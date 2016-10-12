@@ -48,7 +48,6 @@ public class VachanaListFragment extends Fragment {
 
     private RecyclerView recyclerView;
     private MyVachanaListRecyclerViewAdapter adapter;
-    public boolean needToUpdate = false;
     private String title;
     private ListType listType;
     private OnVachanaFragmentListListener mListener;
@@ -126,12 +125,6 @@ public class VachanaListFragment extends Fragment {
             title = getArguments().getString("title");
             new VachanaListTask(kathruMini).execute();
         }
-
-        if (needToUpdate) {
-            new VachanaListTask(kathruMini).execute();
-            Log.d(TAG, "onActivityCreated: needToReload");
-            needToUpdate = false;
-        }
     }
 
 
@@ -173,7 +166,7 @@ public class VachanaListFragment extends Fragment {
             ArrayList<VachanaMini> vachanaMinis = (ArrayList<VachanaMini>) o;
             progressBar.setVisibility(View.INVISIBLE);
             if (vachanaMinis.size() > 0 && recyclerView != null && getActivity() != null) {
-                adapter = new MyVachanaListRecyclerViewAdapter(vachanaMinis, mListener);
+                adapter = new MyVachanaListRecyclerViewAdapter(vachanaMinis, mListener, listType);
                 VerticalRecyclerViewFastScroller fastScroller = (VerticalRecyclerViewFastScroller)
                         getActivity().findViewById(R.id.vachana_fast_scroller);
                 SectionTitleIndicator sectionTitleIndicator = (SectionTitleIndicator)
@@ -251,7 +244,6 @@ public class VachanaListFragment extends Fragment {
 
     public interface OnVachanaFragmentListListener extends Serializable {
         void OnVachanaListItemClick(ArrayList<VachanaMini> vachanaMinis, int position);
-        void onVachanaFavoriteButton(int vachanaId, boolean checked);
         ArrayList<VachanaMini> getVachanaMinis(KathruMini kathruMini, ListType listType);
         ArrayList<VachanaMini> getVachanaMinis(String text, String kathruString, boolean isPartialSearch);
     }

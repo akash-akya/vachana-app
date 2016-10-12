@@ -43,7 +43,6 @@ public class KathruListFragment extends Fragment {
     private MyKathruListRecyclerViewAdapter myAdapter;
     private RecyclerView recyclerView;
     private String title;
-    public boolean needToUpdate = false;
     private ListType listType;
 
     public KathruListFragment() { }
@@ -89,10 +88,9 @@ public class KathruListFragment extends Fragment {
     public void onActivityCreated(@Nullable Bundle savedInstanceState) {
         super.onActivityCreated(savedInstanceState);
 
-        if (myAdapter== null || needToUpdate){
+        if (myAdapter== null){
             title = getArguments().getString("title");
             new KathruListTask().execute();
-            needToUpdate = false;
         }
     }
 
@@ -149,7 +147,7 @@ public class KathruListFragment extends Fragment {
                         getActivity().findViewById(R.id.fast_scroller_section_title_indicator);
 
 
-                myAdapter = new MyKathruListRecyclerViewAdapter(kathruMinis, mListener);
+                myAdapter = new MyKathruListRecyclerViewAdapter(kathruMinis, mListener, listType);
                 recyclerView.setAdapter(myAdapter);
 
                 fastScroller.setRecyclerView(recyclerView);
@@ -210,7 +208,6 @@ public class KathruListFragment extends Fragment {
 
     public interface OnKathruListFragmentListener extends Serializable {
         void onKathruListItemClick(KathruMini item);
-        void onFavoriteButton(int kathruId, boolean checked);
         ArrayList<KathruMini> getKathruMinis(ListType listType);
     }
 }
