@@ -1,9 +1,12 @@
 package com.akash.vachana.activity;
 
+import android.app.Activity;
+import android.content.ComponentName;
 import android.os.Build;
 import android.os.Bundle;
 import android.os.Handler;
 import android.support.v4.app.FragmentActivity;
+import android.support.v4.content.IntentCompat;
 import android.support.v7.app.AppCompatDelegate;
 import android.support.v7.preference.ListPreference;
 import android.support.v7.preference.Preference;
@@ -20,10 +23,21 @@ import com.kizitonwose.colorpreferencecompat.ColorPreferenceCompat;
 
 public class MyPreferencesActivity extends FragmentActivity {
 
+    private static boolean needAppRestart = false;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         getSupportFragmentManager().beginTransaction().replace(android.R.id.content, new MyPreferenceFragment()).commit();
+    }
+
+    @Override
+    public void onBackPressed() {
+        if (needAppRestart){
+            assert getCallingActivity() != null;
+            startActivity(IntentCompat.makeRestartActivityTask(getCallingActivity()));
+        }
+        super.onBackPressed();
     }
 
     public static class MyPreferenceFragment extends PreferenceFragmentCompat {
@@ -43,6 +57,7 @@ public class MyPreferencesActivity extends FragmentActivity {
                         AppCompatDelegate.setDefaultNightMode(AppCompatDelegate.MODE_NIGHT_YES);
                     else
                         AppCompatDelegate.setDefaultNightMode(AppCompatDelegate.MODE_NIGHT_NO);
+                    needAppRestart = true;
                     return true;
                 }
             });
@@ -57,6 +72,7 @@ public class MyPreferencesActivity extends FragmentActivity {
                     else
                         AppCompatDelegate.setDefaultNightMode(AppCompatDelegate.MODE_NIGHT_NO);
 
+                    needAppRestart = true;
                     return true;
                 }
             });

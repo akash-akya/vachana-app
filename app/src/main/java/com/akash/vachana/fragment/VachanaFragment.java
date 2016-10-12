@@ -90,7 +90,6 @@ public class VachanaFragment extends Fragment {
 
         View root = inflater.inflate(R.layout.vachana_pager_layout, container, false);
 
-        Bundle extra = getArguments();
         myViewPagerAdapter = new MyViewPagerAdapter(vachana_minis);
         viewPager = (ViewPager) root.findViewById(R.id.vachana_view_pager);
 
@@ -235,7 +234,6 @@ public class VachanaFragment extends Fragment {
      */
     public class MyViewPagerAdapter extends PagerAdapter {
         private final ArrayList<VachanaMini> vachanaMinis;
-        private LayoutInflater layoutInflater;
         public HashMap<Integer, Vachana> vachanaHashMap = new HashMap<>();
 
         public MyViewPagerAdapter(ArrayList<VachanaMini> vachanaMinis) {
@@ -244,7 +242,7 @@ public class VachanaFragment extends Fragment {
 
         @Override
         public Object instantiateItem(final ViewGroup container, int position) {
-            layoutInflater = (LayoutInflater) getActivity().getSystemService(Context.LAYOUT_INFLATER_SERVICE);
+            LayoutInflater layoutInflater = (LayoutInflater) getActivity().getSystemService(Context.LAYOUT_INFLATER_SERVICE);
             final View view = layoutInflater.inflate(R.layout.vachana_text_view, container, false);
             new GetVachanaFromDb(view, position).execute();
             container.addView(view);

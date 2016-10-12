@@ -172,10 +172,8 @@ public class VachanaListFragment extends Fragment {
             super.onPostExecute(o);
             ArrayList<VachanaMini> vachanaMinis = (ArrayList<VachanaMini>) o;
             progressBar.setVisibility(View.INVISIBLE);
-            if (vachanaMinis.size() > 0 && recyclerView != null) {
+            if (vachanaMinis.size() > 0 && recyclerView != null && getActivity() != null) {
                 adapter = new MyVachanaListRecyclerViewAdapter(vachanaMinis, mListener);
-                RecyclerView recyclerView = (RecyclerView)
-                        getActivity().findViewById(R.id.list);
                 VerticalRecyclerViewFastScroller fastScroller = (VerticalRecyclerViewFastScroller)
                         getActivity().findViewById(R.id.vachana_fast_scroller);
                 SectionTitleIndicator sectionTitleIndicator = (SectionTitleIndicator)
