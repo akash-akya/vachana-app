@@ -9,6 +9,7 @@ import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuInflater;
+import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 import android.view.inputmethod.InputMethodManager;
@@ -117,10 +118,12 @@ public class SearchFragment extends Fragment implements Serializable{
             }
         }
     }
+
     @Override
     public void onCreateOptionsMenu(Menu menu, MenuInflater inflater) {
-        menu.clear();
-        inflater.inflate(R.menu.simple_menu, menu);
+        super.onCreateOptionsMenu(menu, inflater);
+        final MenuItem searchMenuItem = menu.findItem(R.id.menu_search);
+        searchMenuItem.setVisible(false);
     }
 
     @Override
