@@ -4,6 +4,7 @@ import android.content.Context;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
+import android.support.design.widget.AppBarLayout;
 import android.support.v4.app.Fragment;
 import android.text.Html;
 import android.text.Spanned;
@@ -17,6 +18,7 @@ import android.widget.TextView;
 import com.akash.vachana.R;
 import com.akash.vachana.Util.HtmlBuilder;
 import com.akash.vachana.activity.ListType;
+import com.akash.vachana.activity.MainActivity;
 import com.akash.vachana.dbUtil.KathruDetails;
 
 import java.io.Serializable;
@@ -61,6 +63,19 @@ public class KathruDetailsFragment extends Fragment {
     }
 
     @Override
+    public void onResume() {
+        super.onResume();
+        AppBarLayout appBarLayout = (AppBarLayout)getActivity().findViewById(R.id.app_bar);
+        appBarLayout.setExpanded(true, true);
+
+        try {
+            ((MainActivity)getActivity()).getSupportActionBar().setTitle(title);
+        } catch (NullPointerException e){
+            Log.d(TAG, "onCreate: Actionbar not found");
+        }
+    }
+
+    @Override
     public void onActivityCreated(@Nullable Bundle savedInstanceState) {
         super.onActivityCreated(savedInstanceState);
         new GetKathruDetailsTask(kathru_id).execute();
@@ -80,6 +95,7 @@ public class KathruDetailsFragment extends Fragment {
             super.onPreExecute();
             kathruDetailsTextView = (TextView) getActivity().findViewById(R.id.tv_kathru_details);
             vachanaLinkButton = (Button) getActivity().findViewById(R.id.btn_vachanas_link);
+            vachanaLinkButton.setVisibility(View.INVISIBLE);
         }
 
         @Override
@@ -92,12 +108,14 @@ public class KathruDetailsFragment extends Fragment {
             super.onPostExecute(o);
             final KathruDetails kathruDetails = (KathruDetails)o;
             kathruDetailsTextView.setText(getDetailsInFormat(kathruDetails));
+            vachanaLinkButton.setText("ವಚನಗಳನ್ನು ತೆರೆಯಿರಿ");
             vachanaLinkButton.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
                     mListener.onVachanaButtonClick(kathruDetails.getId());
                 }
             });
+            vachanaLinkButton.setVisibility(View.VISIBLE);
         }
     }
 

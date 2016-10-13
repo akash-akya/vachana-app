@@ -1,10 +1,17 @@
 package com.akash.vachana.fragment;
 
+import android.app.Activity;
+import android.content.Context;
+import android.content.DialogInterface;
+import android.support.v4.app.FragmentActivity;
+import android.support.v4.app.FragmentManager;
+import android.support.v7.app.AlertDialog;
 import android.support.v7.widget.RecyclerView;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.ArrayAdapter;
 import android.widget.CheckBox;
 import android.widget.CompoundButton;
 import android.widget.SectionIndexer;
@@ -12,6 +19,7 @@ import android.widget.TextView;
 
 import com.akash.vachana.R;
 import com.akash.vachana.activity.ListType;
+import com.akash.vachana.activity.MainActivity;
 import com.akash.vachana.dbUtil.KathruMini;
 import com.akash.vachana.dbUtil.VachanaMini;
 
@@ -88,7 +96,6 @@ public class MyKathruListRecyclerViewAdapter extends RecyclerView.Adapter<MyKath
             public void onCheckedChanged(CompoundButton compoundButton, boolean b) {
                 holder.mItem.setFavorite(b);
                 EventBus.getDefault().post(holder.mItem);
-//                mListener.onFavoriteButton(holder.mItem.getId(), b);
             }
         });
 
@@ -102,6 +109,43 @@ public class MyKathruListRecyclerViewAdapter extends RecyclerView.Adapter<MyKath
                 }
             }
         });
+
+        holder.mView.setOnLongClickListener(new View.OnLongClickListener() {
+
+            @Override
+            public boolean onLongClick(View v) {
+                Log.d("", "onLongClick: ");
+                showKathruDetailsPopup(holder.mView.getContext(), holder.mItem);
+                return true;
+            }
+        });
+    }
+
+    private void showKathruDetailsPopup(final Context context, final KathruMini kathruMini){
+        AlertDialog.Builder builderSingle = new AlertDialog.Builder(context);
+
+        final ArrayAdapter<String> arrayAdapter = new ArrayAdapter<String>(
+                context,
+                android.R.layout.simple_list_item_1);
+        arrayAdapter.add(kathruMini.getName()+" ಬಗ್ಗೆ ಹೆಚ್ಚಿನ ಮಾಹಿತಿ");
+
+        builderSingle.setAdapter(
+                arrayAdapter,
+                new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialog, int which) {
+                        FragmentManager fragmentManager = ((FragmentActivity)context).getSupportFragmentManager();
+                        KathruDetailsFragment fragment = KathruDetailsFragment.newInstance(kathruMini.getId(),
+                                kathruMini.getName());
+
+                        fragmentManager.popBackStack("kathru_details", FragmentManager.POP_BACK_STACK_INCLUSIVE);
+                        fragmentManager.beginTransaction()
+                                .replace(R.id.main_content, fragment, "kathru_details")
+                                .addToBackStack( "kathru_details" )
+                                .commit();
+                    }
+                });
+        builderSingle.show();
     }
 
     @Override

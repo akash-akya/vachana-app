@@ -1,42 +1,34 @@
-<android.support.v4.widget.NestedScrollView
-    xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:tools="http://schemas.android.com/tools"
-    android:layout_width="fill_parent"
-    android:layout_height="fill_parent"
-    android:background="?android:attr/windowBackground"
-    tools:context="com.akash.vachana.fragment.KathruDetailsFragment">
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent">
 
-    <LinearLayout
+    <android.support.v4.widget.NestedScrollView
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:orientation="vertical">
+        android:layout_height="match_parent">
 
-<!--        <TextView
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="New Text"
-            android:layout_marginTop="20dp"
-            android:textSize="17sp"
-            android:textStyle="bold"
-            android:id="@+id/tv_kathru_name"
-            android:layout_gravity="center_horizontal|top" />-->
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:orientation="vertical">
 
-        <TextView
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="New Text\nsdfsaf dfasdf\ndsfdsfasd dsfsafd\ndfgdgsdf"
-            android:layout_margin="10dp"
-            android:textSize="16sp"
-            android:lineSpacingExtra="8dp"
-            android:id="@+id/tv_kathru_details"
-            android:layout_gravity="center_horizontal" />
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text=""
+                android:layout_margin="10dp"
+                android:textSize="16sp"
+                android:lineSpacingExtra="8dp"
+                android:id="@+id/tv_kathru_details"
+                android:layout_gravity="center_horizontal" />
 
-        <Button
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="ವಚನಗಳನ್ನು ತೆರೆಯಿರಿ"
-            android:id="@+id/btn_vachanas_link"
-            android:layout_gravity="center_horizontal" />
+            <Button
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="ವಚನಗಳನ್ನು ತೆರೆಯಿರಿ"
+                android:id="@+id/btn_vachanas_link"
+                android:layout_gravity="center_horizontal" />
 
-    </LinearLayout>
-</android.support.v4.widget.NestedScrollView>
+        </LinearLayout>
+    </android.support.v4.widget.NestedScrollView>
+</RelativeLayout>
