@@ -6,6 +6,7 @@ import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.design.widget.AppBarLayout;
 import android.support.v4.app.Fragment;
+import android.support.v4.view.MenuItemCompat;
 import android.support.v7.widget.GridLayoutManager;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
@@ -39,11 +40,13 @@ public class KathruListFragment extends Fragment {
     private static final String TAG = "KathruListFragment";
     private static final String TITLE = "title";
     private static final String LIST_TYPE = "list_type";
+    private static final String SEARCH_QUERY = "search_query";
     private OnKathruListFragmentListener mListener;
     private MyKathruListRecyclerViewAdapter myAdapter;
     private RecyclerView recyclerView;
     private String title;
     private ListType listType;
+    private String mSearchQuery;
 
     public KathruListFragment() { }
 
@@ -64,6 +67,12 @@ public class KathruListFragment extends Fragment {
             listType = (ListType) getArguments().getSerializable(LIST_TYPE);
         } else {
             Log.e(TAG, "onCreate: No arguments!!!");
+        }
+
+        if (savedInstanceState == null) {
+            mSearchQuery = "";
+        } else {
+            mSearchQuery = savedInstanceState.getString(SEARCH_QUERY);
         }
     }
 
@@ -166,7 +175,7 @@ public class KathruListFragment extends Fragment {
         super.onCreateOptionsMenu(menu, inflater);
         inflater.inflate(R.menu.main, menu);
         final MenuItem searchMenuItem = menu.findItem(R.id.menu_search);
-        final SearchView searchView = (SearchView) searchMenuItem.getActionView();
+        SearchView searchView = (SearchView) MenuItemCompat.getActionView(searchMenuItem);
 
         //***setOnQueryTextListener***
         searchView.setOnQueryTextListener(new SearchView.OnQueryTextListener() {
@@ -182,11 +191,25 @@ public class KathruListFragment extends Fragment {
                 if (myAdapter != null && recyclerView != null) {
                     myAdapter.filter(newText.trim());
                     recyclerView.invalidate();
+                    mSearchQuery = newText;
                     return true;
                 }
                 return false;
             }
         });
+
+        if (mSearchQuery != null && !mSearchQuery.isEmpty()) {
+            searchMenuItem.expandActionView();
+            searchView.setQuery(mSearchQuery, true);
+            searchView.setIconified(false);
+            searchView.clearFocus();
+        }
+    }
+
+    @Override
+    public void onSaveInstanceState(Bundle outState) {
+        super.onSaveInstanceState(outState);
+        outState.putString(SEARCH_QUERY, mSearchQuery);
     }
 
     @Override

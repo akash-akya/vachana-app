@@ -3,9 +3,11 @@ package com.akash.vachana.fragment;
 import android.content.Context;
 import android.os.AsyncTask;
 import android.os.Bundle;
+import android.os.Parcelable;
 import android.support.annotation.Nullable;
 import android.support.design.widget.AppBarLayout;
 import android.support.v4.app.Fragment;
+import android.support.v4.view.MenuItemCompat;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.SearchView;
@@ -43,8 +45,9 @@ public class VachanaListFragment extends Fragment {
     private static final String LIST_TYPE = "list_type";
     private static final String KATHRU_MINI = "kathru_mini";
     private static final String QUERY_TEXT = "query_text";
-    private static final java.lang.String KATHRU_TEXT = "kathru_text";
-    private static final java.lang.String IS_PARTIAL_SEARCH = "partial_search";
+    private static final String KATHRU_TEXT = "kathru_text";
+    private static final String IS_PARTIAL_SEARCH = "partial_search";
+    private static final String SEARCH_QUERY = "search_query";
 
     private RecyclerView recyclerView;
     private MyVachanaListRecyclerViewAdapter adapter;
@@ -55,6 +58,7 @@ public class VachanaListFragment extends Fragment {
     private String query_text;
     private String kathruString;
     private boolean isPartial;
+    private String mSearchQuery;
 
     public VachanaListFragment() {
     }
@@ -84,6 +88,7 @@ public class VachanaListFragment extends Fragment {
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+
         if (getArguments() != null) {
             title = getArguments().getString(TITLE);
             listType = (ListType) getArguments().getSerializable(LIST_TYPE);
@@ -96,6 +101,12 @@ public class VachanaListFragment extends Fragment {
             }
         } else {
             Log.e(TAG, "onCreate: No arguments!!!");
+        }
+
+        if (savedInstanceState == null) {
+            mSearchQuery = "";
+        } else {
+            mSearchQuery = savedInstanceState.getString(SEARCH_QUERY);
         }
     }
 
@@ -197,19 +208,23 @@ public class VachanaListFragment extends Fragment {
     }
 
     @Override
+    public void onSaveInstanceState(Bundle outState) {
+        super.onSaveInstanceState(outState);
+        outState.putString(SEARCH_QUERY, mSearchQuery);
+    }
+
+    @Override
     public void onCreateOptionsMenu(Menu menu, MenuInflater inflater) {
         menu.clear();
         super.onCreateOptionsMenu(menu, inflater);
         inflater.inflate(R.menu.main, menu);
         final MenuItem searchMenuItem = menu.findItem(R.id.menu_search);
-        final SearchView searchView = (SearchView) searchMenuItem.getActionView();
+        SearchView searchView = (SearchView) MenuItemCompat.getActionView(searchMenuItem);
 
-        //***setOnQueryTextListener***
         searchView.setOnQueryTextListener(new SearchView.OnQueryTextListener() {
 
             @Override
             public boolean onQueryTextSubmit(String query) {
-
                 return false;
             }
 
@@ -218,11 +233,19 @@ public class VachanaListFragment extends Fragment {
                 if (adapter != null && recyclerView != null) {
                     adapter.filter(newText);
                     recyclerView.invalidate();
+                    mSearchQuery = newText;
                     return true;
                 }
                 return false;
             }
         });
+
+        if (mSearchQuery != null && !mSearchQuery.isEmpty()) {
+            searchMenuItem.expandActionView();
+            searchView.setQuery(mSearchQuery, true);
+            searchView.setIconified(false);
+            searchView.clearFocus();
+        }
     }
 
     @Override
