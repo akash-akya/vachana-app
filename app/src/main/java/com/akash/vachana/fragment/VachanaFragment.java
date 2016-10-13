@@ -16,6 +16,7 @@ import android.support.v4.app.FragmentManager;
 import android.support.v4.view.PagerAdapter;
 import android.support.v4.view.ViewPager;
 import android.support.v4.app.Fragment;
+import android.support.v7.widget.Toolbar;
 import android.util.TypedValue;
 import android.view.ActionMode;
 import android.util.Log;
@@ -181,7 +182,35 @@ public class VachanaFragment extends Fragment {
 
         AppBarLayout appBarLayout = (AppBarLayout)getActivity().findViewById(R.id.app_bar);
         appBarLayout.setExpanded(true, true);
+
+        Toolbar toolbar = (Toolbar) getActivity().findViewById(R.id.toolbar);
+        toolbar.setOnClickListener(onActionBarClickListener);
     }
+
+    @Override
+    public void onPause() {
+        super.onPause();
+        Toolbar toolbar = (Toolbar) getActivity().findViewById(R.id.toolbar);
+        toolbar.setOnClickListener(null);
+    }
+
+    View.OnClickListener onActionBarClickListener = new View.OnClickListener() {
+        @Override
+        public void onClick(View v) {
+            final VachanaMini vachanaMini = vachana_minis.get(viewPager.getCurrentItem());
+            final KathruMini kathruMini = MainActivity.db.getKathruMiniById(vachanaMini.getKathruId());
+            FragmentManager fragmentManager = getActivity().getSupportFragmentManager();
+            VachanaListFragment fragment = VachanaListFragment.newInstance(kathruMini,
+                    vachanaMini.getKathruName(),
+                    ListType.NORMAL_LIST);
+
+            fragmentManager.popBackStack("vachana_list", FragmentManager.POP_BACK_STACK_INCLUSIVE);
+            fragmentManager.beginTransaction()
+                    .replace(R.id.main_content, fragment, "vachana_list")
+                    .addToBackStack( "vachana_list")
+                    .commit();
+        }
+    };
 
     private void updateActionBarFavorite(Vachana vachana) {
         MenuItem item = menu.findItem(R.id.action_favorite);
@@ -276,12 +305,10 @@ public class VachanaFragment extends Fragment {
             private final TextView vachanaNumber;
             private ProgressBar progressBar;
             private TextView vachanaTextView;
-            private TextView kathruTextView;
             private int position;
 
             public GetVachanaFromDb(View view, int position) {
                 vachanaTextView = (TextView) view.findViewById(R.id.vachana_text);
-                kathruTextView = (TextView) view.findViewById(R.id.vachana_kathru_text);
                 vachanaNumber = (TextView) view.findViewById(R.id.vachana_number);
                 progressBar = (ProgressBar) view.findViewById(R.id.progressBar);
                 this.position = position;
@@ -305,29 +332,8 @@ public class VachanaFragment extends Fragment {
                 vachanaTextView.setText(vachana.getText());
                 vachanaTextView.setVisibility(View.VISIBLE);
                 vachanaTextView.setCustomSelectionActionModeCallback(new StyleCallback(vachanaTextView));
-                kathruTextView.setText(vachana.getKathru());
-                kathruTextView.setVisibility(View.VISIBLE);
                 vachanaNumber.setText(String.format("%d/%d",position+1,vachanaMinis.size()));
                 vachanaNumber.setVisibility(View.VISIBLE);
-                final MainActivity mainActivity = (MainActivity) getActivity();
-                final KathruMini kathruMini = MainActivity.db.getKathruMiniById(vachana.getKathruId());
-
-                final int id = vachana.getKathruId();
-                kathruTextView.setOnClickListener(new View.OnClickListener() {
-                    @Override
-                    public void onClick(View v) {
-                    FragmentManager fragmentManager = (mainActivity).getSupportFragmentManager();
-                    VachanaListFragment fragment = VachanaListFragment.newInstance(kathruMini, kathruMini.getName(),
-                            ListType.NORMAL_LIST);
-
-                    fragmentManager.popBackStack("vachana_list", FragmentManager.POP_BACK_STACK_INCLUSIVE);
-                    fragmentManager.beginTransaction()
-                            .replace(R.id.main_content, fragment, "vachana_list")
-                            .addToBackStack( "vachana_list")
-                            .commit();
-
-                    }
-                });
                 vachanaHashMap.put(position, vachana);
 
             }

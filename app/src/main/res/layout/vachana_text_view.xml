@@ -25,23 +25,6 @@
             <TextView
                 android:visibility="gone"
                 android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:gravity="center_horizontal"
-                android:textSize="14sp"
-                android:textColor="?attr/colorPrimary"
-                android:lineSpacingExtra="5dp"
-                android:paddingTop="15dp"
-                android:paddingLeft="15dp"
-                android:text="fasfdsdf"
-                android:paddingRight="15dp"
-                android:textIsSelectable="true"
-                android:scrollbars="vertical"
-                android:focusable="false"
-                android:id="@+id/vachana_kathru_text"/>
-
-            <TextView
-                android:visibility="gone"
-                android:layout_width="match_parent"
                 android:layout_height="match_parent"
                 android:gravity="center_horizontal"
                 android:textSize="16sp"
