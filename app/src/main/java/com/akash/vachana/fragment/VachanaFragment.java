@@ -1,13 +1,24 @@
 package com.akash.vachana.fragment;
 
 import android.app.Dialog;
+import android.content.ComponentName;
 import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
+import android.content.pm.LabeledIntent;
+import android.content.pm.PackageManager;
+import android.content.pm.ResolveInfo;
+import android.content.res.Resources;
+import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
+import android.graphics.Canvas;
+import android.graphics.drawable.BitmapDrawable;
+import android.graphics.drawable.Drawable;
 import android.net.Uri;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.os.Handler;
+import android.os.Parcelable;
 import android.preference.PreferenceManager;
 import android.support.annotation.Nullable;
 import android.support.design.widget.AppBarLayout;
@@ -17,6 +28,8 @@ import android.support.v4.view.PagerAdapter;
 import android.support.v4.view.ViewPager;
 import android.support.v4.app.Fragment;
 import android.support.v7.widget.Toolbar;
+import android.text.Html;
+import android.text.TextUtils;
 import android.util.TypedValue;
 import android.view.ActionMode;
 import android.util.Log;
@@ -33,6 +46,7 @@ import android.widget.ProgressBar;
 import android.widget.TextView;
 
 import com.akash.vachana.R;
+import com.akash.vachana.activity.HandleShareActivity;
 import com.akash.vachana.activity.ListType;
 import com.akash.vachana.activity.MainActivity;
 import com.akash.vachana.dbUtil.KathruMini;
@@ -44,6 +58,7 @@ import org.greenrobot.eventbus.EventBus;
 import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
 
 /**
  * Created by akash on 9/2/16.
@@ -133,7 +148,7 @@ public class VachanaFragment extends Fragment {
         if (vachana != null) {
             switch (id) {
                 case R.id.action_share:
-                    Intent sharingIntent = new Intent(android.content.Intent.ACTION_SEND);
+/*                    Intent sharingIntent = new Intent(android.content.Intent.ACTION_SEND);
                     sharingIntent.setType("text/plain");
                     String shareBody =  null;
                     try {
@@ -144,7 +159,8 @@ public class VachanaFragment extends Fragment {
                     }
                     sharingIntent.putExtra(android.content.Intent.EXTRA_SUBJECT, vachana.getKathru());
                     sharingIntent.putExtra(android.content.Intent.EXTRA_TEXT, shareBody);
-                    getActivity().startActivity(Intent.createChooser(sharingIntent, "Share via"));
+                    getActivity().startActivity(Intent.createChooser(sharingIntent, "Share via"));*/
+                    onShareClick(vachana.getKathru(), vachana.getText());
                     return true;
 
                 case R.id.action_favorite:
@@ -414,5 +430,57 @@ public class VachanaFragment extends Fragment {
         });
 
         alert.show();
+    }
+
+    public void onShareClick(String subject, String text) {
+        List<LabeledIntent> targetedShareIntents = new ArrayList<LabeledIntent>();
+        Intent shareIntent = new Intent(android.content.Intent.ACTION_SEND);
+        shareIntent.setType("text/plain");
+        PackageManager pm = getActivity().getPackageManager();
+
+        List<ResolveInfo> resInfo = getActivity().getPackageManager().queryIntentActivities(shareIntent, 0);
+
+
+        if (!resInfo.isEmpty()) {
+            for (ResolveInfo resolveInfo : resInfo) {
+                String packageName = resolveInfo.activityInfo.packageName;
+                Intent targetedShareIntent = new Intent(android.content.Intent.ACTION_SEND);
+                targetedShareIntent.setType("text/plain");
+                targetedShareIntent.putExtra(android.content.Intent.EXTRA_SUBJECT, subject);
+                targetedShareIntent.putExtra(Intent.EXTRA_TEXT, text);
+
+                if (packageName.contains("com.whatsapp")){
+//                    Log.d(TAG, "PackageName: "+packageName);
+                    targetedShareIntents.add(getMyIntent(subject, text, resolveInfo.loadLabel(pm),
+                            R.drawable.whatsapp_icon_24));
+                } else {
+                    targetedShareIntent.setPackage(packageName);
+                    targetedShareIntent.setClassName(
+                            resolveInfo.activityInfo.packageName,
+                            resolveInfo.activityInfo.name);
+                    targetedShareIntents.add(new LabeledIntent(targetedShareIntent, packageName, resolveInfo
+                            .loadLabel(pm), resolveInfo.icon));
+                }
+            }
+            LabeledIntent[] extraIntents = targetedShareIntents.toArray(new LabeledIntent[targetedShareIntents.size()]);
+            Intent chooserIntent = Intent.createChooser(targetedShareIntents.remove(0), "Select app to share");
+            chooserIntent.putExtra(Intent.EXTRA_INITIAL_INTENTS, extraIntents);
+            startActivity(chooserIntent);
+        }
+    }
+
+    private LabeledIntent getMyIntent(String subject, String text, CharSequence charSequence, int icon) {
+        Intent targetedShareIntent = new Intent("com.akash.vachana.WHATSAPP_SHARE_HANDLE");
+        String packageName = getActivity().getPackageName();
+        targetedShareIntent.setType("text/plain");
+
+        targetedShareIntent.putExtra(android.content.Intent.EXTRA_SUBJECT, subject);
+        targetedShareIntent.putExtra(android.content.Intent.EXTRA_TEXT, text);
+        targetedShareIntent.setPackage(packageName);
+        targetedShareIntent.setClassName(
+                packageName,
+                HandleShareActivity.class.getName());
+
+        return new LabeledIntent(targetedShareIntent, packageName, charSequence, icon);
     }
 }
