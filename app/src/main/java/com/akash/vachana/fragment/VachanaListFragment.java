@@ -120,7 +120,13 @@ public class VachanaListFragment extends Fragment {
                 view.findViewById(R.id.vachana_fast_scroller);
         SectionTitleIndicator sectionTitleIndicator = (SectionTitleIndicator)
                 view.findViewById(R.id.vachan_fast_scroller_section_indicator);
-        recyclerView.setAdapter(adapter);
+
+        if (adapter == null){
+            recyclerView.setAdapter(new MyVachanaListRecyclerViewAdapter(new ArrayList<VachanaMini>(), mListener, listType));
+        } else {
+            recyclerView.setAdapter(adapter);
+        }
+
         fastScroller.setRecyclerView(recyclerView);
         recyclerView.addOnScrollListener(fastScroller.getOnScrollListener());
         fastScroller.setSectionIndicator(sectionTitleIndicator);
