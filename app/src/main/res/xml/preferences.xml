@@ -3,20 +3,24 @@
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:android="http://schemas.android.com/apk/res/android">
 
-  <android.support.v7.preference.SwitchPreferenceCompat
-      android:title="ಘಾಡ ಸ್ಕಿನ್"
-      android:defaultValue="false"
-      android:summary="ಈ ಆಪ್ಶನ್ ಬಳಸುವ ಮೂಲಕ ಘಾಡ ಸ್ಕಿನ್ ಸೆಟ್ ಮಾಡಬಹುದು"
-      android:key="theme"/>
+    <android.support.v7.preference.PreferenceCategory
+        android:title="ವೇಷ"
+        />
 
-  <com.kizitonwose.colorpreferencecompat.ColorPreferenceCompat
-      android:title="ಸ್ಕಿನ್ ಬಣ್ಣ"
-      android:defaultValue="@string/color_set_5_primary"
-      app:colorChoices="@array/color_choices"
-      android:summary="ಅ್ಯಪನ ಸ್ಕಿನ್ ಬಣ್ಣವನ್ನು ಬದಲಿಸಿ"
-      android:key="themeColor" />
+    <android.support.v7.preference.SwitchPreferenceCompat
+        android:title="ಘಾಡ ಸ್ಕಿನ್"
+        android:defaultValue="false"
+        android:summary="ಈ ಆಪ್ಶನ್ ಬಳಸುವ ಮೂಲಕ ಘಾಡ ಸ್ಕಿನ್ ಸೆಟ್ ಮಾಡಬಹುದು"
+        android:key="theme"/>
 
-  <android.support.v7.preference.ListPreference
+    <com.kizitonwose.colorpreferencecompat.ColorPreferenceCompat
+        android:title="ಸ್ಕಿನ್ ಬಣ್ಣ"
+        android:defaultValue="0"
+        app:colorChoices="@array/color_choices"
+        android:summary="ಅ್ಯಪನ ಸ್ಕಿನ್ ಬಣ್ಣವನ್ನು ಬದಲಿಸಿ"
+        android:key="themeColor" />
+
+    <android.support.v7.preference.ListPreference
         android:key="font_size"
         android:title="ಅಕ್ಷರದ ಗಾತ್ರ"
         android:defaultValue="16"
@@ -24,10 +28,22 @@
         android:entries="@array/font_size"
         android:entryValues="@array/font_size_values" />
 
-  <android.support.v7.preference.SwitchPreferenceCompat
-      android:title="ಪದಕೋಶದ ಕೊಂಡಿ"
-      android:defaultValue="true"
-      android:summary="ಪದದ ಅರ್ಥದ ಕೊಂಡಿಯನ್ನು ಅ್ಯಪ್ನಲ್ಲಿಯೆ ತೆರೆಯಿರಿ"
-      android:key="dictionary"/>
+    <android.support.v7.preference.PreferenceCategory
+        android:title="ನಿಘಂಟು"
+        />
+
+    <android.support.v7.preference.SwitchPreferenceCompat
+        android:title="ಪದಕೋಶದ ಕೊಂಡಿ"
+        android:defaultValue="true"
+        android:summary="ಪದದ ಅರ್ಥದ ಕೊಂಡಿಯನ್ನು ಅ್ಯಪ್ನಲ್ಲಿಯೆ ತೆರೆಯಿರಿ"
+        android:key="dictionary"/>
+
+    <android.support.v7.preference.ListPreference
+        android:key="dictionary_link"
+        android:title="ನಿಘಂಟು"
+        android:defaultValue="0"
+        android:summary="ಪದದ ಅರ್ಥ ತಿಳಿಸಲು ಯಾವ ನಿಘಂಟಿನನ್ನು ಬಳಸಬೇಕು"
+        android:entries="@array/dictionary_entries"
+        android:entryValues="@array/dictionary_values" />
 
 </android.support.v7.preference.PreferenceScreen>

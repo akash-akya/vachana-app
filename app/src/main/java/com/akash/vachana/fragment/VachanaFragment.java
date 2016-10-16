@@ -27,6 +27,7 @@ import android.support.v4.app.FragmentManager;
 import android.support.v4.view.PagerAdapter;
 import android.support.v4.view.ViewPager;
 import android.support.v4.app.Fragment;
+import android.support.v7.app.AlertDialog;
 import android.support.v7.widget.Toolbar;
 import android.text.Html;
 import android.text.TextUtils;
@@ -39,6 +40,7 @@ import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
+import android.view.WindowManager;
 import android.webkit.WebView;
 import android.webkit.WebViewClient;
 import android.widget.EditText;
@@ -357,6 +359,10 @@ public class VachanaFragment extends Fragment {
             class StyleCallback implements ActionMode.Callback, Serializable {
                 private TextView bodyView;
                 private static final String wikiLink = "https://kn.m.wiktionary.org/wiki/";
+                private static final String wikiLinkFilter = "kn.m.wiktionary";
+                private static final String shabhdakoshLink = "http://www.shabdkosh.com/kn/translate/";
+                private static final String shabhdakoshFilter = "shabdkosh.com";
+
 
                 public StyleCallback(TextView bodyView) {
                     this.bodyView = bodyView;
@@ -385,8 +391,24 @@ public class VachanaFragment extends Fragment {
                         case R.id.wiki:
                             SharedPreferences sharedPreferences = PreferenceManager.getDefaultSharedPreferences(getContext());
                             boolean openable = sharedPreferences.getBoolean("dictionary", true);
+
                             if (openable){
-                                showMeaningPopup(getContext(), wikiLink+selectedText);
+                                int dictionary = Integer.parseInt(sharedPreferences.getString("dictionary_link", "shabdkosh"));
+                                String link;
+                                String filter;
+
+                                switch (dictionary){
+                                    case 0: link = shabhdakoshLink+selectedText;
+                                        filter = shabhdakoshFilter;
+                                        break;
+                                    case 1: link = wikiLink+selectedText;
+                                        filter = wikiLinkFilter;
+                                        break;
+                                    default: link = shabhdakoshLink+selectedText;
+                                        filter = shabhdakoshFilter;
+                                        break;
+                                }
+                                showMeaningPopup(getContext(), link, filter);
                             } else {
                                 Intent browserIntent = new Intent(Intent.ACTION_VIEW, Uri.parse(wikiLink+selectedText));
                                 startActivity(browserIntent);
@@ -403,23 +425,24 @@ public class VachanaFragment extends Fragment {
         }
     }
 
-    public void showMeaningPopup(Context context, String url){
+    public void showMeaningPopup(Context context, String url, final String filter){
+        AlertDialog.Builder adb = new AlertDialog.Builder(context);
+        LayoutInflater inflater = getActivity().getLayoutInflater();
+        final View modifyView = inflater.inflate(R.layout.word_meaning_wv, null);
+        adb.setView(modifyView);
 
-        Dialog alert = new Dialog(context);
-        alert.setContentView(R.layout.word_meaning_wv);
-
-        WebView wv = (WebView) alert.findViewById(R.id.web);
-        EditText edit = (EditText) alert.findViewById(R.id.edit);
+        WebView wv = (WebView) modifyView.findViewById(R.id.web);
+        EditText edit = (EditText) modifyView.findViewById(R.id.edit);
         edit.setFocusable(true);
         edit.requestFocus();
 
-        alert.setTitle("Meaning");
+        adb.setTitle("ಪದದ ಅರ್ಥ");
 
         wv.loadUrl(url);
         wv.setWebViewClient(new WebViewClient() {
             @Override
             public boolean shouldOverrideUrlLoading(WebView view, String url) {
-                if (url.contains("kn.m.wiktionary.org/")){
+                if (url.contains(filter)){
                     view.loadUrl(url);
                 } else {
                     Intent browserIntent = new Intent(Intent.ACTION_VIEW, Uri.parse(url));
@@ -429,7 +452,7 @@ public class VachanaFragment extends Fragment {
             }
         });
 
-        alert.show();
+        adb.show();
     }
 
     public void onShareClick(String subject, String text) {
