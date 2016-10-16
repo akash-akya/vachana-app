@@ -21,15 +21,19 @@
 
         <xyz.danoz.recyclerviewfastscroller.vertical.VerticalRecyclerViewFastScroller
             android:id="@+id/vachana_fast_scroller"
-            android:layout_width="24dp"
+            android:layout_width="wrap_content"
             android:layout_height="match_parent"
             android:layout_alignParentRight="true"
             android:layout_alignParentEnd="true"
             android:focusable="true"
-            android:paddingRight="@dimen/margin_small"
-            android:paddingEnd="@dimen/margin_small"
+            android:clickable="true"
+            android:paddingLeft="5dp"
+            android:paddingStart="5dp"
+            android:paddingRight="5dp"
+            android:paddingEnd="5dp"
+            android:focusableInTouchMode="true"
 
-            recyclerviewfastscroller:rfs_barColor="@color/scrollLineColor"
+            recyclerviewfastscroller:rfs_barColor="@android:color/transparent"
             recyclerviewfastscroller:rfs_handleBackground="@drawable/fast_scroller_handle"
             />
 
@@ -39,9 +43,9 @@
             android:layout_height="wrap_content"
             android:layout_toLeftOf="@id/vachana_fast_scroller"
             android:layout_toStartOf="@id/vachana_fast_scroller"
-            android:layout_marginRight="35dp"
-            android:layout_marginEnd="35dp"
-            android:paddingBottom="40dp"
+            android:layout_marginRight="27dp"
+            android:layout_marginEnd="27dp"
+            android:paddingBottom="30dp"
 
             recyclerviewfastscroller:rfs_backgroundColor="?attr/colorPrimaryDark"
             recyclerviewfastscroller:rfs_textColor="@android:color/primary_text_dark"
