@@ -25,6 +25,7 @@ import android.view.View;
 import android.view.inputmethod.InputMethodManager;
 
 import com.akash.vachana.R;
+import com.akash.vachana.dbUtil.DatabaseReadAccess;
 import com.akash.vachana.dbUtil.KathruDetails;
 import com.akash.vachana.dbUtil.KathruMini;
 import com.akash.vachana.dbUtil.MainDbHelper;
@@ -52,7 +53,7 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
     private static final String TAG = "MainActivity";
     private static final long SMOOTH_DRAWER_DELAY = 175;
 
-    public static MainDbHelper db;
+    private static MainDbHelper db;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -337,7 +338,7 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
         ArrayList<VachanaMini> vachanaMinis = null;
         switch (listType){
             case NORMAL_LIST:
-                vachanaMinis = db.getVachanaMinisByKathruId(kathruMini.getId(), kathruMini.getName());
+                vachanaMinis = db.getVachanaMinisByKathruId(kathruMini.getId());
                 break;
             case FAVORITE_LIST:
                 vachanaMinis = db.getFavoriteVachanaMinis();
@@ -362,6 +363,10 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
                 .replace(R.id.main_content, fragment, "vachana_list")
                 .addToBackStack( "vachana_list")
                 .commit();
+    }
+
+    public static DatabaseReadAccess getDatabaseReadAccess(){
+        return db;
     }
 
     @Override

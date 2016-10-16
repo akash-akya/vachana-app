@@ -28,7 +28,7 @@ import java.util.zip.ZipInputStream;
 /**
  * Created by akash on 9/13/16.
  */
-public class MainDbHelper extends SQLiteOpenHelper implements Serializable {
+public class MainDbHelper extends SQLiteOpenHelper implements Serializable, DatabaseReadAccess {
     private static final String TAG = "MainDbHelper";
     public static final String DATABASE_NAME = "main.db";
     private static final String ZIP_FILE_NAME = DATABASE_NAME+".zip";
@@ -87,7 +87,8 @@ public class MainDbHelper extends SQLiteOpenHelper implements Serializable {
     /**
      * Creates a empty database on the system and rewrites it with your own
      * database.
-     */
+
+     @Override */
     public void getDataBase() throws IOException {
 
         // If database not exists copy it from the assets
@@ -167,7 +168,6 @@ public class MainDbHelper extends SQLiteOpenHelper implements Serializable {
 
     }
 
-    @Override
     public synchronized void close() {
 
         if (mDataBase != null)
@@ -176,8 +176,6 @@ public class MainDbHelper extends SQLiteOpenHelper implements Serializable {
         super.close();
 
     }
-
-
 
     @Override
     public void onCreate(SQLiteDatabase sqLiteDatabase) {
@@ -192,6 +190,7 @@ public class MainDbHelper extends SQLiteOpenHelper implements Serializable {
 */
     }
 
+
     @Override
     public void onUpgrade(SQLiteDatabase sqLiteDatabase, int i, int i1) {
         // Drop older table if existed
@@ -200,6 +199,7 @@ public class MainDbHelper extends SQLiteOpenHelper implements Serializable {
         onCreate(sqLiteDatabase);
     }
 
+    @Override
     public KathruMini getKathruMiniById(int id) {
         SQLiteDatabase db = this.getReadableDatabase();
 
@@ -223,6 +223,7 @@ public class MainDbHelper extends SQLiteOpenHelper implements Serializable {
 
     }
 
+    @Override
     public ArrayList<KathruMini> getAllKathruMinis(){
         ArrayList<KathruMini> contactList = new ArrayList<>();
         String selectQuery = "SELECT " +
@@ -254,7 +255,32 @@ public class MainDbHelper extends SQLiteOpenHelper implements Serializable {
         return contactList;
     }
 
+    /*@Override
     public ArrayList<VachanaMini> getVachanaMinisByKathruId (int kathruId, String kathruName) {
+        ArrayList<VachanaMini> vachanaMinis = new ArrayList<>();
+
+        SQLiteDatabase db = this.getReadableDatabase();
+
+        Cursor cursor = db.query(TABLE_VACHANA, new String[] { KEY_VACHANA_ID, KEY_TITLE, KEY_FAVORITE},
+                FOREIGN_KEY_KATHRU_ID + "=?",
+                new String[] { String.valueOf(kathruId) }, null, null, KEY_TITLE, null);
+
+        if (cursor.moveToFirst()) {
+            do {
+                int id = Integer.parseInt(cursor.getString(0));
+                String title = cursor.getString(1);
+                VachanaMini vachanaMini = new VachanaMini(id, kathruId, kathruName, title, cursor.getInt(2));
+                vachanaMinis.add(vachanaMini);
+            } while (cursor.moveToNext());
+        }
+
+        cursor.close();
+        return vachanaMinis;
+    }*/
+
+    @Override
+    public ArrayList<VachanaMini> getVachanaMinisByKathruId (int kathruId) {
+        String kathruName = getKathruNameById(kathruId);
         ArrayList<VachanaMini> vachanaMinis = new ArrayList<>();
 
         SQLiteDatabase db = this.getReadableDatabase();
@@ -276,10 +302,7 @@ public class MainDbHelper extends SQLiteOpenHelper implements Serializable {
         return vachanaMinis;
     }
 
-    public ArrayList<VachanaMini> getVachanaMinisByKathruId (int kathruId) {
-        return  getVachanaMinisByKathruId(kathruId, getKathruNameById(kathruId));
-    }
-
+    @Override
     public String getKathruNameById(int kathruId) { return getKathruMiniById(kathruId).getName(); }
 
     public ArrayList<VachanaMini> query(String rawQuery, String[] parameters) {
@@ -305,10 +328,11 @@ public class MainDbHelper extends SQLiteOpenHelper implements Serializable {
         return vachanaMinis;
     }
 
+    @Override
     public Vachana getVachana(int id) {
         SQLiteDatabase db = this.getReadableDatabase();
         Cursor cursor = db.query(TABLE_VACHANA, new String[] { KEY_VACHANA_ID, KEY_TEXT, FOREIGN_KEY_KATHRU_ID,
-                KEY_FAVORITE},
+                        KEY_FAVORITE},
                 KEY_VACHANA_ID+ "=?",
                 new String[] { String.valueOf(id) }, null, null, null, null);
         if (cursor != null)
@@ -320,26 +344,6 @@ public class MainDbHelper extends SQLiteOpenHelper implements Serializable {
         Vachana vachana = new Vachana(id, text, getKathruNameById(kathruId), cursor.getInt(3) == 1, kathruId);
         cursor.close();
         return vachana;
-    }
-
-    public VachanaMini getVachanaMiniById(int id) {
-        SQLiteDatabase db = this.getReadableDatabase();
-        Cursor cursor = db.query(TABLE_VACHANA, new String[] { KEY_VACHANA_ID, KEY_TITLE, KEY_FAVORITE, FOREIGN_KEY_KATHRU_ID},
-                KEY_VACHANA_ID+ "=?",
-                new String[] { String.valueOf(id) }, null, null, null, null);
-        if (cursor != null)
-            cursor.moveToFirst();
-
-        assert cursor != null;
-        int vid = Integer.parseInt(cursor.getString(0));
-        String title = cursor.getString(1);
-        int kathruId = Integer.parseInt(cursor.getString(3));
-        String kathruName = getKathruNameById(kathruId);
-
-        VachanaMini vachanaMini = new VachanaMini(id, kathruId, kathruName, title, cursor.getInt(2));
-        cursor.close();
-
-        return vachanaMini;
     }
 
     public void addVachanaToFavorite(int vachanaId){
@@ -362,6 +366,7 @@ public class MainDbHelper extends SQLiteOpenHelper implements Serializable {
         db.update(TABLE_VACHANA, newValues, KEY_VACHANA_ID+"=?", args);
     }
 
+    @Override
     public ArrayList<VachanaMini> getFavoriteVachanaMinis() {
         ArrayList<VachanaMini> vachanaMinis = new ArrayList<>();
 
@@ -385,6 +390,7 @@ public class MainDbHelper extends SQLiteOpenHelper implements Serializable {
         return vachanaMinis;
     }
 
+    @Override
     public ArrayList<KathruMini> getFavoriteKathruMinis() {
         ArrayList<KathruMini> kathruMinis = new ArrayList<>();
         String selectQuery = "SELECT " +
@@ -436,6 +442,7 @@ public class MainDbHelper extends SQLiteOpenHelper implements Serializable {
         db.update(TABLE_KATHRU, newValues, KEY_KATHRU_ID+"=?", args);
     }
 
+    @Override
     public KathruDetails getKathruDetails (int kathruId) {
         SQLiteDatabase db = this.getReadableDatabase();
         Cursor cursor = db.query(TABLE_KATHRU_DETAILS,
@@ -473,9 +480,5 @@ public class MainDbHelper extends SQLiteOpenHelper implements Serializable {
 
         cursor.close();
         return kathruDetails;
-    }
-
-    public boolean getVachanaFavorite(int id) {
-        return getVachanaMiniById(id).getFavorite() == 1;
     }
 }

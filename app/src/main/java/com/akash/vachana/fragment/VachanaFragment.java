@@ -214,7 +214,7 @@ public class VachanaFragment extends Fragment {
         @Override
         public void onClick(View v) {
             final VachanaMini vachanaMini = vachana_minis.get(viewPager.getCurrentItem());
-            final KathruMini kathruMini = MainActivity.db.getKathruMiniById(vachanaMini.getKathruId());
+            final KathruMini kathruMini = MainActivity.getDatabaseReadAccess().getKathruMiniById(vachanaMini.getKathruId());
             FragmentManager fragmentManager = getActivity().getSupportFragmentManager();
             VachanaListFragment fragment = VachanaListFragment.newInstance(kathruMini,
                     vachanaMini.getKathruName(),
@@ -332,7 +332,7 @@ public class VachanaFragment extends Fragment {
 
             @Override
             protected Vachana doInBackground(Object[] objects) {
-                return ((MainActivity) getActivity()).db.getVachana(vachanaMinis.get(position).getId());
+                return MainActivity.getDatabaseReadAccess().getVachana(vachanaMinis.get(position).getId());
             }
 
             @Override
