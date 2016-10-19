@@ -25,9 +25,6 @@ import org.json.JSONObject;
 
 import java.io.Serializable;
 
-/**
- * Created by akash on 8/28/16.
- */
 public class Vachana implements Serializable {
     private boolean favorite;
     private int id;

@@ -35,10 +35,6 @@ import android.util.Log;
 import com.akash.vachana.R;
 import com.kizitonwose.colorpreferencecompat.ColorPreferenceCompat;
 
-/**
- * Created by akash on 8/10/16.
- */
-
 public class MyPreferencesActivity extends FragmentActivity {
 
     private static boolean needAppRestart = false;

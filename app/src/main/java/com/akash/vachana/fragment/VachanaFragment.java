@@ -80,9 +80,6 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 
-/**
- * Created by akash on 9/2/16.
- */
 public class VachanaFragment extends Fragment {
 
     private static final String TAG = "VachanaFragment";
@@ -197,7 +194,7 @@ public class VachanaFragment extends Fragment {
                     return true;
 
                 case R.id.action_kathru_detail:
-                    FragmentManager fragmentManager = ((FragmentActivity)getActivity()).getSupportFragmentManager();
+                    FragmentManager fragmentManager = (getActivity()).getSupportFragmentManager();
                     KathruDetailsFragment fragment = KathruDetailsFragment.newInstance(vachana.getKathruId(),
                             vachana.getKathru());
 
@@ -474,7 +471,7 @@ public class VachanaFragment extends Fragment {
     }
 
     public void onShareClick(String subject, String text) {
-        List<LabeledIntent> targetedShareIntents = new ArrayList<LabeledIntent>();
+        List<LabeledIntent> targetedShareIntents = new ArrayList<>();
         Intent shareIntent = new Intent(android.content.Intent.ACTION_SEND);
         shareIntent.setType("text/plain");
         PackageManager pm = getActivity().getPackageManager();

@@ -20,9 +20,6 @@ package com.akash.vachana.dbUtil;
 
 import java.io.Serializable;
 
-/**
- * Created by akash on 8/28/16.
- */
 public class VachanaMini implements Serializable{
     private int id;
     private int kathruId;

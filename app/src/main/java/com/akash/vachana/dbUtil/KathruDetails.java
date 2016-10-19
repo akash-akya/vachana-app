@@ -27,9 +27,6 @@ import java.io.Serializable;
 import java.util.EnumMap;
 import java.util.HashMap;
 
-/**
- * Created by akash on 9/5/16.
- */
 public class KathruDetails implements Serializable{
     private static final String TAG = "KathruDetails";
 
@@ -59,8 +56,8 @@ public class KathruDetails implements Serializable{
 
     public enum KEYS {SIBLINGS, BIRTH_PLACE, MOTHER, PROVINCE, DEATH_PLACE,
         VILLAGE, FATHER, TIME, OTHER_WORK, CHILDREN, WORK, WIFE, AVAILABLE_VACHANA,
-        ANKITHA, TALUK, SPECIALITY, TOMB_PLACE, NAME;
-    };
+        ANKITHA, TALUK, SPECIALITY, TOMB_PLACE, NAME
+    }
 
     private int id;
     private  EnumMap<KEYS,String> details;

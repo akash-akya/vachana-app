@@ -43,9 +43,6 @@ import java.util.TreeMap;
 import java.util.zip.ZipEntry;
 import java.util.zip.ZipInputStream;
 
-/**
- * Created by akash on 9/13/16.
- */
 public class MainDbHelper extends SQLiteOpenHelper implements Serializable, DatabaseReadAccess {
     private static final String TAG = "MainDbHelper";
     public static final String DATABASE_NAME = "main.db";
@@ -105,8 +102,7 @@ public class MainDbHelper extends SQLiteOpenHelper implements Serializable, Data
     /**
      * Creates a empty database on the system and rewrites it with your own
      * database.
-
-     @Override */
+     */
     public void getDataBase() throws IOException {
 
         // If database not exists copy it from the assets

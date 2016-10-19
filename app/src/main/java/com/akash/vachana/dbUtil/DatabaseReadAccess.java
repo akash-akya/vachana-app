@@ -20,9 +20,6 @@ package com.akash.vachana.dbUtil;
 
 import java.util.ArrayList;
 
-/**
- * Created by akash on 16/10/16.
- */
 public interface DatabaseReadAccess {
     KathruMini getKathruMiniById(int id);
     ArrayList<KathruMini> getAllKathruMinis();

@@ -20,9 +20,6 @@ package com.akash.vachana.Util;
 
 import com.akash.vachana.dbUtil.KathruDetails;
 
-/**
- * Created by akash on 10/10/16.
- */
 public class HtmlBuilder {
 
     private static String keyColor;
