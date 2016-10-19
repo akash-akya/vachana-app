@@ -50,17 +50,13 @@
             android:title="ಅಳವಡಿಕೆಗಳು" />
     </group>
 
-    <!--<item android:title="Communicate">
-        <menu>
-            <item
-                android:id="@+id/nav_share"
-                android:icon="@drawable/ic_menu_share"
-                android:title="Share" />
- &lt;!&ndash;           <item
-                android:id="@+id/nav_send"
-                android:icon="@drawable/ic_menu_send"
-                android:title="Send" />&ndash;&gt;
-        </menu>
-    </item>-->
-
+    <group
+        android:id="@+id/menu_bottom"
+        android:checkableBehavior="none">
+        <item
+            android:id="@+id/nav_about_app"
+            android:icon="@drawable/ic_menu_share"
+            android:title="ತಂತ್ರಾಂಶದ ಕುರಿತು">
+        </item>
+    </group>
 </menu>

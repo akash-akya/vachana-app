@@ -25,6 +25,7 @@ import android.os.AsyncTask;
 import android.os.Handler;
 import android.preference.PreferenceManager;
 import android.support.annotation.NonNull;
+import android.support.v4.app.DialogFragment;
 import android.support.v4.app.FragmentManager;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
@@ -43,6 +44,7 @@ import android.view.View;
 import android.view.inputmethod.InputMethodManager;
 
 import com.akash.vachana.R;
+import com.akash.vachana.Util.AboutDialog;
 import com.akash.vachana.dbUtil.DatabaseReadAccess;
 import com.akash.vachana.dbUtil.KathruDetails;
 import com.akash.vachana.dbUtil.KathruMini;
@@ -274,11 +276,6 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
 
             case R.id.nav_search:
                 fragment = SearchFragment.newInstance();
-/*                try {
-                    fragment.setArguments(bundle);
-                } catch (NullPointerException e){
-                    Log.d(TAG, "selectItem: Fragment is null!!");
-                }*/
                 fragmentManager.popBackStack("search_view_drawer", FragmentManager.POP_BACK_STACK_INCLUSIVE);
                 fragmentManager.beginTransaction()
                         .replace(R.id.main_content, fragment, "search_view_drawer")
@@ -292,6 +289,10 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
                 startActivityForResult(intent, 0);
                 return;
 
+            case R.id.nav_about_app:
+                AboutDialog aboutDialogFragment = new AboutDialog();
+                aboutDialogFragment.show(getSupportFragmentManager(), "ತಂತ್ರಾಂಶದ ಕುರಿತು");
+                return;
 
             default:
                 Log.e(TAG, "selectItem: Error, Wrong id");
