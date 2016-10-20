@@ -29,7 +29,7 @@
         android:id="@+id/action_favorite"
         android:orderInCategory="100"
         android:title="Favorite"
-        android:icon="@drawable/ic_star_outline_20dp"
+        android:icon="@drawable/ic_star_border_white_24dp"
         app:showAsAction="always" />
 
     <item

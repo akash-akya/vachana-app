@@ -25,6 +25,7 @@ import android.os.Parcelable;
 import android.support.annotation.Nullable;
 import android.support.design.widget.AppBarLayout;
 import android.support.v4.app.Fragment;
+import android.support.v4.app.FragmentManager;
 import android.support.v4.view.MenuItemCompat;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.RecyclerView;
@@ -41,7 +42,10 @@ import android.widget.ProgressBar;
 import com.akash.vachana.R;
 import com.akash.vachana.activity.ListType;
 import com.akash.vachana.dbUtil.KathruMini;
+import com.akash.vachana.dbUtil.Vachana;
 import com.akash.vachana.dbUtil.VachanaMini;
+
+import org.greenrobot.eventbus.EventBus;
 
 import java.io.Serializable;
 import java.util.ArrayList;
@@ -239,11 +243,20 @@ public class VachanaListFragment extends Fragment {
 
     @Override
     public void onCreateOptionsMenu(Menu menu, MenuInflater inflater) {
-        menu.clear();
         super.onCreateOptionsMenu(menu, inflater);
-        inflater.inflate(R.menu.main, menu);
+        inflater.inflate(R.menu.vachana_list_menu, menu);
         final MenuItem searchMenuItem = menu.findItem(R.id.menu_search);
         SearchView searchView = (SearchView) MenuItemCompat.getActionView(searchMenuItem);
+
+        if (listType == ListType.NORMAL_LIST) {
+            menu.findItem(R.id.action_kathru_favorite).setVisible(true);
+            menu.findItem(R.id.action_kathru_detail).setVisible(true);
+            updateActionBarFavorite(menu.findItem(R.id.action_kathru_favorite),
+                    kathruMini.getFavorite()==1);
+        } else {
+            menu.findItem(R.id.action_kathru_favorite).setVisible(false);
+            menu.findItem(R.id.action_kathru_detail).setVisible(false);
+        }
 
         searchView.setOnQueryTextListener(new SearchView.OnQueryTextListener() {
 
@@ -269,6 +282,37 @@ public class VachanaListFragment extends Fragment {
             searchView.setQuery(mSearchQuery, true);
             searchView.setIconified(false);
             searchView.clearFocus();
+        }
+    }
+
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+        switch (item.getItemId()){
+            case R.id.action_kathru_favorite:
+                boolean new_state = !(kathruMini.getFavorite() == 1);
+                kathruMini.setFavorite(new_state);
+                updateActionBarFavorite(item, new_state);
+                EventBus.getDefault().post(kathruMini);
+                return true;
+
+            case R.id.action_kathru_detail:
+                FragmentManager fragmentManager = (getActivity()).getSupportFragmentManager();
+                KathruDetailsFragment fragment = KathruDetailsFragment.newInstance(kathruMini.getId(),
+                        kathruMini.getName());
+
+                fragmentManager.popBackStack("kathru_details", FragmentManager.POP_BACK_STACK_INCLUSIVE);
+                fragmentManager.beginTransaction()
+                        .replace(R.id.main_content, fragment, "kathru_details")
+                        .addToBackStack( "kathru_details" )
+                        .commit();
+                return true;
+        }
+        return super.onOptionsItemSelected(item);
+    }
+
+    private void updateActionBarFavorite(MenuItem item, boolean state) {
+        if (item != null) {
+            item.setIcon(state? R.drawable.ic_star_20dp : R.drawable.ic_star_border_white_24dp);
         }
     }
 

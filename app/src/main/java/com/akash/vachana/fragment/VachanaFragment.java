@@ -88,10 +88,10 @@ public class VachanaFragment extends Fragment {
 
     private ViewPager viewPager;
     private MyViewPagerAdapter myViewPagerAdapter;
-    private Menu menu;
     private int textSize = 16;
     private int position;
     private ArrayList<VachanaMini> vachana_minis;
+    private MenuItem starMenuItem;
 
 
     public VachanaFragment() {}
@@ -138,7 +138,7 @@ public class VachanaFragment extends Fragment {
                 Vachana vachana = myViewPagerAdapter.vachanaHashMap.get(position);
                 if (vachana != null) {
                     updateActionBarTitle(vachana);
-                    updateActionBarFavorite(vachana);
+                    updateActionBarFavorite(starMenuItem, vachana.getFavorite());
                 }
             }
 
@@ -149,11 +149,17 @@ public class VachanaFragment extends Fragment {
         return root;
     }
 
+    private void updateActionBarFavorite(MenuItem starMenuItem, boolean favorite) {
+        if (starMenuItem != null){
+            starMenuItem.setIcon(favorite? R.drawable.ic_star_20dp : R.drawable.ic_star_border_white_24dp);
+        }
+    }
+
     @Override
     public void onCreateOptionsMenu(Menu menu, MenuInflater inflater) {
         menu.clear();
-        this.menu = menu;
         inflater.inflate(R.menu.vachana, menu);
+        starMenuItem = menu.findItem(R.id.action_favorite);
         super.onCreateOptionsMenu(menu, inflater);
     }
 
@@ -165,18 +171,6 @@ public class VachanaFragment extends Fragment {
         if (vachana != null) {
             switch (id) {
                 case R.id.action_share:
-/*                    Intent sharingIntent = new Intent(android.content.Intent.ACTION_SEND);
-                    sharingIntent.setType("text/plain");
-                    String shareBody =  null;
-                    try {
-                        shareBody = vachana.getText();
-                    } catch (NullPointerException e){
-                        e.printStackTrace();
-                        Log.d(TAG, "onOptionsItemSelected: TextView not found") ;
-                    }
-                    sharingIntent.putExtra(android.content.Intent.EXTRA_SUBJECT, vachana.getKathru());
-                    sharingIntent.putExtra(android.content.Intent.EXTRA_TEXT, shareBody);
-                    getActivity().startActivity(Intent.createChooser(sharingIntent, "Share via"));*/
                     onShareClick(vachana.getKathru(), vachana.getText());
                     return true;
 
@@ -184,11 +178,7 @@ public class VachanaFragment extends Fragment {
                     boolean new_state = !vachana.getFavorite();
                     vachana.setFavorite(new_state);
                     myViewPagerAdapter.vachanaHashMap.put(position, vachana);
-                    if (new_state)
-                        item.setIcon(R.drawable.ic_star_20dp);
-                    else
-                        item.setIcon(R.drawable.ic_star_outline_20dp);
-
+                    updateActionBarFavorite(starMenuItem, new_state);
                     vachana_minis.get(position).setFavorite(new_state);
                     EventBus.getDefault().post(vachana_minis.get(position));
                     return true;
@@ -244,17 +234,6 @@ public class VachanaFragment extends Fragment {
                     .commit();
         }
     };
-
-    private void updateActionBarFavorite(Vachana vachana) {
-        MenuItem item = menu.findItem(R.id.action_favorite);
-        if (item != null) {
-            if (vachana.getFavorite()) {
-                menu.findItem(R.id.action_favorite).setIcon(R.drawable.ic_star_20dp);
-            } else {
-                menu.findItem(R.id.action_favorite).setIcon(R.drawable.ic_star_outline_20dp);
-            }
-        }
-    }
 
     @Override
     public void onActivityCreated(@Nullable Bundle savedInstanceState) {
@@ -358,7 +337,7 @@ public class VachanaFragment extends Fragment {
                 final Vachana vachana = (Vachana) o;
                 if (viewPager.getCurrentItem() == position){
                     updateActionBarTitle(vachana);
-                    updateActionBarFavorite(vachana);
+                    updateActionBarFavorite(starMenuItem, vachana.getFavorite());
                 }
                 progressBar.setVisibility(View.GONE);
                 vachanaTextView.setTextSize(TypedValue.COMPLEX_UNIT_SP, textSize);

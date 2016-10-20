@@ -19,17 +19,18 @@
 
 <menu xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto">
-<!--    <item
-        android:id="@+id/action_settings"
-        android:orderInCategory="100"
-        android:title="ಅಳವಡಿಕೆಗಳು"
-        app:showAsAction="never" />-->
 
     <item
-        android:id="@+id/menu_search"
-        android:title="ಹುಡುಕು"
-        android:orderInCategory="200"
-        app:actionViewClass="android.support.v7.widget.SearchView"
-        app:showAsAction="always"/>
+        android:id="@+id/action_kathru_favorite"
+        android:orderInCategory="100"
+        android:title="Favorite"
+        android:icon="@drawable/ic_star_border_white_24dp"
+        app:showAsAction="always" />
 
+    <item
+        android:id="@+id/action_kathru_detail"
+        android:orderInCategory="100"
+        android:title="ವಚನಕಾರನ ಕುರಿತು"
+        android:icon="@drawable/ic_info_outline_white_24dp"
+        app:showAsAction="always" />
 </menu>
