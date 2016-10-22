@@ -19,16 +19,21 @@
 
 <menu xmlns:android="http://schemas.android.com/apk/res/android">
 
-    <group android:checkableBehavior="single">
+    <group android:id="@+id/menu_top"
+        android:checkableBehavior="none">
         <item
             android:id="@+id/nav_search"
             android:icon="@drawable/ic_search_black_24dp"
             android:title="ಹುಡುಕು" />
+    </group>
+
+    <group android:checkableBehavior="single">
 
         <item
             android:id="@+id/nav_vachana"
             android:icon="@drawable/ic_local_library_black_24dp"
-            android:title="ವಚನಗಳು" />
+            android:title="ಯಾದೃಚ್ಛಿಕ ವಚನಗಳು" />
+
         <item
             android:id="@+id/nav_kathru"
             android:icon="@drawable/ic_person_black_24dp"
@@ -43,20 +48,23 @@
             android:id="@+id/nav_favorite_kathru"
             android:icon="@drawable/ic_favorite_black_24dp"
             android:title="ನೆಚ್ಚಿನ ವಚನಕಾರರು" />
+    </group>
 
+    <group android:id="@+id/menu_bottom"
+        android:checkableBehavior="none">
         <item
             android:id="@+id/nav_settings"
             android:icon="@drawable/ic_settings_black_24dp"
             android:title="ಅಳವಡಿಕೆಗಳು" />
-    </group>
-
-    <group
-        android:id="@+id/menu_bottom"
-        android:checkableBehavior="none">
         <item
             android:id="@+id/nav_about_app"
             android:icon="@drawable/ic_menu_share"
             android:title="ತಂತ್ರಾಂಶದ ಕುರಿತು">
+        </item>
+        <item
+            android:id="@+id/nav_acknowledgement"
+            android:icon="@drawable/ic_menu_share"
+            android:title="ಸ್ವೀಕೃತಿ">
         </item>
     </group>
 </menu>

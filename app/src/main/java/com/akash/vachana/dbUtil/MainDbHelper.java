@@ -229,7 +229,7 @@ public class MainDbHelper extends SQLiteOpenHelper implements Serializable, Data
         String name = cursor.getString(1);
 
         KathruMini kathruMini = new KathruMini(Integer.parseInt(cursor.getString(0)), name, cursor.getString(2),
-                cursor.getInt(3), cursor.getInt(3));
+                cursor.getInt(3), cursor.getInt(4));
 
         cursor.close();
 

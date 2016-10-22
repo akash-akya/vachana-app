@@ -46,6 +46,8 @@ import com.akash.vachana.dbUtil.Vachana;
 import com.akash.vachana.dbUtil.VachanaMini;
 
 import org.greenrobot.eventbus.EventBus;
+import org.greenrobot.eventbus.Subscribe;
+import org.greenrobot.eventbus.ThreadMode;
 
 import java.io.Serializable;
 import java.util.ArrayList;
@@ -81,6 +83,7 @@ public class VachanaListFragment extends Fragment {
     private String kathruString;
     private boolean isPartial;
     private String mSearchQuery;
+    private Menu menu;
 
     public VachanaListFragment() {
     }
@@ -192,36 +195,45 @@ public class VachanaListFragment extends Fragment {
 
         @Override
         protected ArrayList<VachanaMini> doInBackground(Object[] objects) {
-            if (listType == ListType.SEARCH){
-                return mListener.getVachanaMinis(query_text, kathruString, isPartial);
-            } else {
-                return mListener.getVachanaMinis(kathruMini, listType);
+            if (mListener != null){
+                if (listType == ListType.SEARCH){
+                    return mListener.getVachanaMinis(query_text, kathruString, isPartial);
+                } else {
+                    return mListener.getVachanaMinis(kathruMini, listType);
+                }
             }
+            return null;
         }
 
         @Override
         protected void onPostExecute(Object o) {
             super.onPostExecute(o);
-            ArrayList<VachanaMini> vachanaMinis = (ArrayList<VachanaMini>) o;
-            progressBar.setVisibility(View.INVISIBLE);
-            if (vachanaMinis.size() > 0 && recyclerView != null && getActivity() != null) {
-                adapter = new MyVachanaListRecyclerViewAdapter(vachanaMinis, mListener, listType);
-                VerticalRecyclerViewFastScroller fastScroller = (VerticalRecyclerViewFastScroller)
-                        getActivity().findViewById(R.id.vachana_fast_scroller);
-                SectionTitleIndicator sectionTitleIndicator = (SectionTitleIndicator)
-                        getActivity().findViewById(R.id.vachan_fast_scroller_section_indicator);
+            if (o != null){
+                ArrayList<VachanaMini> vachanaMinis = (ArrayList<VachanaMini>) o;
+                progressBar.setVisibility(View.INVISIBLE);
+                if (vachanaMinis.size() > 0 && recyclerView != null && getActivity() != null) {
+                    adapter = new MyVachanaListRecyclerViewAdapter(vachanaMinis, mListener, listType);
+                    VerticalRecyclerViewFastScroller fastScroller = (VerticalRecyclerViewFastScroller)
+                            getActivity().findViewById(R.id.vachana_fast_scroller);
+                    SectionTitleIndicator sectionTitleIndicator = (SectionTitleIndicator)
+                            getActivity().findViewById(R.id.vachan_fast_scroller_section_indicator);
 
-                recyclerView.setAdapter(adapter);
-                fastScroller.setRecyclerView(recyclerView);
-                recyclerView.addOnScrollListener(fastScroller.getOnScrollListener());
-                fastScroller.setSectionIndicator(sectionTitleIndicator);
-                vachanaListContainer.setVisibility(View.VISIBLE);
-            } else {
-                noDataTv.setVisibility(View.VISIBLE);
+                    recyclerView.setAdapter(adapter);
+                    fastScroller.setRecyclerView(recyclerView);
+                    recyclerView.addOnScrollListener(fastScroller.getOnScrollListener());
+                    fastScroller.setSectionIndicator(sectionTitleIndicator);
+                    vachanaListContainer.setVisibility(View.VISIBLE);
+                } else {
+                    noDataTv.setVisibility(View.VISIBLE);
+                }
+
+                if (getActivity() != null) {
+                    if (menu != null && listType == ListType.NORMAL_LIST){
+                        updateActionBarFavorite(menu.findItem(R.id.kathru_favorite), kathruMini.getFavorite()==1);
+                    }
+                    ((AppCompatActivity) getActivity()).getSupportActionBar().setTitle(title);
+                }
             }
-
-            if (getActivity() != null)
-                ((AppCompatActivity) getActivity()).getSupportActionBar().setTitle(title);
         }
     }
 
@@ -283,6 +295,7 @@ public class VachanaListFragment extends Fragment {
             searchView.setIconified(false);
             searchView.clearFocus();
         }
+        this.menu = menu;
     }
 
     @Override
@@ -310,6 +323,14 @@ public class VachanaListFragment extends Fragment {
         return super.onOptionsItemSelected(item);
     }
 
+
+    @Subscribe(threadMode = ThreadMode.POSTING)
+    public void doThis(KathruMini kathruMini){
+        if (listType == ListType.NORMAL_LIST && kathruMini.getId() == this.kathruMini.getId()){
+            updateActionBarFavorite(menu.findItem(R.id.kathru_favorite), kathruMini.getFavorite()==1);
+        }
+    }
+
     private void updateActionBarFavorite(MenuItem item, boolean state) {
         if (item != null) {
             item.setIcon(state? R.drawable.ic_star_20dp : R.drawable.ic_star_border_white_24dp);
@@ -319,6 +340,9 @@ public class VachanaListFragment extends Fragment {
     @Override
     public void onAttach(Context context) {
         super.onAttach(context);
+        if (!EventBus.getDefault().isRegistered(this)){
+            EventBus.getDefault().register(this);
+        }
         if (context instanceof OnVachanaFragmentListListener) {
             mListener = (OnVachanaFragmentListListener) context;
         } else {
@@ -331,6 +355,9 @@ public class VachanaListFragment extends Fragment {
     public void onDetach() {
         super.onDetach();
         mListener = null;
+        if (EventBus.getDefault().isRegistered(this)){
+            EventBus.getDefault().unregister(this);
+        }
     }
 
     public interface OnVachanaFragmentListListener extends Serializable {
