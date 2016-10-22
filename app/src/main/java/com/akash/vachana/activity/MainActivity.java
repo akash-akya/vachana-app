@@ -18,6 +18,7 @@
 
 package com.akash.vachana.activity;
 
+import android.app.Activity;
 import android.app.ProgressDialog;
 import android.content.Context;
 import android.content.Intent;
@@ -356,6 +357,8 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
         FragmentManager fragmentManager = getSupportFragmentManager();
         Fragment fragment = VachanaListFragment.newInstance(kathruMini, kathruMini.getName(), ListType.NORMAL_LIST);
 
+        hideKeyboard(this);
+
         fragmentManager.popBackStack("kathru_list_vertical", FragmentManager.POP_BACK_STACK_INCLUSIVE);
         fragmentManager.beginTransaction()
                 .replace(R.id.main_content, fragment, "kathru_list_vertical")
@@ -381,6 +384,8 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
     public void OnVachanaListItemClick(ArrayList<VachanaMini> vachanaMinis, int position) {
         FragmentManager fragmentManager = getSupportFragmentManager();
         VachanaFragment fragment = VachanaFragment.newInstance(position, vachanaMinis);
+
+        hideKeyboard(this);
 
         fragmentManager.popBackStack("vachana_list", FragmentManager.POP_BACK_STACK_INCLUSIVE);
         fragmentManager.beginTransaction()
@@ -432,6 +437,8 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
         final VachanaListFragment fragment = VachanaListFragment.newInstance("ಹುಡುಕು", text, kathru,
                 isPartial, ListType.SEARCH);
 
+        hideKeyboard(this);
+
         fragmentManager.popBackStack("search_button", FragmentManager.POP_BACK_STACK_INCLUSIVE);
         fragmentManager.beginTransaction()
                 .replace(R.id.main_content, fragment)
@@ -442,5 +449,17 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
     @Override
     public ArrayList<VachanaMini> getVachanaMinis(String text, String kathruString, boolean isPartialSearch) {
         return MainActivity.db.searchForVachana( text, kathruString, isPartialSearch);
+    }
+
+    public static void hideKeyboard(Context ctx) {
+        InputMethodManager inputManager = (InputMethodManager) ctx
+                .getSystemService(Context.INPUT_METHOD_SERVICE);
+
+        // check if no view has focus:
+        View v = ((Activity) ctx).getCurrentFocus();
+        if (v == null)
+            return;
+
+        inputManager.hideSoftInputFromWindow(v.getWindowToken(), 0);
     }
 }

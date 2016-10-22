@@ -132,7 +132,6 @@ public class MyKathruListRecyclerViewAdapter extends RecyclerView.Adapter<MyKath
 
             @Override
             public boolean onLongClick(View v) {
-                Log.d("", "onLongClick: ");
                 showKathruDetailsPopup(holder.mView.getContext(), holder.mItem);
                 return true;
             }
