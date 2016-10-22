@@ -136,10 +136,13 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
             }
         });
 
-        selectItem(R.id.nav_vachana);
 
         NavigationView navigationView = (NavigationView) findViewById(R.id.nav_view);
         navigationView.setNavigationItemSelectedListener(this);
+
+        if (savedInstanceState == null) {
+            selectItem(R.id.nav_vachana);
+        }
     }
 
     @Override

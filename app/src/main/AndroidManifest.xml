@@ -27,7 +27,8 @@
         android:icon="@mipmap/ic_launcher"
         android:label="@string/app_name"
         android:supportsRtl="true"
-        android:theme="@style/theme5">
+        android:theme="@style/theme5"
+        android:configChanges="orientation">
         <activity
             android:name=".activity.MainActivity"
             android:label="@string/app_name">
