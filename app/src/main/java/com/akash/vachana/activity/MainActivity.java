@@ -74,6 +74,11 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
 
     private static final String TAG = "MainActivity";
     private static final long SMOOTH_DRAWER_DELAY = 175;
+    private static final String DRAWER_RANDOM_VACHANA_LIST = "random_vachana_list";
+    private static final String DRAWER_KATHRU_LIST = "kathru_list";
+    private static final String DRAWER_FAVORITE_VACHANA_LIST = "fav_vachana_drawer";
+    private static final String DRAWER_FAVORITE_KATHRU_LIST = "kathru_favorite_drawer";
+    private static final String DRAWER_SEARCH = "search_view_drawer";
 
     private static MainDbHelper db;
 
@@ -105,7 +110,7 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
             //throw new Error("Unable to create database");
         }
 
-        DrawerLayout drawer = (DrawerLayout) findViewById(R.id.drawer_layout);
+        final DrawerLayout drawer = (DrawerLayout) findViewById(R.id.drawer_layout);
 
         ActionBarDrawerToggle toggle = new ActionBarDrawerToggle(
                 this, drawer, toolbar, R.string.navigation_drawer_open, R.string.navigation_drawer_close);
@@ -139,11 +144,33 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
         });
 
 
-        NavigationView navigationView = (NavigationView) findViewById(R.id.nav_view);
+        final NavigationView navigationView = (NavigationView) findViewById(R.id.nav_view);
         navigationView.setNavigationItemSelectedListener(this);
+
+        getSupportFragmentManager().addOnBackStackChangedListener(new FragmentManager.OnBackStackChangedListener() {
+            @Override
+            public void onBackStackChanged() {
+                FragmentManager fm = getSupportFragmentManager();
+                if (fm.getBackStackEntryCount()>0){
+
+                    String name = fm.getBackStackEntryAt(fm.getBackStackEntryCount()-1).getName();
+                    int itemId;
+                    switch (name){
+                        case DRAWER_RANDOM_VACHANA_LIST: itemId = R.id.nav_vachana; break;
+                        case DRAWER_KATHRU_LIST: itemId = R.id.nav_kathru; break;
+                        case DRAWER_SEARCH: itemId = R.id.nav_search; break;
+                        case DRAWER_FAVORITE_VACHANA_LIST: itemId = R.id.nav_favorite; break;
+                        case DRAWER_FAVORITE_KATHRU_LIST: itemId = R.id.nav_favorite_kathru; break;
+                        default: return;
+                    }
+                    navigationView.setCheckedItem(itemId);
+                }
+            }
+        });
 
         if (savedInstanceState == null) {
             selectItem(R.id.nav_vachana);
+            navigationView.setCheckedItem(R.id.nav_vachana);
         }
     }
 
@@ -189,7 +216,12 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
         if (drawer.isDrawerOpen(GravityCompat.START)) {
             drawer.closeDrawer(GravityCompat.START);
         } else {
-            super.onBackPressed();
+            int fragments = getSupportFragmentManager().getBackStackEntryCount();
+            if (fragments == 1) {
+                finish();
+            } else {
+                super.onBackPressed();
+            }
         }
     }
 
@@ -229,9 +261,8 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
 
     private void selectItem(int itemId) {
         FragmentManager fragmentManager = getSupportFragmentManager();
-        Fragment fragment = null;
+        Fragment fragment;
 
-        Bundle bundle = new Bundle();
         switch (itemId){
 
             case R.id.nav_vachana:
@@ -244,7 +275,8 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
 
                 fragmentManager.popBackStack(null, FragmentManager.POP_BACK_STACK_INCLUSIVE);
                 fragmentManager.beginTransaction()
-                        .replace(R.id.main_content, fragment, "vachana_list")
+                        .replace(R.id.main_content, fragment, DRAWER_RANDOM_VACHANA_LIST)
+                        .addToBackStack(DRAWER_RANDOM_VACHANA_LIST)
                         .commit();
                 return;
 
@@ -253,38 +285,38 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
                 fragment = KathruListFragment.newInstance("ವಚನಕಾರರು", ListType.NORMAL_LIST);
                 fragmentManager.popBackStack(null, FragmentManager.POP_BACK_STACK_INCLUSIVE);
                 fragmentManager.beginTransaction()
-                        .replace(R.id.main_content, fragment, "kathru_list")
-                        .addToBackStack( "kathru_list" )
+                        .replace(R.id.main_content, fragment, DRAWER_KATHRU_LIST)
+                        .addToBackStack( DRAWER_KATHRU_LIST )
                         .commit();
                 return;
 
 
             case R.id.nav_favorite:
                 fragment = VachanaListFragment.newInstance(null, "ನೆಚ್ಚಿನ ವಚನಗಳು", ListType.FAVORITE_LIST);
-                fragmentManager.popBackStack("fav_vachana_drawer", FragmentManager.POP_BACK_STACK_INCLUSIVE);
+                fragmentManager.popBackStack(DRAWER_FAVORITE_VACHANA_LIST, FragmentManager.POP_BACK_STACK_INCLUSIVE);
                 fragmentManager.beginTransaction()
-                        .replace(R.id.main_content, fragment, "fav_vachana_drawer")
-                        .addToBackStack( "fav_vachana_drawer" )
+                        .replace(R.id.main_content, fragment, DRAWER_FAVORITE_VACHANA_LIST)
+                        .addToBackStack( DRAWER_FAVORITE_VACHANA_LIST )
                         .commit();
                 return;
 
 
             case R.id.nav_favorite_kathru:
                 fragment = KathruListFragment.newInstance("ನೆಚ್ಚಿನ ವಚನಕಾರರು", ListType.FAVORITE_LIST);
-                fragmentManager.popBackStack("kathru_favorite_drawer", FragmentManager.POP_BACK_STACK_INCLUSIVE);
+                fragmentManager.popBackStack(DRAWER_FAVORITE_KATHRU_LIST, FragmentManager.POP_BACK_STACK_INCLUSIVE);
                 fragmentManager.beginTransaction()
-                        .replace(R.id.main_content, fragment, "kathru_favorite_drawer")
-                        .addToBackStack( "kathru_favorite_drawer" )
+                        .replace(R.id.main_content, fragment, DRAWER_FAVORITE_KATHRU_LIST)
+                        .addToBackStack( DRAWER_FAVORITE_KATHRU_LIST )
                         .commit();
                 return;
 
 
             case R.id.nav_search:
                 fragment = SearchFragment.newInstance();
-                fragmentManager.popBackStack("search_view_drawer", FragmentManager.POP_BACK_STACK_INCLUSIVE);
+                fragmentManager.popBackStack(DRAWER_SEARCH, FragmentManager.POP_BACK_STACK_INCLUSIVE);
                 fragmentManager.beginTransaction()
-                        .replace(R.id.main_content, fragment, "search_view_drawer")
-                        .addToBackStack( "search_view_drawer" )
+                        .replace(R.id.main_content, fragment, DRAWER_SEARCH)
+                        .addToBackStack( DRAWER_SEARCH )
                         .commit();
                 return;
 
