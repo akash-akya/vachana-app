@@ -35,19 +35,20 @@ import android.widget.Toast;
 
 import com.akash.vachana.R;
 
-public class AboutDialog extends DialogFragment {
+public class WebViewDialog extends DialogFragment {
     @NonNull
     @Override
     public Dialog onCreateDialog(Bundle savedInstanceState) {
         AlertDialog.Builder dialog = new AlertDialog.Builder(getActivity());
         dialog.setTitle("ತಂತ್ರಾಂಶದ ಕುರಿತು");
 
+        String resourcePath = getArguments().getString("resource_path");
+
         LayoutInflater inflater = getActivity().getLayoutInflater();
         View view = inflater.inflate(R.layout.about_view, null);
 
-
         WebView webView = (WebView) view.findViewById(R.id.about_text_view);
-        webView.loadData(getString(R.string.about_content), "text/html; charset=utf-8", "UTF-8");
+        webView.loadUrl(resourcePath );
         dialog.setView(view);
 
         return dialog.create();

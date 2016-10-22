@@ -41,12 +41,12 @@
 
         <item
             android:id="@+id/nav_favorite"
-            android:icon="@drawable/ic_favorite_black_24dp"
+            android:icon="@drawable/ic_stars_black_24dp"
             android:title="ನೆಚ್ಚಿನ ವಚನಗಳು" />
 
         <item
             android:id="@+id/nav_favorite_kathru"
-            android:icon="@drawable/ic_favorite_black_24dp"
+            android:icon="@drawable/ic_stars_black_24dp"
             android:title="ನೆಚ್ಚಿನ ವಚನಕಾರರು" />
     </group>
 
@@ -58,12 +58,12 @@
             android:title="ಅಳವಡಿಕೆಗಳು" />
         <item
             android:id="@+id/nav_about_app"
-            android:icon="@drawable/ic_menu_share"
+            android:icon="@drawable/ic_android_black_24dp"
             android:title="ತಂತ್ರಾಂಶದ ಕುರಿತು">
         </item>
         <item
             android:id="@+id/nav_acknowledgement"
-            android:icon="@drawable/ic_menu_share"
+            android:icon="@drawable/ic_info_black_24dp"
             android:title="ಸ್ವೀಕೃತಿ">
         </item>
     </group>

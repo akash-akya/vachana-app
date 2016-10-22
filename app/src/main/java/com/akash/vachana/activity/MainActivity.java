@@ -47,7 +47,7 @@ import android.view.View;
 import android.view.inputmethod.InputMethodManager;
 
 import com.akash.vachana.R;
-import com.akash.vachana.Util.AboutDialog;
+import com.akash.vachana.Util.WebViewDialog;
 import com.akash.vachana.dbUtil.DatabaseReadAccess;
 import com.akash.vachana.dbUtil.KathruDetails;
 import com.akash.vachana.dbUtil.KathruMini;
@@ -327,10 +327,23 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
                 startActivityForResult(intent, 0);
                 return;
 
-            case R.id.nav_about_app:
-                AboutDialog aboutDialogFragment = new AboutDialog();
+            case R.id.nav_acknowledgement:{
+                WebViewDialog aboutDialogFragment = new WebViewDialog();
+                Bundle bundle = new Bundle();
+                bundle.putString("resource_path", "file:///android_res/raw/copyrights.html");
+                aboutDialogFragment.setArguments(bundle);
+                aboutDialogFragment.show(getSupportFragmentManager(), "ಸ್ವೀಕೃತಿ");
+                return;
+            }
+
+            case R.id.nav_about_app: {
+                WebViewDialog aboutDialogFragment = new WebViewDialog();
+                Bundle bundle = new Bundle();
+                bundle.putString("resource_path", "file:///android_res/raw/about_app.html");
+                aboutDialogFragment.setArguments(bundle);
                 aboutDialogFragment.show(getSupportFragmentManager(), "ತಂತ್ರಾಂಶದ ಕುರಿತು");
                 return;
+            }
 
             default:
                 Log.e(TAG, "selectItem: Error, Wrong id");

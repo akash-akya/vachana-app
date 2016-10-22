@@ -20,17 +20,18 @@
 <menu xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto">
     <item
-        android:id="@+id/action_share"
-        android:orderInCategory="100"
-        android:title="@string/action_share"
-        android:icon="@drawable/ic_share_white_24dp"
-        app:showAsAction="ifRoom" />
-    <item
         android:id="@+id/action_favorite"
         android:orderInCategory="100"
         android:title="Favorite"
         android:icon="@drawable/ic_star_border_white_24dp"
         app:showAsAction="always" />
+
+    <item
+        android:id="@+id/action_share"
+        android:orderInCategory="100"
+        android:title="@string/action_share"
+        android:icon="@drawable/ic_share_white_24dp"
+        app:showAsAction="ifRoom" />
 
     <item
         android:id="@+id/action_kathru_detail"
