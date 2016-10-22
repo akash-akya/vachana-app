@@ -18,6 +18,7 @@
 
 package com.akash.vachana.activity;
 
+import android.app.ProgressDialog;
 import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
@@ -29,6 +30,7 @@ import android.support.v4.app.DialogFragment;
 import android.support.v4.app.FragmentManager;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
+import android.support.v4.content.ContextCompat;
 import android.support.v7.app.ActionBar;
 import android.support.v7.app.ActionBarDrawerToggle;
 import android.support.v7.app.AppCompatDelegate;
@@ -79,7 +81,7 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
     protected void onCreate(Bundle savedInstanceState) {
         SharedPreferences sharedPreferences = PreferenceManager.getDefaultSharedPreferences(this);
         boolean value = sharedPreferences.getBoolean("theme", false);
-        matchColor(0xFFFFFF & sharedPreferences.getInt("themeColor", 0));
+        matchColor(0xFFFFFF & sharedPreferences.getInt("themeColor", ContextCompat.getColor(this, R.color.color_set_5_primary)));
         AppCompatDelegate.setDefaultNightMode(value? AppCompatDelegate.MODE_NIGHT_YES : AppCompatDelegate.MODE_NIGHT_NO);
 
         super.onCreate(savedInstanceState);
@@ -98,7 +100,7 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
         db = new MainDbHelper(this);
         try {
             db.getDataBase();
-            Log.d(TAG, "onCreate: Database Created\n");
+            Log.d(TAG, "onCreate: Database is loaded\n");
         } catch (IOException ioe) {
             //throw new Error("Unable to create database");
         }
@@ -407,31 +409,6 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
 
     @Override
     public ArrayList<VachanaMini> getVachanaMinis(String text, String kathruString, boolean isPartialSearch) {
-        String query_text = "SELECT " +
-                MainDbHelper.KEY_VACHANA_ID + ", "+
-                MainDbHelper.KEY_TITLE + ", "+
-                MainDbHelper.FOREIGN_KEY_KATHRU_ID + ", "+
-                MainDbHelper.KEY_FAVORITE;
-        String[] parameters;
-
-        query_text += " FROM " + MainDbHelper.TABLE_VACHANA;
-        query_text += " WHERE " +
-                MainDbHelper.KEY_TITLE + " LIKE ? "; // + "%"+query+"%";
-
-        String query_text_parameter = isPartialSearch? "%"+text+"%" : text;
-        if (!kathruString.isEmpty()) {
-            query_text += " AND " +
-                    MainDbHelper.FOREIGN_KEY_KATHRU_ID + " IN " +
-                    " ( SELECT " + MainDbHelper.KEY_KATHRU_ID +
-                    " FROM " + MainDbHelper.TABLE_KATHRU +
-                    " WHERE " + MainDbHelper.KEY_NAME + " LIKE ? )"; // + "%"+kathruString+"% ) ";
-            parameters = new  String[]{query_text_parameter, kathruString};
-        } else {
-            parameters = new  String[]{query_text_parameter};
-        }
-
-        query_text += " = 1 ORDER BY "+MainDbHelper.KEY_TITLE;
-
-        return MainActivity.db.query( query_text, parameters);
+        return MainActivity.db.searchForVachana( text, kathruString, isPartialSearch);
     }
 }

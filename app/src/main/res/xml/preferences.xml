@@ -33,7 +33,7 @@
 
     <com.kizitonwose.colorpreferencecompat.ColorPreferenceCompat
         android:title="ಸ್ಕಿನ್ ಬಣ್ಣ"
-        android:defaultValue="0"
+        android:defaultValue="@color/color_set_5_primary"
         app:colorChoices="@array/color_choices"
         android:summary="ಅ್ಯಪನ ಸ್ಕಿನ್ ಬಣ್ಣವನ್ನು ಬದಲಿಸಿ"
         android:key="themeColor" />

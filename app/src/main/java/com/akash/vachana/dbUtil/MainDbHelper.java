@@ -128,7 +128,7 @@ public class MainDbHelper extends SQLiteOpenHelper implements Serializable, Data
      */
 
     //Check that the database exists here: /data/data/your package/databases/Da Name
-    private boolean checkDataBase() {
+    public boolean checkDataBase() {
         File dbFile = new File(DB_PATH + DATABASE_NAME);
         return dbFile.exists();
     }
@@ -319,14 +319,36 @@ public class MainDbHelper extends SQLiteOpenHelper implements Serializable, Data
     @Override
     public String getKathruNameById(int kathruId) { return getKathruMiniById(kathruId).getName(); }
 
-    public ArrayList<VachanaMini> query(String rawQuery, String[] parameters) {
+    public ArrayList<VachanaMini> searchForVachana(String text, String kathruName, boolean isPartialSearch) {
         ArrayList<VachanaMini> vachanaMinis = new ArrayList<>();
-        if (parameters[0].length()<3)
-            return vachanaMinis;
+        String query_text = "SELECT " +
+                MainDbHelper.KEY_VACHANA_ID + ", "+
+                MainDbHelper.KEY_TITLE + ", "+
+                MainDbHelper.FOREIGN_KEY_KATHRU_ID + ", "+
+                MainDbHelper.KEY_FAVORITE;
+
+        String[] parameters;
+
+        query_text += " FROM " + MainDbHelper.TABLE_VACHANA;
+        query_text += " WHERE " +
+                MainDbHelper.KEY_TITLE + " LIKE ? "; // + "%"+query+"%";
+
+        String query_text_parameter = isPartialSearch? "%"+text+"%" : text;
+        if (!kathruName.isEmpty()) {
+            query_text += " AND " +
+                    MainDbHelper.FOREIGN_KEY_KATHRU_ID + " IN " +
+                    " ( SELECT " + MainDbHelper.KEY_KATHRU_ID +
+                    " FROM " + MainDbHelper.TABLE_KATHRU +
+                    " WHERE " + MainDbHelper.KEY_NAME + " LIKE ? )"; // + "%"+kathruString+"% ) ";
+            parameters = new  String[]{query_text_parameter, kathruName};
+        } else {
+            parameters = new  String[]{query_text_parameter};
+        }
+
+        query_text += " = 1 ORDER BY "+MainDbHelper.KEY_TITLE;
 
         SQLiteDatabase db = this.getReadableDatabase();
-//        Cursor cursor = db.query(TABLE_VACHANA, fields, q, parameter, null, null, null, "100");
-        Cursor cursor = db.rawQuery(rawQuery, parameters);
+        Cursor cursor = db.rawQuery(query_text, parameters);
 
         if (cursor.moveToFirst()) {
             do {
@@ -334,7 +356,7 @@ public class MainDbHelper extends SQLiteOpenHelper implements Serializable, Data
                 String title = cursor.getString(1);
                 int kathruId = cursor.getInt(2);
                 VachanaMini vachanaMini = new VachanaMini(id, kathruId, getKathruNameById(kathruId),
-                        title, cursor.getInt(2));
+                        title, cursor.getInt(3));
                 vachanaMinis.add(vachanaMini);
             } while (cursor.moveToNext());
         }
