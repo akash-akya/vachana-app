@@ -20,31 +20,69 @@ package com.akash.vachana.activity;
 
 import android.app.Activity;
 import android.content.ComponentName;
+import android.content.SharedPreferences;
+import android.graphics.Color;
+import android.graphics.drawable.ColorDrawable;
+import android.graphics.drawable.Drawable;
 import android.os.Build;
 import android.os.Bundle;
 import android.os.Handler;
+import android.preference.PreferenceManager;
+import android.support.design.widget.FloatingActionButton;
+import android.support.design.widget.Snackbar;
 import android.support.v4.app.FragmentActivity;
+import android.support.v4.app.NavUtils;
+import android.support.v4.content.ContextCompat;
 import android.support.v4.content.IntentCompat;
+import android.support.v7.app.ActionBar;
 import android.support.v7.app.AlertDialog;
+import android.support.v7.app.AppCompatActivity;
 import android.support.v7.app.AppCompatDelegate;
 import android.support.v7.preference.ListPreference;
 import android.support.v7.preference.Preference;
 import android.support.v7.preference.PreferenceFragmentCompat;
 import android.support.v7.preference.SwitchPreferenceCompat;
+import android.support.v7.widget.Toolbar;
 import android.util.Log;
+import android.view.Menu;
+import android.view.MenuInflater;
+import android.view.MenuItem;
+import android.view.View;
 import android.webkit.WebView;
+import android.widget.ListView;
 
 import com.akash.vachana.R;
 import com.kizitonwose.colorpreferencecompat.ColorPreferenceCompat;
 
-public class MyPreferencesActivity extends FragmentActivity {
-
+public class MyPreferencesActivity extends AppCompatActivity {
+    private static final String TAG = "MyPreferencesActivity";
     private static boolean needAppRestart = false;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
+        SharedPreferences sharedPreferences = PreferenceManager.getDefaultSharedPreferences(this);
+        boolean value = sharedPreferences.getBoolean("theme", false);
+        matchColor(0xFFFFFF & sharedPreferences.getInt("themeColor", ContextCompat.getColor(this, R.color.color_set_5_primary)));
+        AppCompatDelegate.setDefaultNightMode(value? AppCompatDelegate.MODE_NIGHT_YES : AppCompatDelegate.MODE_NIGHT_NO);
+
         super.onCreate(savedInstanceState);
-        getSupportFragmentManager().beginTransaction().replace(android.R.id.content, new MyPreferenceFragment()).commit();
+        setContentView(R.layout.activity_preference);
+        Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
+        setSupportActionBar(toolbar);
+
+        ActionBar actionBar = getSupportActionBar();
+        if (actionBar != null){
+            actionBar.setDisplayHomeAsUpEnabled(true);
+            actionBar.setDisplayShowHomeEnabled(true);
+
+            toolbar.setNavigationOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View view) {
+                   onBackPressed();
+                }
+            });
+        }
+        getSupportFragmentManager().beginTransaction().replace(R.id.preference_content, new MyPreferenceFragment()).commit();
     }
 
     @Override
@@ -53,6 +91,7 @@ public class MyPreferencesActivity extends FragmentActivity {
             assert getCallingActivity() != null;
             startActivity(IntentCompat.makeRestartActivityTask(getCallingActivity()));
             needAppRestart = false;
+            finish();
         }
         super.onBackPressed();
     }
@@ -67,6 +106,10 @@ public class MyPreferencesActivity extends FragmentActivity {
         @Override
         public void onCreatePreferences(Bundle savedInstanceState, String rootKey) {
             addPreferencesFromResource(R.xml.preferences);
+
+            Toolbar toolbar = (Toolbar) getActivity().findViewById(R.id.search_bar);
+            ((AppCompatActivity)getActivity()).setSupportActionBar( toolbar);
+
             darkThemeSwitch = (SwitchPreferenceCompat) getPreferenceManager().findPreference("theme");
             darkThemeSwitch.setOnPreferenceChangeListener(new Preference.OnPreferenceChangeListener() {
                 @Override
@@ -109,6 +152,27 @@ public class MyPreferencesActivity extends FragmentActivity {
                     return true;
                 }
             });
+        }
+
+        @Override
+        public void setDivider(Drawable divider) {
+            super.setDivider(new ColorDrawable(Color.TRANSPARENT));
+        }
+
+        @Override
+        public void setDividerHeight(int height) {
+            super.setDividerHeight(0);
+        }
+    }
+
+    void matchColor(int id){
+        switch (id) {
+            case 0x4fc3f7: setTheme(R.style.theme1); break;
+            case 0x42bd41: setTheme(R.style.theme2); break;
+            case 0xffb74d: setTheme(R.style.theme3); break;
+            case 0xff8a65: setTheme(R.style.theme4); break;
+            case 0x3F51B5: setTheme(R.style.theme5); break;
+            default: Log.d(TAG, "Color: unknown theme");
         }
     }
 }
