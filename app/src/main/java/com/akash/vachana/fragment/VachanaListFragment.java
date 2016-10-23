@@ -162,17 +162,6 @@ public class VachanaListFragment extends Fragment {
         return view;
     }
 
-    private int getPrimaryColor() {
-        // Get the primary text color of the theme
-        TypedValue typedValue = new TypedValue();
-        Resources.Theme theme = getActivity().getTheme();
-        theme.resolveAttribute(android.R.attr.textColorPrimary, typedValue, true);
-        TypedArray arr =
-                getActivity().obtainStyledAttributes(typedValue.data, new int[]{
-                        android.R.attr.textColorPrimary});
-        return arr.getColor(0, -1);
-    }
-
     @Override
     public void onActivityCreated(@Nullable Bundle savedInstanceState) {
         super.onActivityCreated(savedInstanceState);
@@ -284,6 +273,7 @@ public class VachanaListFragment extends Fragment {
             menu.findItem(R.id.action_kathru_detail).setVisible(false);
         }
 
+        searchView.setQueryHint("ಮೊದಲ ಸಾಲಿನ ಪದ");
         searchView.setOnQueryTextListener(new SearchView.OnQueryTextListener() {
 
             @Override

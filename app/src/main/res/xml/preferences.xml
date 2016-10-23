@@ -22,13 +22,13 @@
     xmlns:android="http://schemas.android.com/apk/res/android">
 
     <android.support.v7.preference.PreferenceCategory
-        android:title="ನೂಟ"
+        android:title="ನೋಟ"
         />
 
     <android.support.v7.preference.SwitchPreferenceCompat
-        android:title="ಘಾಡ ಸ್ಕಿನ್"
+        android:title="ಗಾಢ ಸ್ಕಿನ್"
         android:defaultValue="false"
-        android:summary="ಈ ಆಯ್ಕೆಯನ್ನು ಬಳಸುವ ಮೂಲಕ ಘಾಡ ಸ್ಕಿನ್ ನಿರ್ಧರಿಸಬಹುದು"
+        android:summary="ಈ ಆಯ್ಕೆಯನ್ನು ಬಳಸುವ ಮೂಲಕ ಗಾಢ ಸ್ಕಿನ್ ನಿರ್ಧರಿಸಬಹುದು"
         android:key="theme"/>
 
     <com.kizitonwose.colorpreferencecompat.ColorPreferenceCompat

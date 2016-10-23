@@ -119,17 +119,6 @@ public class KathruListFragment extends Fragment {
         return view;
     }
 
-    private int getPrimaryColor() {
-        // Get the primary text color of the theme
-        TypedValue typedValue = new TypedValue();
-        Resources.Theme theme = getActivity().getTheme();
-        theme.resolveAttribute(android.R.attr.textColorPrimary, typedValue, true);
-        TypedArray arr =
-                getActivity().obtainStyledAttributes(typedValue.data, new int[]{
-                        android.R.attr.textColorPrimary});
-        return arr.getColor(0, -1);
-    }
-
     @Override
     public void onActivityCreated(@Nullable Bundle savedInstanceState) {
         super.onActivityCreated(savedInstanceState);
@@ -139,7 +128,6 @@ public class KathruListFragment extends Fragment {
             new KathruListTask().execute();
         }
     }
-
 
     @Override
     public void onResume() {
@@ -215,6 +203,7 @@ public class KathruListFragment extends Fragment {
         SearchView searchView = (SearchView) MenuItemCompat.getActionView(searchMenuItem);
 
         //***setOnQueryTextListener***
+        searchView.setQueryHint("ಹೆಸರು ಅಥವಾ ಅಂಕಿತನಾಮ");
         searchView.setOnQueryTextListener(new SearchView.OnQueryTextListener() {
 
             @Override
