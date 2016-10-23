@@ -52,6 +52,7 @@ public class MyPreferencesActivity extends FragmentActivity {
         if (needAppRestart){
             assert getCallingActivity() != null;
             startActivity(IntentCompat.makeRestartActivityTask(getCallingActivity()));
+            needAppRestart = false;
         }
         super.onBackPressed();
     }

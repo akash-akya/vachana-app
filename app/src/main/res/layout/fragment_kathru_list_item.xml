@@ -56,7 +56,7 @@
                         android:lines="1"
                         android:maxWidth="@dimen/list_title_width"
                         android:ellipsize="marquee"
-                        android:text="smaple sdf sfds fsdfsfdsdf sdfsdfs dfsdf sdfsdfsdfsdfsdfsdfsdfsdfsdtset"
+                        android:text=""
                         android:textSize="15sp" />
 
                     <TextView

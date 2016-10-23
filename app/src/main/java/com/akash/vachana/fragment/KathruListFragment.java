@@ -19,6 +19,8 @@
 package com.akash.vachana.fragment;
 
 import android.content.Context;
+import android.content.res.Resources;
+import android.content.res.TypedArray;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
@@ -31,6 +33,7 @@ import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.SearchView;
 import android.support.v7.widget.Toolbar;
 import android.util.Log;
+import android.util.TypedValue;
 import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuInflater;
@@ -114,6 +117,17 @@ public class KathruListFragment extends Fragment {
         recyclerView.addOnScrollListener(fastScroller.getOnScrollListener());
         fastScroller.setSectionIndicator(sectionTitleIndicator);
         return view;
+    }
+
+    private int getPrimaryColor() {
+        // Get the primary text color of the theme
+        TypedValue typedValue = new TypedValue();
+        Resources.Theme theme = getActivity().getTheme();
+        theme.resolveAttribute(android.R.attr.textColorPrimary, typedValue, true);
+        TypedArray arr =
+                getActivity().obtainStyledAttributes(typedValue.data, new int[]{
+                        android.R.attr.textColorPrimary});
+        return arr.getColor(0, -1);
     }
 
     @Override

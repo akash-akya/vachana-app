@@ -18,6 +18,35 @@
   -->
 
 <resources>
+    <string-array name="color_choices">
+        <item>@string/color_set_1_primary</item>
+        <item>@string/color_set_2_primary</item>
+        <item>@string/color_set_3_primary</item>
+        <item>@string/color_set_4_primary</item>
+        <item>@string/color_set_5_primary</item>
+    </string-array>
+
+    <!-- Reveal transition colors -->
+    <color name="color_set_1_primary">#4fc3f7</color>
+    <color name="color_set_1_primary_dark">#40a0c0</color>
+    <color name="color_set_1_accent">#009688</color>
+
+    <color name="color_set_2_primary">#42bd41</color>
+    <color name="color_set_2_primary_dark">#40a030</color>
+    <color name="color_set_2_accent">#673AB7</color>
+
+    <color name="color_set_3_primary">#ffb74d</color>
+    <color name="color_set_3_primary_dark">#f0a830</color>
+    <color name="color_set_3_accent">#E91E63</color>
+
+    <color name="color_set_4_primary">#ff8a65</color>
+    <color name="color_set_4_primary_dark">#f06050</color>
+    <color name="color_set_4_accent">#d500f9</color>
+
+    <color name="color_set_5_primary">#3F51B5</color>
+    <color name="color_set_5_primary_dark">#303F9F</color>
+    <color name="color_set_5_accent">#FF4081</color>
+
     <color name="scrollLineColor">#555555</color>
     <color name="vachana_count_color">#aaaaaa</color>
 </resources>

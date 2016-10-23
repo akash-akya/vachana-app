@@ -18,6 +18,6 @@
   -->
 
 <shape xmlns:android="http://schemas.android.com/apk/res/android">
-    <solid android:color="?attr/colorPrimary" />
-    <corners android:radius="10dp" />
+    <solid android:color="@color/color_set_5_primary" />
+    <corners android:radius="1dp" />
 </shape>

@@ -22,20 +22,20 @@
     xmlns:android="http://schemas.android.com/apk/res/android">
 
     <android.support.v7.preference.PreferenceCategory
-        android:title="ವೇಷ"
+        android:title="ನೂಟ"
         />
 
     <android.support.v7.preference.SwitchPreferenceCompat
         android:title="ಘಾಡ ಸ್ಕಿನ್"
         android:defaultValue="false"
-        android:summary="ಈ ಆಪ್ಶನ್ ಬಳಸುವ ಮೂಲಕ ಘಾಡ ಸ್ಕಿನ್ ಸೆಟ್ ಮಾಡಬಹುದು"
+        android:summary="ಈ ಆಯ್ಕೆಯನ್ನು ಬಳಸುವ ಮೂಲಕ ಘಾಡ ಸ್ಕಿನ್ ನಿರ್ಧರಿಸಬಹುದು"
         android:key="theme"/>
 
     <com.kizitonwose.colorpreferencecompat.ColorPreferenceCompat
         android:title="ಸ್ಕಿನ್ ಬಣ್ಣ"
         android:defaultValue="@color/color_set_5_primary"
         app:colorChoices="@array/color_choices"
-        android:summary="ಅ್ಯಪನ ಸ್ಕಿನ್ ಬಣ್ಣವನ್ನು ಬದಲಿಸಿ"
+        android:summary="ತಂತ್ರಾಂಶ ಸ್ಕಿನ್ ಬಣ್ಣವನ್ನು ಬದಲಿಸಿ"
         android:key="themeColor" />
 
     <android.support.v7.preference.ListPreference
@@ -53,14 +53,14 @@
     <android.support.v7.preference.SwitchPreferenceCompat
         android:title="ಪದಕೋಶದ ಕೊಂಡಿ"
         android:defaultValue="true"
-        android:summary="ಪದದ ಅರ್ಥದ ಕೊಂಡಿಯನ್ನು ಅ್ಯಪ್ನಲ್ಲಿಯೆ ತೆರೆಯಿರಿ"
+        android:summary="ಪದದ ಅರ್ಥದ ಕೊಂಡಿಯನ್ನು ತಂತ್ರಾಂಶದಲ್ಲಿಯೆ ತೆರೆಯಿರಿ"
         android:key="dictionary"/>
 
     <android.support.v7.preference.ListPreference
         android:key="dictionary_link"
         android:title="ನಿಘಂಟು"
         android:defaultValue="0"
-        android:summary="ಪದದ ಅರ್ಥ ತಿಳಿಸಲು ಯಾವ ನಿಘಂಟಿನನ್ನು ಬಳಸಬೇಕು"
+        android:summary="ಪದದ ಅರ್ಥ ತಿಳಿಯಲು ಯಾವ ನಿಘಂಟನ್ನು ಬಳಸಬೇಕು"
         android:entries="@array/dictionary_entries"
         android:entryValues="@array/dictionary_values" />
 
@@ -68,7 +68,7 @@
 
         <android.support.v7.preference.Preference
             android:title="ಸ್ವೀಕೃತಿ"
-            android:summary="ಈ ತಂತ್ರಾಶದಲ್ಲಿ ಬಳಸಲಾದ ಲೈಬ್ರರಿಗಳು ಮತ್ತು ಅವುಗಳ ಲೈಸನ್ಸ್"
+            android:summary="ಈ ತಂತ್ರಾಂಶದಲ್ಲಿ ಬಳಸಲಾದ ಲೈಬ್ರರಿಗಳು ಮತ್ತು ಅವುಗಳ ಲೈಸನ್ಸ್"
             android:key="license"/>
 
 </android.support.v7.preference.PreferenceScreen>
