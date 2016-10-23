@@ -64,4 +64,11 @@
         android:entries="@array/dictionary_entries"
         android:entryValues="@array/dictionary_values" />
 
+    <android.support.v7.preference.PreferenceCategory android:title="ತಂತ್ರಾಂಶ" />
+
+        <android.support.v7.preference.Preference
+            android:title="ಸ್ವೀಕೃತಿ"
+            android:summary="ಈ ತಂತ್ರಾಶದಲ್ಲಿ ಬಳಸಲಾದ ಲೈಬ್ರರಿಗಳು ಮತ್ತು ಅವುಗಳ ಲೈಸನ್ಸ್"
+            android:key="license"/>
+
 </android.support.v7.preference.PreferenceScreen>

@@ -19,21 +19,19 @@
 package com.akash.vachana.activity;
 
 import android.app.Activity;
-import android.app.ProgressDialog;
 import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
-import android.os.AsyncTask;
 import android.os.Handler;
 import android.preference.PreferenceManager;
 import android.support.annotation.NonNull;
-import android.support.v4.app.DialogFragment;
 import android.support.v4.app.FragmentManager;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.support.v4.content.ContextCompat;
 import android.support.v7.app.ActionBar;
 import android.support.v7.app.ActionBarDrawerToggle;
+import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatDelegate;
 import android.util.Log;
 import android.support.design.widget.NavigationView;
@@ -45,9 +43,9 @@ import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.inputmethod.InputMethodManager;
+import android.webkit.WebView;
 
 import com.akash.vachana.R;
-import com.akash.vachana.Util.WebViewDialog;
 import com.akash.vachana.dbUtil.DatabaseReadAccess;
 import com.akash.vachana.dbUtil.KathruDetails;
 import com.akash.vachana.dbUtil.KathruMini;
@@ -327,21 +325,21 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
                 startActivityForResult(intent, 0);
                 return;
 
-            case R.id.nav_acknowledgement:{
-                WebViewDialog aboutDialogFragment = new WebViewDialog();
-                Bundle bundle = new Bundle();
-                bundle.putString("resource_path", "file:///android_res/raw/copyrights.html");
-                aboutDialogFragment.setArguments(bundle);
-                aboutDialogFragment.show(getSupportFragmentManager(), "ಸ್ವೀಕೃತಿ");
+            case R.id.nav_more_about_vachana:{
+                WebView webView = new WebView(this);
+                webView.loadUrl("file:///android_res/raw/more_about_vachana.html");
+                AlertDialog.Builder dialog = new AlertDialog.Builder(this);
+                dialog.setView(webView);
+                dialog.show();
                 return;
             }
 
             case R.id.nav_about_app: {
-                WebViewDialog aboutDialogFragment = new WebViewDialog();
-                Bundle bundle = new Bundle();
-                bundle.putString("resource_path", "file:///android_res/raw/about_app.html");
-                aboutDialogFragment.setArguments(bundle);
-                aboutDialogFragment.show(getSupportFragmentManager(), "ತಂತ್ರಾಂಶದ ಕುರಿತು");
+                WebView webView = new WebView(this);
+                webView.loadUrl("file:///android_res/raw/about_app.html");
+                AlertDialog.Builder dialog = new AlertDialog.Builder(this);
+                dialog.setView(webView);
+                dialog.show();
                 return;
             }
 

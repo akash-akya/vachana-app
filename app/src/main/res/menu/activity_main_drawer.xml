@@ -57,14 +57,14 @@
             android:icon="@drawable/ic_settings_black_24dp"
             android:title="ಅಳವಡಿಕೆಗಳು" />
         <item
+            android:id="@+id/nav_more_about_vachana"
+            android:icon="@drawable/ic_info_black_24dp"
+            android:title="ವಚನಗಳ ಕುರಿತು ಹೆಚ್ಚಿನ ಮಾಹಿತಿ">
+        </item>
+        <item
             android:id="@+id/nav_about_app"
             android:icon="@drawable/ic_android_black_24dp"
             android:title="ತಂತ್ರಾಂಶದ ಕುರಿತು">
-        </item>
-        <item
-            android:id="@+id/nav_acknowledgement"
-            android:icon="@drawable/ic_info_black_24dp"
-            android:title="ಸ್ವೀಕೃತಿ">
         </item>
     </group>
 </menu>

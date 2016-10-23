@@ -17,7 +17,7 @@
   -->
 
 <resources>
-    <string name="app_name">vachana</string>
+    <string name="app_name">Vachana</string>
     <string name="title_activity_main">MainActivity</string>
 
     <string name="navigation_drawer_open">Open navigation drawer</string>
@@ -34,15 +34,4 @@
     <string name="color_set_3_primary">#ffb74d</string>
     <string name="color_set_4_primary">#ff8a65</string>
     <string name="color_set_5_primary">#3F51B5</string>
-    <string name="about_content"><![CDATA[
-    <b>ನವಯುಗಕ್ಕೆ ತಕ್ಕಂತೆ ಸರ್ವಕಾಲಿಕವಾದ ಕನ್ನಡದ ವಚನಗಳನ್ನು ಡಿಜಿಟಲೀಕರಣಗೊಳಿಸಿ, ಜನಸಾಮಾನ್ಯರಿಗೆ ಎಟಕುವಂತೆ ಮಾಡುವ ಪ್ರಯತ್ನ.</b>
-<br /> <br />
-ಈ ತಂತ್ರಾಂಶವು <a href="https://www.gnu.org/licenses/gpl-3.0.txt">ಮುಕ್ತ ತಂತ್ರಾಂಶದ ೩ನೇ ರೂಪಾಂತರದ(GPLv3)</a> ಅಡಿಯಲ್ಲಿ ಬಿಡುಗಡೆಯಾಗಿದೆ.
-ಆದ್ದರಿಂದ ತಂತ್ರಾಶ ಮತ್ತು ಅದರಲ್ಲಿರುವ ಡೆಟಾ ಸದಾಕಾಲ <a href="http://www.fsf.org/about">ಸಂಪೂರ್ಣ ಉಚಿತ</a>.
-<br /> <br />
-ತಂತ್ರಾಶದ ಮೂಲಪ್ರತಿಯನ್ನು <a href="https://github.com/akash-akya/vachana-app">ನನ್ನ ಗಿಟ್-ಹಬ್</a> ಅಕೌಂಟ್ ನಿಂದ ಪಡೆಯಬಹುದು.
-<br />
-ನಿಮ್ಮ ಸಲಹೆ ಮತ್ತು ಅಭಿಪ್ರಾಯಗಳನ್ನು akashhiremath@hotmail.com ವಿಳಾಸಕ್ಕೆ ಇಮೇಲ್ ಮಾಡಬಹುದು.
-]]></string>
-
 </resources>

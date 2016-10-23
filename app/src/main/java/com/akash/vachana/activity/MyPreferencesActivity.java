@@ -25,12 +25,14 @@ import android.os.Bundle;
 import android.os.Handler;
 import android.support.v4.app.FragmentActivity;
 import android.support.v4.content.IntentCompat;
+import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatDelegate;
 import android.support.v7.preference.ListPreference;
 import android.support.v7.preference.Preference;
 import android.support.v7.preference.PreferenceFragmentCompat;
 import android.support.v7.preference.SwitchPreferenceCompat;
 import android.util.Log;
+import android.webkit.WebView;
 
 import com.akash.vachana.R;
 import com.kizitonwose.colorpreferencecompat.ColorPreferenceCompat;
@@ -59,6 +61,7 @@ public class MyPreferencesActivity extends FragmentActivity {
 
         private SwitchPreferenceCompat darkThemeSwitch;
         private ColorPreferenceCompat themeChooser;
+        private Preference license;
 
         @Override
         public void onCreatePreferences(Bundle savedInstanceState, String rootKey) {
@@ -87,6 +90,21 @@ public class MyPreferencesActivity extends FragmentActivity {
                         AppCompatDelegate.setDefaultNightMode(AppCompatDelegate.MODE_NIGHT_NO);
 
                     needAppRestart = true;
+                    return true;
+                }
+            });
+
+            license = getPreferenceManager().findPreference("license");
+            license.setOnPreferenceClickListener(new Preference.OnPreferenceClickListener() {
+                @Override
+                public boolean onPreferenceClick(Preference preference) {
+                    WebView webView = new WebView(getContext());
+                    webView.loadUrl("file:///android_res/raw/copyrights.html");
+
+                    AlertDialog.Builder dialog = new AlertDialog.Builder(getContext());
+                    dialog.setView(webView);
+                    dialog.show();
+
                     return true;
                 }
             });
