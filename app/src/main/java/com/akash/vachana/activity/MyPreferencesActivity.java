@@ -21,6 +21,7 @@ package com.akash.vachana.activity;
 import android.app.Activity;
 import android.content.ComponentName;
 import android.content.SharedPreferences;
+import android.content.res.Configuration;
 import android.graphics.Color;
 import android.graphics.drawable.ColorDrawable;
 import android.graphics.drawable.Drawable;
@@ -52,18 +53,19 @@ import android.webkit.WebView;
 import android.widget.ListView;
 
 import com.akash.vachana.R;
+import com.akash.vachana.Util.ThemeChangeUtil;
 import com.kizitonwose.colorpreferencecompat.ColorPreferenceCompat;
 
 public class MyPreferencesActivity extends AppCompatActivity {
     private static final String TAG = "MyPreferencesActivity";
-    private static boolean needAppRestart = false;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         SharedPreferences sharedPreferences = PreferenceManager.getDefaultSharedPreferences(this);
         boolean value = sharedPreferences.getBoolean("theme", false);
-        matchColor(0xFFFFFF & sharedPreferences.getInt("themeColor", ContextCompat.getColor(this, R.color.color_set_5_primary)));
         AppCompatDelegate.setDefaultNightMode(value? AppCompatDelegate.MODE_NIGHT_YES : AppCompatDelegate.MODE_NIGHT_NO);
+        ThemeChangeUtil.onActivityCreateSetTheme(this, 0xFFFFFF & sharedPreferences.getInt("themeColor",
+                ContextCompat.getColor(this, R.color.color_set_5_primary)));
 
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_preference);
@@ -85,17 +87,6 @@ public class MyPreferencesActivity extends AppCompatActivity {
         getSupportFragmentManager().beginTransaction().replace(R.id.preference_content, new MyPreferenceFragment()).commit();
     }
 
-    @Override
-    public void onBackPressed() {
-        if (needAppRestart){
-            assert getCallingActivity() != null;
-            startActivity(IntentCompat.makeRestartActivityTask(getCallingActivity()));
-            needAppRestart = false;
-            finish();
-        }
-        super.onBackPressed();
-    }
-
     public static class MyPreferenceFragment extends PreferenceFragmentCompat {
         public static final String TAG = "MyPreferenceFragment";
 
@@ -114,11 +105,7 @@ public class MyPreferencesActivity extends AppCompatActivity {
             darkThemeSwitch.setOnPreferenceChangeListener(new Preference.OnPreferenceChangeListener() {
                 @Override
                 public boolean onPreferenceChange(Preference preference, Object newValue) {
-                    if ((boolean) newValue)
-                        AppCompatDelegate.setDefaultNightMode(AppCompatDelegate.MODE_NIGHT_YES);
-                    else
-                        AppCompatDelegate.setDefaultNightMode(AppCompatDelegate.MODE_NIGHT_NO);
-                    needAppRestart = true;
+                    restartActivity();
                     return true;
                 }
             });
@@ -128,12 +115,7 @@ public class MyPreferencesActivity extends AppCompatActivity {
             themeChooser.setOnPreferenceChangeListener(new Preference.OnPreferenceChangeListener() {
                 @Override
                 public boolean onPreferenceChange(Preference preference, Object newValue) {
-                    if (darkThemeSwitch.isEnabled())
-                        AppCompatDelegate.setDefaultNightMode(AppCompatDelegate.MODE_NIGHT_YES);
-                    else
-                        AppCompatDelegate.setDefaultNightMode(AppCompatDelegate.MODE_NIGHT_NO);
-
-                    needAppRestart = true;
+                    restartActivity();
                     return true;
                 }
             });
@@ -154,6 +136,10 @@ public class MyPreferencesActivity extends AppCompatActivity {
             });
         }
 
+        private void restartActivity() {
+            ThemeChangeUtil.changeToTheme(getActivity());
+        }
+
         @Override
         public void setDivider(Drawable divider) {
             super.setDivider(new ColorDrawable(Color.TRANSPARENT));
@@ -162,17 +148,6 @@ public class MyPreferencesActivity extends AppCompatActivity {
         @Override
         public void setDividerHeight(int height) {
             super.setDividerHeight(0);
-        }
-    }
-
-    void matchColor(int id){
-        switch (id) {
-            case 0x4fc3f7: setTheme(R.style.theme1); break;
-            case 0x42bd41: setTheme(R.style.theme2); break;
-            case 0xffb74d: setTheme(R.style.theme3); break;
-            case 0xff8a65: setTheme(R.style.theme4); break;
-            case 0x3F51B5: setTheme(R.style.theme5); break;
-            default: Log.d(TAG, "Color: unknown theme");
         }
     }
 }

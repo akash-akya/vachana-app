@@ -18,44 +18,14 @@
 
 <resources>
 
-    <style name="AppTheme.NoActionBar" parent="MyTheme">
+    <style name="AppTheme" parent="Theme.AppCompat.DayNight.DarkActionBar">
+        <item name="windowActionBarOverlay">true</item>
+        <item name="preferenceTheme">@style/PreferenceThemeOverlay</item>
+    </style>
+
+    <style name="AppTheme.NoActionBar">
         <item name="windowActionBar">false</item>
         <item name="windowNoTitle">true</item>
-    </style>
-
-    <style name="theme1" parent="AppTheme.NoActionBar">
-        <item name="colorPrimary">@color/color_set_1_primary</item>
-        <item name="colorPrimaryDark">@color/color_set_1_primary_dark</item>
-        <item name="colorControlActivated">@color/color_set_1_accent</item>
-        <item name="colorAccent">@color/color_set_1_accent</item>
-    </style>
-
-    <style name="theme2" parent="AppTheme.NoActionBar">
-        <item name="colorPrimary">@color/color_set_2_primary</item>
-        <item name="colorPrimaryDark">@color/color_set_2_primary_dark</item>
-        <item name="colorControlActivated">@color/color_set_2_accent</item>
-        <item name="colorAccent">@color/color_set_2_accent</item>
-    </style>
-
-    <style name="theme3" parent="AppTheme.NoActionBar">
-        <item name="colorPrimary">@color/color_set_3_primary</item>
-        <item name="colorPrimaryDark">@color/color_set_3_primary_dark</item>
-        <item name="colorControlActivated">@color/color_set_3_accent</item>
-        <item name="colorAccent">@color/color_set_3_accent</item>
-    </style>
-
-    <style name="theme4" parent="AppTheme.NoActionBar">
-        <item name="colorPrimary">@color/color_set_4_primary</item>
-        <item name="colorPrimaryDark">@color/color_set_4_primary_dark</item>
-        <item name="colorControlActivated">@color/color_set_4_accent</item>
-        <item name="colorAccent">@color/color_set_4_accent</item>
-    </style>
-
-    <style name="theme5" parent="AppTheme.NoActionBar">
-        <item name="colorPrimary">@color/color_set_5_primary</item>
-        <item name="colorPrimaryDark">@color/color_set_5_primary_dark</item>
-        <item name="colorControlActivated">@color/color_set_5_accent</item>
-        <item name="colorAccent">@color/color_set_5_accent</item>
     </style>
 
     <style name="AppTheme.AppBarOverlay" parent="ThemeOverlay.AppCompat.Dark.ActionBar" />
@@ -69,4 +39,15 @@
         <item name="android:windowIsTranslucent">true</item>
         <item name="android:windowAnimationStyle">@android:style/Animation</item>
     </style>
+
+    <!-- Styles *not* specific to any API -->
+    <style name="MyThemeLight" parent="AppTheme.NoActionBar">
+        <item name="fast_scroller_handle_color">@color/fast_scroller_handle_color_light</item>
+    </style>
+
+    <style name="MyThemeDark" parent="AppTheme.NoActionBar">
+        <item name="fast_scroller_handle_color">@color/fast_scroller_handle_color_dark</item>
+    </style>
+
+    <!--Define the themes-->
 </resources>

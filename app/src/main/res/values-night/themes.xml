@@ -18,15 +18,40 @@
   -->
 
 <resources>
-    <style name="AppTheme" parent="Theme.AppCompat.DayNight.DarkActionBar">
-        <item name="colorPrimary">@color/color_set_5_primary</item>
-        <item name="colorPrimaryDark">@color/color_set_5_primary_dark</item>
-        <item name="colorAccent">@color/color_set_5_accent</item>
-        <item name="windowActionBarOverlay">true</item>
-        <item name="preferenceTheme">@style/PreferenceThemeOverlay</item>
+
+    <style name="Theme.theme1" parent="MyThemeDark">
+        <item name="colorPrimary">@color/color_set_1_primary</item>
+        <item name="colorPrimaryDark">@color/color_set_1_primary_dark</item>
+        <item name="colorControlActivated">@color/color_set_1_accent</item>
+        <item name="colorAccent">@color/color_set_1_accent</item>
     </style>
 
-    <style name="MyTheme" parent="AppTheme">
+    <style name="Theme.theme2" parent="MyThemeDark">
+        <item name="colorPrimary">@color/color_set_2_primary</item>
+        <item name="colorPrimaryDark">@color/color_set_2_primary_dark</item>
+        <item name="colorControlActivated">@color/color_set_2_accent</item>
+        <item name="colorAccent">@color/color_set_2_accent</item>
+    </style>
+
+    <style name="Theme.theme3" parent="MyThemeDark">
+        <item name="colorPrimary">@color/color_set_3_primary</item>
+        <item name="colorPrimaryDark">@color/color_set_3_primary_dark</item>
+        <item name="colorControlActivated">@color/color_set_3_accent</item>
+        <item name="colorAccent">@color/color_set_3_accent</item>
+    </style>
+
+    <style name="Theme.theme4" parent="MyThemeDark">
+        <item name="colorPrimary">@color/color_set_4_primary</item>
+        <item name="colorPrimaryDark">@color/color_set_4_primary_dark</item>
+        <item name="colorControlActivated">@color/color_set_4_accent</item>
+        <item name="colorAccent">@color/color_set_4_accent</item>
+    </style>
+
+    <style name="Theme.theme5" parent="MyThemeDark">
+        <item name="colorPrimary">@color/color_set_5_primary</item>
+        <item name="colorPrimaryDark">@color/color_set_5_primary_dark</item>
+        <item name="colorControlActivated">@color/color_set_5_accent</item>
+        <item name="colorAccent">@color/color_set_5_accent</item>
     </style>
 
 </resources>

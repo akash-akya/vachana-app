@@ -387,7 +387,8 @@ public class VachanaFragment extends Fragment {
                             boolean openable = sharedPreferences.getBoolean("dictionary", true);
 
                             if (openable){
-                                int dictionary = sharedPreferences.getInt("dictionary_link", 0);
+
+                                int dictionary = Integer.parseInt(sharedPreferences.getString("dictionary_link", "0"));
                                 String link;
                                 String filter;
 

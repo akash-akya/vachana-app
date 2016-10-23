@@ -46,6 +46,7 @@ import android.view.inputmethod.InputMethodManager;
 import android.webkit.WebView;
 
 import com.akash.vachana.R;
+import com.akash.vachana.Util.ThemeChangeUtil;
 import com.akash.vachana.dbUtil.DatabaseReadAccess;
 import com.akash.vachana.dbUtil.KathruDetails;
 import com.akash.vachana.dbUtil.KathruMini;
@@ -78,15 +79,19 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
     private static final String DRAWER_FAVORITE_VACHANA_LIST = "fav_vachana_drawer";
     private static final String DRAWER_FAVORITE_KATHRU_LIST = "kathru_favorite_drawer";
     private static final String DRAWER_SEARCH = "search_view_drawer";
+    private static final int SETTINGS_ACTIVITY = 1;
 
     private static MainDbHelper db;
+    private boolean isDarkThemeEnabled;
+    private int themeColor;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         SharedPreferences sharedPreferences = PreferenceManager.getDefaultSharedPreferences(this);
-        boolean value = sharedPreferences.getBoolean("theme", false);
-        matchColor(0xFFFFFF & sharedPreferences.getInt("themeColor", ContextCompat.getColor(this, R.color.color_set_5_primary)));
-        AppCompatDelegate.setDefaultNightMode(value? AppCompatDelegate.MODE_NIGHT_YES : AppCompatDelegate.MODE_NIGHT_NO);
+        isDarkThemeEnabled = sharedPreferences.getBoolean("theme", false);
+        themeColor = sharedPreferences.getInt("themeColor", ContextCompat.getColor(this, R.color.color_set_5_primary));
+        AppCompatDelegate.setDefaultNightMode(isDarkThemeEnabled? AppCompatDelegate.MODE_NIGHT_YES : AppCompatDelegate.MODE_NIGHT_NO);
+        ThemeChangeUtil.onActivityCreateSetTheme(this, 0xFFFFFF & themeColor);
 
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
@@ -322,7 +327,7 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
 
             case R.id.nav_settings:
                 Intent intent = new Intent(this, MyPreferencesActivity.class);
-                startActivityForResult(intent, 0);
+                startActivityForResult(intent, SETTINGS_ACTIVITY);
                 return;
 
             case R.id.nav_more_about_vachana:{
@@ -348,19 +353,24 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
         }
     }
 
-    public ArrayList<KathruMini> getAllKathruMinis() {
-        return db.getAllKathruMinis();
+    @Override
+    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
+        if (requestCode == SETTINGS_ACTIVITY){
+            SharedPreferences sharedPreferences = PreferenceManager.getDefaultSharedPreferences(this);
+
+            boolean newValue = sharedPreferences.getBoolean("theme", false);
+            int newColor = sharedPreferences.getInt("themeColor",
+                    ContextCompat.getColor(this, R.color.color_set_5_primary));
+
+            if (newValue != isDarkThemeEnabled || newColor != themeColor){
+                ThemeChangeUtil.changeToTheme(this);
+            }
+        }
+        super.onActivityResult(requestCode, resultCode, data);
     }
 
-    void matchColor(int id){
-        switch (id) {
-            case 0x4fc3f7: setTheme(R.style.theme1); break;
-            case 0x42bd41: setTheme(R.style.theme2); break;
-            case 0xffb74d: setTheme(R.style.theme3); break;
-            case 0xff8a65: setTheme(R.style.theme4); break;
-            case 0x3F51B5: setTheme(R.style.theme5); break;
-            default: Log.d(TAG, "Color: unknown theme");
-        }
+    public ArrayList<KathruMini> getAllKathruMinis() {
+        return db.getAllKathruMinis();
     }
 
     @Override

@@ -22,13 +22,13 @@
 
     <application
         android:allowBackup="true"
-        android:configChanges="orientation"
         android:icon="@mipmap/ic_launcher"
         android:label="@string/app_name"
         android:supportsRtl="true"
-        android:theme="@style/theme5">
+        android:theme="@style/Theme.theme5">
         <activity
             android:name=".activity.MainActivity"
+            android:configChanges="orientation"
             android:label="@string/app_name">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />

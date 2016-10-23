@@ -52,7 +52,7 @@
             android:focusableInTouchMode="true"
 
             recyclerviewfastscroller:rfs_barColor="@android:color/transparent"
-            recyclerviewfastscroller:rfs_handleBackground="@drawable/fast_scroller_handle"
+            recyclerviewfastscroller:rfs_handleBackground="?attr/fast_scroller_handle_color"
             />
 
         <com.akash.vachana.Util.ListScrollIndicator
