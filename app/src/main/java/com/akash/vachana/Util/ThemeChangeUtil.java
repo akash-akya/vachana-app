@@ -42,7 +42,7 @@ public class ThemeChangeUtil {
             case 0xffb74d: activity.setTheme(R.style.Theme_theme3); break;
             case 0xff8a65: activity.setTheme(R.style.Theme_theme4); break;
             case 0x3F51B5: activity.setTheme(R.style.Theme_theme5); break;
-            case 0x000000: activity.setTheme(R.style.Theme_theme6); break;
+            case 0x333333: activity.setTheme(R.style.Theme_theme6); break;
             default:
                 activity.setTheme(R.style.Theme_theme5);
                 Log.d(TAG, "Color: unknown theme");
