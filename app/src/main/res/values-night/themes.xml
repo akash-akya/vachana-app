@@ -54,4 +54,11 @@
         <item name="colorAccent">@color/color_set_5_accent</item>
     </style>
 
+    <style name="Theme.theme6" parent="MyThemeLight">
+        <item name="colorPrimary">@color/color_set_6_primary</item>
+        <item name="colorPrimaryDark">@color/color_set_6_primary_dark</item>
+        <item name="colorControlActivated">@color/color_set_6_accent</item>
+        <item name="colorAccent">@color/color_set_6_accent</item>
+    </style>
+
 </resources>

@@ -34,4 +34,5 @@
     <string name="color_set_3_primary">#ffb74d</string>
     <string name="color_set_4_primary">#ff8a65</string>
     <string name="color_set_5_primary">#3F51B5</string>
+    <string name="color_set_6_primary">#333333</string>
 </resources>

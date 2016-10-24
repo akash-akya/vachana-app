@@ -24,6 +24,7 @@
         <item>@string/color_set_3_primary</item>
         <item>@string/color_set_4_primary</item>
         <item>@string/color_set_5_primary</item>
+        <item>@string/color_set_6_primary</item>
     </string-array>
 
     <!-- Reveal transition colors -->
@@ -46,6 +47,10 @@
     <color name="color_set_5_primary">#3F51B5</color>
     <color name="color_set_5_primary_dark">#303F9F</color>
     <color name="color_set_5_accent">#FF4081</color>
+
+    <color name="color_set_6_primary">#333333</color>
+    <color name="color_set_6_primary_dark">#222222</color>
+    <color name="color_set_6_accent">#777777</color>
 
     <color name="scrollLineColor">#555555</color>
     <color name="vachana_count_color">#aaaaaa</color>
