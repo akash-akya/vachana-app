@@ -31,6 +31,6 @@
         android:id="@+id/action_kathru_detail"
         android:orderInCategory="100"
         android:title="ವಚನಕಾರನ ಕುರಿತು"
-        android:icon="@drawable/ic_info_outline_white_24dp"
         app:showAsAction="never" />
+
 </menu>

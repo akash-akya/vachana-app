@@ -22,6 +22,7 @@ import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
+import android.net.Uri;
 import android.os.Handler;
 import android.preference.PreferenceManager;
 import android.support.annotation.NonNull;
@@ -324,10 +325,13 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
                         .commit();
                 return;
 
-
-            case R.id.nav_settings:
-                Intent intent = new Intent(this, MyPreferencesActivity.class);
-                startActivityForResult(intent, SETTINGS_ACTIVITY);
+            case R.id.nav_play_link:
+                final String appPackageName = getPackageName();
+                try {
+                    startActivity(new Intent(Intent.ACTION_VIEW, Uri.parse("market://details?id=" + appPackageName)));
+                } catch (android.content.ActivityNotFoundException activityNotFoundException) {
+                    startActivity(new Intent(Intent.ACTION_VIEW, Uri.parse("https://play.google.com/store/apps/details?id=" + appPackageName)));
+                }
                 return;
 
             case R.id.nav_more_about_vachana:{
@@ -336,6 +340,12 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
                 AlertDialog.Builder dialog = new AlertDialog.Builder(this);
                 dialog.setView(webView);
                 dialog.show();
+                return;
+            }
+
+            case R.id.nav_settings:{
+                Intent intent = new Intent(this, MyPreferencesActivity.class);
+                startActivityForResult(intent, SETTINGS_ACTIVITY);
                 return;
             }
 
