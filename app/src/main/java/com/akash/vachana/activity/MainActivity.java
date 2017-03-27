@@ -88,6 +88,8 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
+        ThemeChangeUtil.themeResetGard(this);
+
         SharedPreferences sharedPreferences = PreferenceManager.getDefaultSharedPreferences(this);
         isDarkThemeEnabled = sharedPreferences.getBoolean("theme", false);
         themeColor = sharedPreferences.getInt("themeColor", ContextCompat.getColor(this, R.color.color_set_5_primary));

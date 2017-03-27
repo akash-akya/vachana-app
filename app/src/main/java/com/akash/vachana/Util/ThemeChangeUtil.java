@@ -20,13 +20,23 @@ package com.akash.vachana.Util;
 
 import android.app.Activity;
 import android.content.Intent;
+import android.os.Build;
 import android.os.Bundle;
 import android.util.Log;
+import android.webkit.WebView;
 
 import com.akash.vachana.R;
 
 public class ThemeChangeUtil {
     private static final String TAG = "ThemeChangeUtil";
+
+    public static void themeResetGard(final Activity activity)
+    {
+        // Ugly fix for 'Dark theme reset' defect. See: https://code.google.com/p/android/issues/detail?id=226208#c2
+        if (Build.VERSION.SDK_INT >= 24) {
+            new WebView(activity);
+        }
+    }
 
     public static void changeToTheme(Activity activity) {
         activity.finish();
