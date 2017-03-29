@@ -44,6 +44,7 @@ import android.widget.ProgressBar;
 import android.widget.TextView;
 
 import com.akash.vachana.R;
+import com.akash.vachana.Util.KannadaTransliteration;
 import com.akash.vachana.activity.ListType;
 import com.akash.vachana.activity.MainActivity;
 import com.akash.vachana.dbUtil.KathruMini;
@@ -200,7 +201,7 @@ public class KathruListFragment extends Fragment {
         super.onCreateOptionsMenu(menu, inflater);
         inflater.inflate(R.menu.main, menu);
         final MenuItem searchMenuItem = menu.findItem(R.id.menu_search);
-        SearchView searchView = (SearchView) MenuItemCompat.getActionView(searchMenuItem);
+        final SearchView searchView = (SearchView) MenuItemCompat.getActionView(searchMenuItem);
 
         //***setOnQueryTextListener***
         searchView.setQueryHint("ಹೆಸರು ಅಥವಾ ಅಂಕಿತನಾಮ");
@@ -208,17 +209,21 @@ public class KathruListFragment extends Fragment {
 
             @Override
             public boolean onQueryTextSubmit(String query) {
-
                 return false;
             }
 
             @Override
             public boolean onQueryTextChange(String newText) {
-                if (myAdapter != null && recyclerView != null) {
-                    myAdapter.filter(newText.trim());
-                    recyclerView.invalidate();
-                    mSearchQuery = newText;
-                    return true;
+                String text = KannadaTransliteration.getUnicodeString(newText);
+                if (!newText.equals(text)){
+                    searchView.setQuery(text, false);
+                } else {
+                    if (myAdapter != null && recyclerView != null) {
+                        myAdapter.filter(text.trim());
+                        recyclerView.invalidate();
+                        mSearchQuery = text;
+                        return true;
+                    }
                 }
                 return false;
             }

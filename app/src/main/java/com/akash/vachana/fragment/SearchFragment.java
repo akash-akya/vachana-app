@@ -23,6 +23,8 @@ import android.os.AsyncTask;
 import android.os.Bundle;
 import android.support.design.widget.AppBarLayout;
 import android.support.v4.app.Fragment;
+import android.text.Editable;
+import android.text.TextWatcher;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.Menu;
@@ -37,15 +39,18 @@ import android.widget.AutoCompleteTextView;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.RadioButton;
+import android.widget.TextView;
 
 import com.akash.vachana.R;
+import com.akash.vachana.Util.EditTextWatcher;
+import com.akash.vachana.Util.KannadaTransliteration;
 import com.akash.vachana.activity.MainActivity;
 import com.akash.vachana.dbUtil.KathruMini;
 
 import java.io.Serializable;
 import java.util.ArrayList;
 
-public class SearchFragment extends Fragment implements Serializable{
+public class SearchFragment extends Fragment implements Serializable {
 
     private static final String TAG = "SearchFragment";
     private KathruListTask kathruListTask;
@@ -74,6 +79,10 @@ public class SearchFragment extends Fragment implements Serializable{
         final RadioButton radioPartial = (RadioButton) view.findViewById(R.id.radio_partial);
         final Button resetButton = (Button) view.findViewById(R.id.reset_button);
         final Button searchButton = (Button) view.findViewById(R.id.search_button);
+
+        textSearchView.addTextChangedListener(new EditTextWatcher(textSearchView));
+        autoCompleteTextView.addTextChangedListener(new EditTextWatcher(autoCompleteTextView));
+
         searchButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {

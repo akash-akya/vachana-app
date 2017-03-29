@@ -45,8 +45,10 @@ import android.view.MenuItem;
 import android.view.View;
 import android.view.inputmethod.InputMethodManager;
 import android.webkit.WebView;
+import android.widget.Toast;
 
 import com.akash.vachana.R;
+import com.akash.vachana.Util.KannadaTransliteration;
 import com.akash.vachana.Util.ThemeChangeUtil;
 import com.akash.vachana.dbUtil.DatabaseReadAccess;
 import com.akash.vachana.dbUtil.KathruDetails;
@@ -64,7 +66,9 @@ import org.greenrobot.eventbus.Subscribe;
 import org.greenrobot.eventbus.ThreadMode;
 
 import java.io.IOException;
+import java.nio.charset.Charset;
 import java.util.ArrayList;
+import java.util.Formatter;
 import java.util.Random;
 
 public class MainActivity extends AppCompatActivity implements NavigationView.OnNavigationItemSelectedListener,
@@ -98,6 +102,15 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
 
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
+
+        /*
+        * Testing purpose
+        * */
+        Log.d("Kannada Test", "Start");
+        String text = KannadaTransliteration.getUnicodeString("KhaDgadhAri yaccammanAyaka");
+        Log.d("Kannada Test", text);
+        Toast.makeText(this, text, Toast.LENGTH_LONG).show();
+
 
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
@@ -461,6 +474,19 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
 
     public static DatabaseReadAccess getDatabaseReadAccess(){
         return db;
+    }
+
+    public String escapeUnicode(String input) {
+        StringBuilder b = new StringBuilder(input.length());
+        Formatter f = new Formatter(b);
+        for (char c : input.toCharArray()) {
+            if (c < 128) {
+                b.append(c);
+            } else {
+                f.format("\\u%04x", (int) c);
+            }
+        }
+        return b.toString();
     }
 
     @Override

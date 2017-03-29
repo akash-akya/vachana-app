@@ -43,6 +43,7 @@ import android.view.ViewGroup;
 import android.widget.ProgressBar;
 
 import com.akash.vachana.R;
+import com.akash.vachana.Util.KannadaTransliteration;
 import com.akash.vachana.activity.ListType;
 import com.akash.vachana.dbUtil.KathruMini;
 import com.akash.vachana.dbUtil.Vachana;
@@ -261,7 +262,7 @@ public class VachanaListFragment extends Fragment {
         super.onCreateOptionsMenu(menu, inflater);
         inflater.inflate(R.menu.vachana_list_menu, menu);
         final MenuItem searchMenuItem = menu.findItem(R.id.menu_search);
-        SearchView searchView = (SearchView) MenuItemCompat.getActionView(searchMenuItem);
+        final SearchView searchView = (SearchView) MenuItemCompat.getActionView(searchMenuItem);
 
         if (listType == ListType.NORMAL_LIST) {
             menu.findItem(R.id.action_kathru_favorite).setVisible(true);
@@ -283,11 +284,16 @@ public class VachanaListFragment extends Fragment {
 
             @Override
             public boolean onQueryTextChange(String newText) {
-                if (adapter != null && recyclerView != null) {
-                    adapter.filter(newText);
-                    recyclerView.invalidate();
-                    mSearchQuery = newText;
-                    return true;
+                String text = KannadaTransliteration.getUnicodeString(newText);
+                if (!newText.equals(text)){
+                    searchView.setQuery(text, false);
+                } else {
+                    if (adapter != null && recyclerView != null) {
+                        adapter.filter(newText);
+                        recyclerView.invalidate();
+                        mSearchQuery = newText;
+                        return true;
+                    }
                 }
                 return false;
             }
