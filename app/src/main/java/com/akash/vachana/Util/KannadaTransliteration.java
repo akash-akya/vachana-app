@@ -152,6 +152,7 @@ public abstract class KannadaTransliteration  {
         KANNADA_MAP.put("q", "\u0C95\u0CCD");
 
         // Numbers
+/*
         KANNADA_MAP.put("\u200D1", "\u0CE7");
         KANNADA_MAP.put("\u200D2", "\u0CE8");
         KANNADA_MAP.put("\u200D3", "\u0CE9");
@@ -162,33 +163,32 @@ public abstract class KannadaTransliteration  {
         KANNADA_MAP.put("\u200D8", "\u0CEE");
         KANNADA_MAP.put("\u200D9", "\u0CEF");
         KANNADA_MAP.put("\u200D0", "\u0CE6");
+*/
 //        KANNADA_MAP.put("(.+)\u200C(.+)", "$1$2");
     }
 
     public static String getUnicodeString(final String src) {
         StringBuilder uniStr = new StringBuilder();
 
-        if (src.length() == 0)
-            return "";
+        if (src.length() > 0){
+            uniStr.append(mapLang(src.substring(0,1)));
 
-        uniStr.append(src.charAt(0));
+            for (int i=1; i< src.length(); i++) {
+                char curChar  = src.charAt(i);
+                int uniLen = uniStr.length();
+                int prevCharLen = 4;
 
-        for (int i=1; i< src.length(); i++) {
-            char curChar  = src.charAt(i);
-            int uniLen = uniStr.length();
-            int prevCharLen = 4;
+                if(i < 4) {
+                    prevCharLen = (uniStr.charAt(uniLen-1) == CHNBIN)? 2 : 1;
+                }
 
-            if(i < 4) {
-                prevCharLen = (uniStr.charAt(uniLen-1) == CHNBIN)? 2 : 1;
+                String ch = mapLang(uniStr.substring(uniLen-prevCharLen, uniLen)+curChar);
+                uniStr.replace(uniLen-prevCharLen, uniLen+ch.length(), ch);
             }
 
-            String ch = mapLang(uniStr.substring(uniLen-prevCharLen, uniLen)+curChar);
-            uniStr.replace(uniLen-prevCharLen, uniLen+ch.length(), ch);
-        }
-
-        if (uniStr.charAt(uniStr.length()-1) == '\u200C')
-        {
-            return uniStr.substring(0, uniStr.length()-1);
+            if (uniStr.charAt(uniStr.length()-1) == '\u200C') {
+                return uniStr.substring(0, uniStr.length()-1);
+            }
         }
         return uniStr.toString();
     }
@@ -204,16 +204,12 @@ public abstract class KannadaTransliteration  {
         return str.toString().replaceAll("(.+)\u200C(.+)", "$1$2"); //.replaceAll("(.+)\u200C$", "$1");;
     }
 
-    public static void replaceAll(StringBuilder builder, String from, String to)
-    {
+    public static void replaceAll(StringBuilder builder, String from, String to) {
         int index = builder.indexOf(from);
-        while (index != -1)
-        {
+        while (index != -1) {
             builder.replace(index, index + from.length(), to);
             index += to.length(); // Move to the end of the replacement
             index = builder.indexOf(from, index);
         }
     }
 }
-
-

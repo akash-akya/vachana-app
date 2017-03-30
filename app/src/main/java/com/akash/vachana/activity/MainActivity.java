@@ -103,15 +103,6 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
-        /*
-        * Testing purpose
-        * */
-        Log.d("Kannada Test", "Start");
-        String text = KannadaTransliteration.getUnicodeString("KhaDgadhAri yaccammanAyaka");
-        Log.d("Kannada Test", text);
-        Toast.makeText(this, text, Toast.LENGTH_LONG).show();
-
-
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
 
