@@ -18,20 +18,19 @@
 
 package com.akash.vachana.fragment;
 
+import android.support.annotation.NonNull;
 import android.support.v7.widget.RecyclerView;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.CheckBox;
 import android.widget.CompoundButton;
-import android.widget.SectionIndexer;
 import android.widget.TextView;
 
 import com.akash.vachana.R;
 import com.akash.vachana.activity.ListType;
-import com.akash.vachana.dbUtil.KathruMini;
 import com.akash.vachana.dbUtil.VachanaMini;
+import com.simplecityapps.recyclerview_fastscroll.views.FastScrollRecyclerView;
 
 import org.greenrobot.eventbus.EventBus;
 import org.greenrobot.eventbus.Subscribe;
@@ -43,10 +42,10 @@ import java.util.List;
 import static android.widget.CompoundButton.*;
 
 public class MyVachanaListRecyclerViewAdapter extends RecyclerView.Adapter<MyVachanaListRecyclerViewAdapter.ViewHolder>
-        implements SectionIndexer {
+        implements FastScrollRecyclerView.SectionedAdapter {
 
     private final ListType listType;
-    private String[] names;
+    private char[] mScrollIndex;
     private List<VachanaMini> vachanaMinis;
     private ArrayList<VachanaMini> dupVachanaMinis = new ArrayList<>();
     private VachanaListFragment.OnVachanaFragmentListListener mListener;
@@ -56,6 +55,14 @@ public class MyVachanaListRecyclerViewAdapter extends RecyclerView.Adapter<MyVac
         mListener = listener;
         this.listType = listType;
         dupVachanaMinis.addAll(vachanaMinis);
+        createScrollIndex();
+    }
+
+    void createScrollIndex(){
+        mScrollIndex = new char[vachanaMinis.size()];
+        for (int i=0; i< vachanaMinis.size(); i++){
+            mScrollIndex[i] = vachanaMinis.get(i).getTitle().charAt(0);
+        }
     }
 
     @Override
@@ -110,38 +117,13 @@ public class MyVachanaListRecyclerViewAdapter extends RecyclerView.Adapter<MyVac
                 }
             }
         }
+        createScrollIndex();
         notifyDataSetChanged();
     }
 
     @Override
     public int getItemCount() {
         return vachanaMinis.size();
-    }
-
-    @Override
-    public Object[] getSections() {
-        if (names == null) {
-            names = new String[vachanaMinis.size()];
-            int i = 0;
-            for (VachanaMini k : vachanaMinis) {
-                names[i] = k.getTitle();
-                i++;
-            }
-        }
-        return names;
-    }
-
-    @Override
-    public int getPositionForSection(int sectionIndex) {
-        return 0;
-    }
-
-    @Override
-    public int getSectionForPosition(int position) {
-        if (position >= vachanaMinis.size()) {
-            position = vachanaMinis.size() - 1;
-        }
-        return position;
     }
 
     @Override
@@ -167,6 +149,7 @@ public class MyVachanaListRecyclerViewAdapter extends RecyclerView.Adapter<MyVac
                 if (listType == ListType.FAVORITE_LIST){
                     vachanaMinis.remove(vachanaMini);
                     notifyDataSetChanged();
+                    createScrollIndex();
                 }else {
                     vachanaMinis.set(i, vachanaMini);
                     notifyItemChanged(i);
@@ -176,10 +159,16 @@ public class MyVachanaListRecyclerViewAdapter extends RecyclerView.Adapter<MyVac
         }
     }
 
-
     public void addVachanas(ArrayList<VachanaMini> vachanaMinis) {
         this.vachanaMinis = vachanaMinis;
         dupVachanaMinis.addAll(vachanaMinis);
+        createScrollIndex();
+    }
+
+    @NonNull
+    @Override
+    public String getSectionName(int position) {
+        return String.valueOf(mScrollIndex[position]);
     }
 
     public class ViewHolder extends RecyclerView.ViewHolder {

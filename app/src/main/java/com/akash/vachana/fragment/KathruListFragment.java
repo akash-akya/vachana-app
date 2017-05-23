@@ -53,10 +53,6 @@ import com.akash.vachana.dbUtil.VachanaMini;
 import java.io.Serializable;
 import java.util.ArrayList;
 
-import xyz.danoz.recyclerviewfastscroller.AbsRecyclerViewFastScroller;
-import xyz.danoz.recyclerviewfastscroller.sectionindicator.title.SectionTitleIndicator;
-import xyz.danoz.recyclerviewfastscroller.vertical.VerticalRecyclerViewFastScroller;
-
 public class KathruListFragment extends Fragment {
 
     private static final String TAG = "KathruListFragment";
@@ -104,19 +100,12 @@ public class KathruListFragment extends Fragment {
         setHasOptionsMenu(true);
         View view =  inflater.inflate(R.layout.fragment_kathru_list, container, false);
         recyclerView = (RecyclerView) view.findViewById(R.id.kathru_recycler_view);
-        VerticalRecyclerViewFastScroller fastScroller = (VerticalRecyclerViewFastScroller)
-                view.findViewById(R.id.fast_scroller);
-        SectionTitleIndicator sectionTitleIndicator = (SectionTitleIndicator)
-                view.findViewById(R.id.fast_scroller_section_title_indicator);
         if (myAdapter == null){
             recyclerView.setAdapter(new MyKathruListRecyclerViewAdapter(new ArrayList<KathruMini>(),
                     mListener, listType));
         } else {
             recyclerView.setAdapter(myAdapter);
         }
-        fastScroller.setRecyclerView(recyclerView);
-        recyclerView.addOnScrollListener(fastScroller.getOnScrollListener());
-        fastScroller.setSectionIndicator(sectionTitleIndicator);
         return view;
     }
 
@@ -176,18 +165,9 @@ public class KathruListFragment extends Fragment {
             if (kathruMinis.size() > 0){
                 RecyclerView recyclerView = (RecyclerView)
                         getActivity().findViewById(R.id.kathru_recycler_view);
-                VerticalRecyclerViewFastScroller fastScroller = (VerticalRecyclerViewFastScroller)
-                        getActivity().findViewById(R.id.fast_scroller);
-                SectionTitleIndicator sectionTitleIndicator = (SectionTitleIndicator)
-                        getActivity().findViewById(R.id.fast_scroller_section_title_indicator);
-
-
                 myAdapter = new MyKathruListRecyclerViewAdapter(kathruMinis, mListener, listType);
                 recyclerView.setAdapter(myAdapter);
 
-                fastScroller.setRecyclerView(recyclerView);
-                recyclerView.addOnScrollListener(fastScroller.getOnScrollListener());
-                fastScroller.setSectionIndicator(sectionTitleIndicator);
                 kathruListContainer.setVisibility(View.VISIBLE);
             } else {
                 noDataTv.findViewById(R.id.no_data_kathru).setVisibility(View.VISIBLE);

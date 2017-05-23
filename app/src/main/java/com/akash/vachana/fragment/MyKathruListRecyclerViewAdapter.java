@@ -21,6 +21,7 @@ package com.akash.vachana.fragment;
 import android.app.Activity;
 import android.content.Context;
 import android.content.DialogInterface;
+import android.support.annotation.NonNull;
 import android.support.v4.app.FragmentActivity;
 import android.support.v4.app.FragmentManager;
 import android.support.v7.app.AlertDialog;
@@ -40,6 +41,7 @@ import com.akash.vachana.activity.ListType;
 import com.akash.vachana.activity.MainActivity;
 import com.akash.vachana.dbUtil.KathruMini;
 import com.akash.vachana.dbUtil.VachanaMini;
+import com.simplecityapps.recyclerview_fastscroll.views.FastScrollRecyclerView;
 
 import org.greenrobot.eventbus.EventBus;
 import org.greenrobot.eventbus.Subscribe;
@@ -50,25 +52,27 @@ import java.util.List;
 import java.util.Locale;
 
 public class MyKathruListRecyclerViewAdapter extends RecyclerView.Adapter<MyKathruListRecyclerViewAdapter.ViewHolder>
-        implements SectionIndexer {
+        implements FastScrollRecyclerView.SectionedAdapter {
 
     private static final String TAG = "MyKathruListRecyclerViewAdapter";
-    private String[] names;
     private List<KathruMini> kathruMinis;
     private ArrayList<KathruMini> dupKathruMinis = new ArrayList<>();
     private final KathruListFragment.OnKathruListFragmentListener mListener;
     private ListType listType;
+    private char[] mScrollIndex;
 
     public MyKathruListRecyclerViewAdapter(List<KathruMini> items, KathruListFragment.OnKathruListFragmentListener listener, ListType listType) {
         kathruMinis = items;
         mListener = listener;
         this.listType = listType;
         dupKathruMinis.addAll(kathruMinis);
-        names = new String[kathruMinis.size()];
-        int i = 0;
-        for (KathruMini k : kathruMinis) {
-            names[i] = k.getName();
-            i++;
+        createScrolIndex();
+    }
+
+    void createScrolIndex(){
+        mScrollIndex = new char[kathruMinis.size()];
+        for (int i=0; i< kathruMinis.size(); i++){
+            mScrollIndex[i] = kathruMinis.get(i).getName().charAt(0);
         }
     }
 
@@ -83,7 +87,6 @@ public class MyKathruListRecyclerViewAdapter extends RecyclerView.Adapter<MyKath
         kathruMinis.clear();
         if (charText.length() == 0) {
             kathruMinis.addAll(dupKathruMinis);
-
         } else {
             for (KathruMini kathruMini : dupKathruMinis) {
                 if (charText.length() != 0 && (kathruMini.getName().contains(charText) ||
@@ -92,6 +95,7 @@ public class MyKathruListRecyclerViewAdapter extends RecyclerView.Adapter<MyKath
                 }
             }
         }
+        createScrolIndex();
         notifyDataSetChanged();
     }
 
@@ -187,6 +191,7 @@ public class MyKathruListRecyclerViewAdapter extends RecyclerView.Adapter<MyKath
                 if (listType == ListType.FAVORITE_LIST){
                     kathruMinis.remove(i);
                     notifyDataSetChanged();
+                    createScrolIndex();
                 }else {
                     kathruMinis.set(i, kathruMini);
                     notifyItemChanged(i);
@@ -201,22 +206,10 @@ public class MyKathruListRecyclerViewAdapter extends RecyclerView.Adapter<MyKath
         return kathruMinis.size();
     }
 
+    @NonNull
     @Override
-    public Object[] getSections() {
-        return names;
-    }
-
-    @Override
-    public int getPositionForSection(int sectionIndex) {
-        return 0;
-    }
-
-    @Override
-    public int getSectionForPosition(int position) {
-        if (position >= kathruMinis.size()) {
-            position = kathruMinis.size() - 1;
-        }
-        return position;
+    public String getSectionName(int position) {
+        return String.valueOf(mScrollIndex[position]);
     }
 
     public class ViewHolder extends RecyclerView.ViewHolder {

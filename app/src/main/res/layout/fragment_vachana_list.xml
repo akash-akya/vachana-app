@@ -19,6 +19,7 @@
 
 <RelativeLayout android:layout_height="match_parent"
     android:layout_width="match_parent"
+    xmlns:app="http://schemas.android.com/tools"
     android:background="@android:color/transparent"
     xmlns:recyclerviewfastscroller="http://schemas.android.com/apk/res-auto"
     xmlns:android="http://schemas.android.com/apk/res/android">
@@ -28,46 +29,15 @@
         android:layout_height="match_parent"
             android:id="@+id/vachana_list_container">
 
-        <android.support.v7.widget.RecyclerView xmlns:android="http://schemas.android.com/apk/res/android"
+        <com.simplecityapps.recyclerview_fastscroll.views.FastScrollRecyclerView
             xmlns:app="http://schemas.android.com/apk/res-auto"
-            xmlns:tools="http://schemas.android.com/tools"
             android:id="@+id/list"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
             app:layoutManager="android.support.v7.widget.LinearLayoutManager"
-            />
-
-        <xyz.danoz.recyclerviewfastscroller.vertical.VerticalRecyclerViewFastScroller
-            android:id="@+id/vachana_fast_scroller"
-            android:layout_width="wrap_content"
-            android:layout_height="match_parent"
-            android:layout_alignParentRight="true"
-            android:layout_alignParentEnd="true"
-            android:focusable="true"
-            android:clickable="true"
-            android:paddingLeft="5dp"
-            android:paddingStart="5dp"
-            android:paddingRight="5dp"
-            android:paddingEnd="5dp"
-            android:focusableInTouchMode="true"
-
-            recyclerviewfastscroller:rfs_barColor="@android:color/transparent"
-            recyclerviewfastscroller:rfs_handleBackground="?attr/fast_scroller_handle_color"
-            />
-
-        <com.akash.vachana.Util.ListScrollIndicator
-            android:id="@+id/vachan_fast_scroller_section_indicator"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_toLeftOf="@id/vachana_fast_scroller"
-            android:layout_toStartOf="@id/vachana_fast_scroller"
-            android:layout_marginRight="27dp"
-            android:layout_marginEnd="27dp"
-            android:paddingBottom="30dp"
-
-            recyclerviewfastscroller:rfs_backgroundColor="?attr/colorPrimaryDark"
-            recyclerviewfastscroller:rfs_textColor="@android:color/primary_text_dark"
-            />
+            app:fastScrollPopupBgColor="?colorAccent"
+            app:fastScrollPopupTextColor="@android:color/primary_text_dark"
+            app:fastScrollThumbColor="?colorAccent" />
 
     </RelativeLayout>
 

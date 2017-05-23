@@ -56,10 +56,6 @@ import org.greenrobot.eventbus.ThreadMode;
 import java.io.Serializable;
 import java.util.ArrayList;
 
-import xyz.danoz.recyclerviewfastscroller.sectionindicator.title.SectionTitleIndicator;
-import xyz.danoz.recyclerviewfastscroller.vertical.VerticalRecyclerViewFastScroller;
-
-
 /**
  * A fragment representing a list of Items.
  * <p/>
@@ -145,21 +141,12 @@ public class VachanaListFragment extends Fragment {
         setHasOptionsMenu(true);
         View view = inflater.inflate(R.layout.fragment_vachana_list, container, false);
         recyclerView = (RecyclerView) view.findViewById(R.id.list);
-        VerticalRecyclerViewFastScroller fastScroller = (VerticalRecyclerViewFastScroller)
-                view.findViewById(R.id.vachana_fast_scroller);
-        SectionTitleIndicator sectionTitleIndicator = (SectionTitleIndicator)
-                view.findViewById(R.id.vachan_fast_scroller_section_indicator);
 
         if (adapter == null){
             recyclerView.setAdapter(new MyVachanaListRecyclerViewAdapter(new ArrayList<VachanaMini>(), mListener, listType));
         } else {
             recyclerView.setAdapter(adapter);
         }
-
-        fastScroller.setRecyclerView(recyclerView);
-        recyclerView.addOnScrollListener(fastScroller.getOnScrollListener());
-        fastScroller.setSectionIndicator(sectionTitleIndicator);
-
         return view;
     }
 
@@ -217,15 +204,7 @@ public class VachanaListFragment extends Fragment {
                 progressBar.setVisibility(View.INVISIBLE);
                 if (vachanaMinis.size() > 0 && recyclerView != null && getActivity() != null) {
                     adapter = new MyVachanaListRecyclerViewAdapter(vachanaMinis, mListener, listType);
-                    VerticalRecyclerViewFastScroller fastScroller = (VerticalRecyclerViewFastScroller)
-                            getActivity().findViewById(R.id.vachana_fast_scroller);
-                    SectionTitleIndicator sectionTitleIndicator = (SectionTitleIndicator)
-                            getActivity().findViewById(R.id.vachan_fast_scroller_section_indicator);
-
                     recyclerView.setAdapter(adapter);
-                    fastScroller.setRecyclerView(recyclerView);
-                    recyclerView.addOnScrollListener(fastScroller.getOnScrollListener());
-                    fastScroller.setSectionIndicator(sectionTitleIndicator);
                     vachanaListContainer.setVisibility(View.VISIBLE);
                 } else {
                     noDataTv.setVisibility(View.VISIBLE);
