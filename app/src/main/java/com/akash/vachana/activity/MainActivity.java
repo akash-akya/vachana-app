@@ -19,36 +19,40 @@
 package com.akash.vachana.activity;
 
 import android.app.Activity;
+import android.app.Dialog;
 import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.net.Uri;
+import android.os.Bundle;
 import android.os.Handler;
 import android.preference.PreferenceManager;
 import android.support.annotation.NonNull;
-import android.support.v4.app.FragmentManager;
-import android.os.Bundle;
+import android.support.design.widget.NavigationView;
 import android.support.v4.app.Fragment;
+import android.support.v4.app.FragmentManager;
 import android.support.v4.content.ContextCompat;
+import android.support.v4.view.GravityCompat;
+import android.support.v4.widget.DrawerLayout;
 import android.support.v7.app.ActionBar;
 import android.support.v7.app.ActionBarDrawerToggle;
 import android.support.v7.app.AlertDialog;
-import android.support.v7.app.AppCompatDelegate;
-import android.util.Log;
-import android.support.design.widget.NavigationView;
-import android.support.v4.view.GravityCompat;
-import android.support.v4.widget.DrawerLayout;
 import android.support.v7.app.AppCompatActivity;
+import android.support.v7.app.AppCompatDelegate;
 import android.support.v7.widget.Toolbar;
+import android.text.Html;
+import android.text.Spanned;
+import android.text.method.LinkMovementMethod;
+import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
+import android.view.Window;
 import android.view.inputmethod.InputMethodManager;
 import android.webkit.WebView;
-import android.widget.Toast;
+import android.widget.TextView;
 
 import com.akash.vachana.R;
-import com.akash.vachana.Util.KannadaTransliteration;
 import com.akash.vachana.Util.ThemeChangeUtil;
 import com.akash.vachana.dbUtil.DatabaseReadAccess;
 import com.akash.vachana.dbUtil.KathruDetails;
@@ -66,7 +70,6 @@ import org.greenrobot.eventbus.Subscribe;
 import org.greenrobot.eventbus.ThreadMode;
 
 import java.io.IOException;
-import java.nio.charset.Charset;
 import java.util.ArrayList;
 import java.util.Formatter;
 import java.util.Random;
@@ -355,11 +358,29 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
                 return;
             }
 
+            case R.id.nav_keyboard:{
+                // custom dialog
+                final Dialog dialog = new Dialog(this);
+                dialog.setContentView(R.layout.typing_help);
+                dialog.show();
+                return;
+            }
+
             case R.id.nav_about_app: {
+/*
                 WebView webView = new WebView(this);
                 webView.loadUrl("file:///android_res/raw/about_app.html");
                 AlertDialog.Builder dialog = new AlertDialog.Builder(this);
                 dialog.setView(webView);
+                dialog.show();
+*/
+
+                final Dialog dialog = new Dialog(this);
+                dialog.setContentView(R.layout.about_app);
+                Window window = dialog.getWindow();
+                window.setLayout(DrawerLayout.LayoutParams.MATCH_PARENT, DrawerLayout.LayoutParams.WRAP_CONTENT);
+                TextView aboutAppText = (TextView) dialog.findViewById(R.id.about_app_tv);
+                aboutAppText.setMovementMethod(LinkMovementMethod.getInstance());
                 dialog.show();
                 return;
             }
@@ -367,6 +388,17 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
             default:
                 Log.e(TAG, "selectItem: Error, Wrong id");
         }
+    }
+
+    @SuppressWarnings("deprecation")
+    public static Spanned fromHtml(String html){
+        Spanned result;
+        if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.N) {
+            result = Html.fromHtml(html,Html.FROM_HTML_MODE_LEGACY);
+        } else {
+            result = Html.fromHtml(html);
+        }
+        return result;
     }
 
     @Override

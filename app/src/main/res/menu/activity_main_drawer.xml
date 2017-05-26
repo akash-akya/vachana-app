@@ -57,6 +57,11 @@
             android:icon="@drawable/ic_settings_black_24dp"
             android:title="ಅಳವಡಿಕೆಗಳು" />
         <item
+            android:id="@+id/nav_keyboard"
+            android:icon="@drawable/ic_keyboard_black_24dp"
+            android:title="ಕೀಲಿಮಣಿ ವಿನ್ಯಾಸ">
+        </item>
+        <item
             android:id="@+id/nav_more_about_vachana"
             android:icon="@drawable/ic_info_black_24dp"
             android:title="ವಚನಗಳ ಕುರಿತು ಹೆಚ್ಚಿನ ಮಾಹಿತಿ">
