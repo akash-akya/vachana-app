@@ -22,8 +22,6 @@ import com.akash.vachana.dbUtil.KathruDetails;
 
 public class HtmlBuilder {
 
-    private static String keyColor;
-
     private static String setColor(String text, String color) {
         return "<font color=" + color + ">" + text + "</font>";
     }

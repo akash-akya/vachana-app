@@ -100,7 +100,7 @@ public class MyVachanaListRecyclerViewAdapter extends RecyclerView.Adapter<MyVac
                 if (null != mListener) {
                     // Notify the active callbacks interface (the activity, if the
                     // fragment is attached to one) that an item has been selected.
-                    mListener.OnVachanaListItemClick((ArrayList<VachanaMini>) vachanaMinis, position);
+                    mListener.onVachanaListItemClick((ArrayList<VachanaMini>) vachanaMinis, position);
                 }
             }
         });

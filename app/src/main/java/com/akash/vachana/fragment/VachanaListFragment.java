@@ -19,11 +19,8 @@
 package com.akash.vachana.fragment;
 
 import android.content.Context;
-import android.content.res.Resources;
-import android.content.res.TypedArray;
 import android.os.AsyncTask;
 import android.os.Bundle;
-import android.os.Parcelable;
 import android.support.annotation.Nullable;
 import android.support.design.widget.AppBarLayout;
 import android.support.v4.app.Fragment;
@@ -33,7 +30,6 @@ import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.SearchView;
 import android.util.Log;
-import android.util.TypedValue;
 import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuInflater;
@@ -46,7 +42,6 @@ import com.akash.vachana.R;
 import com.akash.vachana.Util.KannadaTransliteration;
 import com.akash.vachana.activity.ListType;
 import com.akash.vachana.dbUtil.KathruMini;
-import com.akash.vachana.dbUtil.Vachana;
 import com.akash.vachana.dbUtil.VachanaMini;
 
 import org.greenrobot.eventbus.EventBus;
@@ -350,7 +345,7 @@ public class VachanaListFragment extends Fragment {
     }
 
     public interface OnVachanaFragmentListListener extends Serializable {
-        void OnVachanaListItemClick(ArrayList<VachanaMini> vachanaMinis, int position);
+        void onVachanaListItemClick(ArrayList<VachanaMini> vachanaMinis, int position);
         ArrayList<VachanaMini> getVachanaMinis(KathruMini kathruMini, ListType listType);
         ArrayList<VachanaMini> getVachanaMinis(String text, String kathruString, boolean isPartialSearch);
     }

@@ -247,7 +247,7 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
 
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
-        int id = item.getItemId();
+        //int id = item.getItemId();
 
 /*
         switch (id) {
@@ -445,12 +445,14 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
             case FAVORITE_LIST:
                 kathruMinis = db.getFavoriteKathruMinis();
                 break;
+            default:
+                Log.d(TAG, "getKathruMinis: Wrong listType");
         }
         return kathruMinis;
     }
 
     @Override
-    public void OnVachanaListItemClick(ArrayList<VachanaMini> vachanaMinis, int position) {
+    public void onVachanaListItemClick(ArrayList<VachanaMini> vachanaMinis, int position) {
         FragmentManager fragmentManager = getSupportFragmentManager();
         VachanaFragment fragment = VachanaFragment.newInstance(position, vachanaMinis);
 
@@ -473,6 +475,8 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
             case FAVORITE_LIST:
                 vachanaMinis = db.getFavoriteVachanaMinis();
                 break;
+            default:
+                Log.d(TAG, "getVachanaMinis: Wrong listType");
         }
         return vachanaMinis;
     }

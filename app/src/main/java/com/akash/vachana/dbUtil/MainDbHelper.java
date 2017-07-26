@@ -27,19 +27,14 @@ import android.util.Log;
 
 import java.io.BufferedInputStream;
 import java.io.File;
-import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
-import java.io.OutputStream;
 import java.io.Serializable;
 import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.EnumMap;
-import java.util.List;
-import java.util.StringTokenizer;
-import java.util.TreeMap;
 import java.util.zip.ZipEntry;
 import java.util.zip.ZipInputStream;
 
@@ -48,7 +43,7 @@ public class MainDbHelper extends SQLiteOpenHelper implements Serializable, Data
     public static final String DATABASE_NAME = "main.db";
     private static final String ZIP_FILE_NAME = DATABASE_NAME+".zip";
 
-    private static String DB_PATH;
+    private String DB_PATH;
     public static final int DATABASE_VERSION = 2;
 
     public static final String TABLE_KATHRU = "Kathru";
@@ -85,8 +80,8 @@ public class MainDbHelper extends SQLiteOpenHelper implements Serializable, Data
     private static final String KEY_SPECIALITY = "Speciality";
     private static final String KEY_TOMB_PLACE = "Tomb_place";
 
-    private static Context mContext;
-    private static SQLiteDatabase mDataBase;
+    private Context mContext;
+    private SQLiteDatabase mDataBase;
 
     public MainDbHelper(Context context) {
         super(context, DATABASE_NAME, null, DATABASE_VERSION);
@@ -174,7 +169,6 @@ public class MainDbHelper extends SQLiteOpenHelper implements Serializable, Data
     }
 
     public void openDataBase() throws SQLException {
-
         // Open the database
         String myPath = DB_PATH + DATABASE_NAME;
         mDataBase = SQLiteDatabase.openDatabase(myPath, null,
