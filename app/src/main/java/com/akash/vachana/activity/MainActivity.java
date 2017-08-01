@@ -95,6 +95,7 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
         ThemeChangeUtil.themeResetGard(this);
 
         SharedPreferences sharedPreferences = PreferenceManager.getDefaultSharedPreferences(this);
@@ -103,7 +104,6 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
         AppCompatDelegate.setDefaultNightMode(isDarkThemeEnabled? AppCompatDelegate.MODE_NIGHT_YES : AppCompatDelegate.MODE_NIGHT_NO);
         ThemeChangeUtil.onActivityCreateSetTheme(this, 0xFFFFFF & themeColor);
 
-        super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
@@ -182,10 +182,8 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
             }
         });
 
-        if (savedInstanceState == null) {
-            selectItem(R.id.nav_vachana);
-            navigationView.setCheckedItem(R.id.nav_vachana);
-        }
+        selectItem(R.id.nav_vachana);
+        navigationView.setCheckedItem(R.id.nav_vachana);
     }
 
     @Override

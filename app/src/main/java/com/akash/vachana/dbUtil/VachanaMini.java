@@ -18,9 +18,12 @@
 
 package com.akash.vachana.dbUtil;
 
+import android.os.Parcel;
+import android.os.Parcelable;
+
 import java.io.Serializable;
 
-public class VachanaMini implements Serializable{
+public class VachanaMini implements Parcelable {
     private int id;
     private int kathruId;
     private String kathruName;
@@ -34,6 +37,26 @@ public class VachanaMini implements Serializable{
         this.kathruName = kathruName;
         this.favorite = favorite;
     }
+
+    protected VachanaMini(Parcel in) {
+        id = in.readInt();
+        kathruId = in.readInt();
+        kathruName = in.readString();
+        title = in.readString();
+        favorite = in.readInt();
+    }
+
+    public static final Creator<VachanaMini> CREATOR = new Creator<VachanaMini>() {
+        @Override
+        public VachanaMini createFromParcel(Parcel in) {
+            return new VachanaMini(in);
+        }
+
+        @Override
+        public VachanaMini[] newArray(int size) {
+            return new VachanaMini[size];
+        }
+    };
 
     public String getKathruName() {
         return kathruName;
@@ -60,5 +83,19 @@ public class VachanaMini implements Serializable{
             this.favorite = 1;
         else
             this.favorite = 0;
+    }
+
+    @Override
+    public int describeContents() {
+        return 0;
+    }
+
+    @Override
+    public void writeToParcel(Parcel dest, int flags) {
+        dest.writeInt(id);
+        dest.writeInt(kathruId);
+        dest.writeString(kathruName);
+        dest.writeString(title);
+        dest.writeInt(favorite);
     }
 }

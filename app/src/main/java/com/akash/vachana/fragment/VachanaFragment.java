@@ -18,47 +18,34 @@
 
 package com.akash.vachana.fragment;
 
-import android.app.Dialog;
-import android.content.ComponentName;
 import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.content.pm.LabeledIntent;
 import android.content.pm.PackageManager;
 import android.content.pm.ResolveInfo;
-import android.content.res.Resources;
-import android.graphics.Bitmap;
-import android.graphics.BitmapFactory;
-import android.graphics.Canvas;
-import android.graphics.drawable.BitmapDrawable;
-import android.graphics.drawable.Drawable;
 import android.net.Uri;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.os.Handler;
-import android.os.Parcelable;
 import android.preference.PreferenceManager;
 import android.support.annotation.Nullable;
 import android.support.design.widget.AppBarLayout;
-import android.support.v4.app.FragmentActivity;
+import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.view.PagerAdapter;
 import android.support.v4.view.ViewPager;
-import android.support.v4.app.Fragment;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.widget.Toolbar;
-import android.text.Html;
-import android.text.TextUtils;
+import android.util.Log;
 import android.util.TypedValue;
 import android.view.ActionMode;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
-import android.view.WindowManager;
 import android.webkit.WebView;
 import android.webkit.WebViewClient;
 import android.widget.EditText;
@@ -100,7 +87,7 @@ public class VachanaFragment extends Fragment {
         VachanaFragment  fragment = new VachanaFragment();
         Bundle args = new Bundle();
         args.putInt(POSITION, position);
-        args.putSerializable(VACHANA_MINIS, vachanaMinis);
+        args.putParcelableArrayList(VACHANA_MINIS,vachanaMinis);
         fragment.setArguments(args);
         return fragment;
     }
@@ -110,7 +97,7 @@ public class VachanaFragment extends Fragment {
         super.onCreate(savedInstanceState);
         if (getArguments() != null) {
             position = getArguments().getInt(POSITION);
-            vachana_minis = (ArrayList<VachanaMini>) getArguments().getSerializable(VACHANA_MINIS);
+            vachana_minis = getArguments().getParcelableArrayList(VACHANA_MINIS);
         } else {
             Log.e(TAG, "onCreate: No arguments!!!");
         }

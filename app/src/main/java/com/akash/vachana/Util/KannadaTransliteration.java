@@ -18,13 +18,12 @@
 
 package com.akash.vachana.Util;
 
-import android.util.Log;
-
 import java.util.LinkedHashMap;
 import java.util.Map;
 
 public abstract class KannadaTransliteration  {
     private static final char CHNBIN = '್';
+    private static final String TAG = KannadaTransliteration.class.getSimpleName();
     private static Map<String, String> KANNADA_MAP = null;
 
     /**
@@ -168,29 +167,26 @@ public abstract class KannadaTransliteration  {
     }
 
     public static String getUnicodeString(final String src) {
-        StringBuilder uniStr = new StringBuilder();
+        StringBuilder uStr = new StringBuilder();
 
         if (src.length() > 0){
-            uniStr.append(mapLang(src.substring(0,1)));
+            int len = (src.length() > 4) ? 4 : src.length();
+            String ch = mapLang(src.substring(0,len));
+            uStr.append(ch);
 
-            for (int i=1; i< src.length(); i++) {
-                char curChar  = src.charAt(i);
-                int uniLen = uniStr.length();
-                int prevCharLen = 4;
+            for (int i=4, pad=4; i< src.length(); i++) {
+                int uLen = uStr.length();
+                int uStart = uLen-pad;
 
-                if(i < 4) {
-                    prevCharLen = (uniStr.charAt(uniLen-1) == CHNBIN)? 2 : 1;
-                }
-
-                String ch = mapLang(uniStr.substring(uniLen-prevCharLen, uniLen)+curChar);
-                uniStr.replace(uniLen-prevCharLen, uniLen+ch.length(), ch);
+                ch = mapLang(uStr.substring(uStart, uLen)+src.charAt(i));
+                uStr.replace(uStart, uLen+ch.length(), ch);
             }
 
-            if (uniStr.charAt(uniStr.length()-1) == '\u200C') {
-                return uniStr.substring(0, uniStr.length()-1);
+            if (uStr.charAt(uStr.length()-1) == '\u200C') {
+                return uStr.substring(0, uStr.length()-1);
             }
         }
-        return uniStr.toString();
+        return uStr.toString();
     }
 
     private static String mapLang(final String txt) {
