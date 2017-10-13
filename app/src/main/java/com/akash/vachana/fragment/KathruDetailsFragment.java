@@ -41,6 +41,7 @@ import com.akash.vachana.Util.HtmlBuilder;
 import com.akash.vachana.activity.ListType;
 import com.akash.vachana.activity.MainActivity;
 import com.akash.vachana.dbUtil.KathruDetails;
+import com.google.firebase.crash.FirebaseCrash;
 
 import java.io.Serializable;
 
@@ -51,6 +52,7 @@ public class KathruDetailsFragment extends Fragment {
     private OnKathruDetailsInteractionListener mListener;
     private String title;
     private int  kathru_id;
+    private GetKathruDetailsTask kathruDetailsTask;
 
     public KathruDetailsFragment() {
         // Required empty public constructor
@@ -80,8 +82,7 @@ public class KathruDetailsFragment extends Fragment {
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
-        View view = inflater.inflate(R.layout.fragment_kathru_details, container, false);
-        return view;
+        return inflater.inflate(R.layout.fragment_kathru_details, container, false);
     }
 
     @Override
@@ -100,7 +101,8 @@ public class KathruDetailsFragment extends Fragment {
     @Override
     public void onActivityCreated(@Nullable Bundle savedInstanceState) {
         super.onActivityCreated(savedInstanceState);
-        new GetKathruDetailsTask(kathru_id).execute();
+        kathruDetailsTask = new GetKathruDetailsTask(kathru_id);
+        kathruDetailsTask.execute();
     }
 
     private class GetKathruDetailsTask extends AsyncTask{
@@ -115,9 +117,16 @@ public class KathruDetailsFragment extends Fragment {
         @Override
         protected void onPreExecute() {
             super.onPreExecute();
-            kathruDetailsTextView = (TextView) getActivity().findViewById(R.id.tv_kathru_details);
-            vachanaLinkButton = (Button) getActivity().findViewById(R.id.btn_vachanas_link);
-            vachanaLinkButton.setVisibility(View.INVISIBLE);
+            try{
+                if (!isCancelled()){
+                    kathruDetailsTextView = (TextView) getActivity().findViewById(R.id.tv_kathru_details);
+                    vachanaLinkButton = (Button) getActivity().findViewById(R.id.btn_vachanas_link);
+                    vachanaLinkButton.setVisibility(View.INVISIBLE);
+                }
+            } catch (NullPointerException ex){
+                FirebaseCrash.log(TAG+"onPreExecute: Display elements are null.");
+                cancel(true);
+            }
         }
 
         @Override
@@ -167,6 +176,12 @@ public class KathruDetailsFragment extends Fragment {
     public void onDetach() {
         super.onDetach();
         mListener = null;
+    }
+
+    @Override
+    public void onPause() {
+        super.onPause();
+        kathruDetailsTask.cancel(true);
     }
 
     public interface OnKathruDetailsInteractionListener extends Serializable {

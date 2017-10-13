@@ -46,6 +46,7 @@ import com.akash.vachana.Util.EditTextWatcher;
 import com.akash.vachana.Util.KannadaTransliteration;
 import com.akash.vachana.activity.MainActivity;
 import com.akash.vachana.dbUtil.KathruMini;
+import com.google.firebase.crash.FirebaseCrash;
 
 import java.io.Serializable;
 import java.util.ArrayList;
@@ -115,6 +116,9 @@ public class SearchFragment extends Fragment implements Serializable {
         @Override
         protected void onPreExecute() {
             super.onPreExecute();
+            if (isCancelled()){
+                return;
+            }
         }
 
         @Override
@@ -125,7 +129,7 @@ public class SearchFragment extends Fragment implements Serializable {
         @Override
         protected void onPostExecute(Object o) {
             super.onPostExecute(o);
-            if (!kathruListTask.isCancelled()) {
+            if (o != null) {
                 ArrayList<KathruMini> kathruMinis = (ArrayList<KathruMini>) o;
                 final AutoCompleteTextView autoTextView = (AutoCompleteTextView) getActivity().findViewById(R.id.auto_complete_kathru);
                 ArrayAdapter<KathruMini> adapter = new ArrayAdapter<KathruMini>(getActivity(), android.R.layout.simple_dropdown_item_1line,
@@ -142,6 +146,8 @@ public class SearchFragment extends Fragment implements Serializable {
                         }
                     });
                 }
+            } else {
+                FirebaseCrash.log(TAG+"onPostExecute(): Task is cancelled or return value is null");
             }
         }
     }

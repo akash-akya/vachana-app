@@ -79,6 +79,7 @@ public class VachanaFragment extends Fragment {
     private int position;
     private ArrayList<VachanaMini> vachana_minis;
     private MenuItem starMenuItem;
+    private AsyncTask mDbTask;
 
 
     public VachanaFragment() {}
@@ -200,6 +201,7 @@ public class VachanaFragment extends Fragment {
     @Override
     public void onPause() {
         super.onPause();
+        mDbTask.cancel(true);
         Toolbar toolbar = (Toolbar) getActivity().findViewById(R.id.toolbar);
         toolbar.setOnClickListener(null);
     }
@@ -273,7 +275,8 @@ public class VachanaFragment extends Fragment {
         public Object instantiateItem(final ViewGroup container, int position) {
             LayoutInflater layoutInflater = (LayoutInflater) getActivity().getSystemService(Context.LAYOUT_INFLATER_SERVICE);
             final View view = layoutInflater.inflate(R.layout.vachana_text_view, container, false);
-            new GetVachanaFromDb(view, position).execute();
+            mDbTask = new GetVachanaFromDb(view, position);
+            mDbTask.execute();
             container.addView(view);
             return view;
         }
@@ -311,6 +314,11 @@ public class VachanaFragment extends Fragment {
                 vachanaNumber = (TextView) view.findViewById(R.id.vachana_number);
                 progressBar = (ProgressBar) view.findViewById(R.id.progressBar);
                 this.position = position;
+            }
+
+            @Override
+            protected void onPreExecute() {
+                super.onPreExecute();
             }
 
             @Override

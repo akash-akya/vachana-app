@@ -19,21 +19,16 @@
 package com.akash.vachana.fragment;
 
 import android.content.Context;
-import android.content.res.Resources;
-import android.content.res.TypedArray;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.design.widget.AppBarLayout;
 import android.support.v4.app.Fragment;
 import android.support.v4.view.MenuItemCompat;
-import android.support.v7.widget.GridLayoutManager;
-import android.support.v7.widget.LinearLayoutManager;
+import android.support.v7.app.ActionBar;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.SearchView;
-import android.support.v7.widget.Toolbar;
 import android.util.Log;
-import android.util.TypedValue;
 import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuInflater;
@@ -41,30 +36,29 @@ import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ProgressBar;
-import android.widget.TextView;
 
 import com.akash.vachana.R;
 import com.akash.vachana.Util.KannadaTransliteration;
 import com.akash.vachana.activity.ListType;
 import com.akash.vachana.activity.MainActivity;
 import com.akash.vachana.dbUtil.KathruMini;
-import com.akash.vachana.dbUtil.VachanaMini;
+import com.google.firebase.crash.FirebaseCrash;
 
 import java.io.Serializable;
 import java.util.ArrayList;
 
 public class KathruListFragment extends Fragment {
-
-    private static final String TAG = "KathruListFragment";
+    private static final String TAG = KathruListFragment.class.getSimpleName();
     private static final String TITLE = "title";
     private static final String LIST_TYPE = "list_type";
     private static final String SEARCH_QUERY = "search_query";
     private OnKathruListFragmentListener mListener;
     private MyKathruListRecyclerViewAdapter myAdapter;
-    private RecyclerView recyclerView;
+    private RecyclerView mRecyclerView;
     private String title;
     private ListType listType;
     private String mSearchQuery;
+    private KathruListTask katruRetreiveTask;
 
     public KathruListFragment() { }
 
@@ -84,12 +78,11 @@ public class KathruListFragment extends Fragment {
             title = getArguments().getString(TITLE);
             listType = (ListType) getArguments().getSerializable(LIST_TYPE);
         } else {
-            Log.e(TAG, "onCreate: No arguments!!!");
+            throw new NullPointerException(TAG+" onCreate(): getArguments() is null!");
         }
 
-        if (savedInstanceState == null) {
-            mSearchQuery = "";
-        } else {
+        mSearchQuery = "";
+        if (savedInstanceState != null) {
             mSearchQuery = savedInstanceState.getString(SEARCH_QUERY);
         }
     }
@@ -99,12 +92,9 @@ public class KathruListFragment extends Fragment {
                              Bundle savedInstanceState) {
         setHasOptionsMenu(true);
         View view =  inflater.inflate(R.layout.fragment_kathru_list, container, false);
-        recyclerView = (RecyclerView) view.findViewById(R.id.kathru_recycler_view);
-        if (myAdapter == null){
-            recyclerView.setAdapter(new MyKathruListRecyclerViewAdapter(new ArrayList<KathruMini>(),
-                    mListener, listType));
-        } else {
-            recyclerView.setAdapter(myAdapter);
+        mRecyclerView = (RecyclerView) view.findViewById(R.id.kathru_recycler_view);
+        if (myAdapter != null){
+            mRecyclerView.setAdapter(myAdapter);
         }
         return view;
     }
@@ -115,7 +105,8 @@ public class KathruListFragment extends Fragment {
 
         if (myAdapter == null){
             title = getArguments().getString("title");
-            new KathruListTask().execute();
+            katruRetreiveTask = new KathruListTask();
+            katruRetreiveTask.execute();
         }
     }
 
@@ -126,7 +117,8 @@ public class KathruListFragment extends Fragment {
         appBarLayout.setExpanded(true, true);
 
         try {
-            ((MainActivity)getActivity()).getSupportActionBar().setTitle(title);
+            ActionBar actionbar = ((MainActivity) getActivity()).getSupportActionBar();
+            actionbar.setTitle(title);
         } catch (NullPointerException e){
             Log.d(TAG, "onCreate: Actionbar not found");
         }
@@ -141,32 +133,42 @@ public class KathruListFragment extends Fragment {
         @Override
         protected void onPreExecute() {
             super.onPreExecute();
+            if (isCancelled()){
+                return;
+            }
+
             progressBar = (ProgressBar) getActivity().findViewById(R.id.kathru_list_progressBar);
             kathruListContainer = getActivity().findViewById(R.id.kathru_list_container);
             noDataTv = getActivity().findViewById(R.id.no_data_kathru);
 
-            progressBar.setVisibility(View.VISIBLE);
-            kathruListContainer.setVisibility(View.INVISIBLE);
-            noDataTv.setVisibility(View.INVISIBLE);
+            try {
+                progressBar.setVisibility(View.VISIBLE);
+                kathruListContainer.setVisibility(View.INVISIBLE);
+                noDataTv.setVisibility(View.INVISIBLE);
+            } catch (NullPointerException e) {
+                FirebaseCrash.log(TAG+".onPreExecute(): Display elements is null");
+                cancel(true);
+            }
         }
 
         @Override
         protected ArrayList<KathruMini> doInBackground(Object[] objects) {
-            return mListener.getKathruMinis(listType);
+            if (null != mListener) {
+                return mListener.getKathruMinis(listType);
+            } else {
+                return new ArrayList<KathruMini>();
+            }
         }
 
         @Override
         protected void onPostExecute(Object o) {
             super.onPostExecute(o);
             ArrayList<KathruMini> kathruMinis = (ArrayList<KathruMini>) o;
-
             progressBar.setVisibility(View.INVISIBLE);
 
             if (kathruMinis.size() > 0){
-                RecyclerView recyclerView = (RecyclerView)
-                        getActivity().findViewById(R.id.kathru_recycler_view);
                 myAdapter = new MyKathruListRecyclerViewAdapter(kathruMinis, mListener, listType);
-                recyclerView.setAdapter(myAdapter);
+                mRecyclerView.setAdapter(myAdapter);
 
                 kathruListContainer.setVisibility(View.VISIBLE);
             } else {
@@ -198,9 +200,9 @@ public class KathruListFragment extends Fragment {
                 if (!newText.equals(text)){
                     searchView.setQuery(text, false);
                 } else {
-                    if (myAdapter != null && recyclerView != null) {
+                    if (myAdapter != null && mRecyclerView != null) {
                         myAdapter.filter(text.trim());
-                        recyclerView.invalidate();
+                        mRecyclerView.invalidate();
                         mSearchQuery = text;
                         return true;
                     }
@@ -221,6 +223,12 @@ public class KathruListFragment extends Fragment {
     public void onSaveInstanceState(Bundle outState) {
         super.onSaveInstanceState(outState);
         outState.putString(SEARCH_QUERY, mSearchQuery);
+    }
+
+    @Override
+    public void onPause() {
+        katruRetreiveTask.cancel(true);
+        super.onPause();
     }
 
     @Override

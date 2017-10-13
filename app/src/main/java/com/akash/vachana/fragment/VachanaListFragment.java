@@ -43,6 +43,7 @@ import com.akash.vachana.Util.KannadaTransliteration;
 import com.akash.vachana.activity.ListType;
 import com.akash.vachana.dbUtil.KathruMini;
 import com.akash.vachana.dbUtil.VachanaMini;
+import com.google.firebase.crash.FirebaseCrash;
 
 import org.greenrobot.eventbus.EventBus;
 import org.greenrobot.eventbus.Subscribe;
@@ -79,6 +80,7 @@ public class VachanaListFragment extends Fragment {
     private boolean isPartial;
     private String mSearchQuery;
     private Menu menu;
+    private VachanaListTask vachanaListTask;
 
     public VachanaListFragment() {
     }
@@ -151,7 +153,8 @@ public class VachanaListFragment extends Fragment {
 
         if (adapter == null) {
             title = getArguments().getString("title");
-            new VachanaListTask(kathruMini).execute();
+            vachanaListTask =  new VachanaListTask(kathruMini);
+            vachanaListTask.execute();
         }
     }
 
@@ -174,9 +177,15 @@ public class VachanaListFragment extends Fragment {
             vachanaListContainer = getActivity().findViewById(R.id.vachana_list_container);
             noDataTv = getActivity().findViewById(R.id.no_data_vachana);
 
-            progressBar.setVisibility(View.VISIBLE);
-            vachanaListContainer.setVisibility(View.INVISIBLE);
-            noDataTv.setVisibility(View.INVISIBLE);
+            // If app is closed display elements will be null
+            try {
+                progressBar.setVisibility(View.VISIBLE);
+                vachanaListContainer.setVisibility(View.INVISIBLE);
+                noDataTv.setVisibility(View.INVISIBLE);
+            } catch (NullPointerException e){
+                FirebaseCrash.log(TAG+" VachanaListTask.onPreExecute(): display elements are null.");
+                cancel(true);
+            }
         }
 
         @Override
@@ -188,6 +197,9 @@ public class VachanaListFragment extends Fragment {
                     return mListener.getVachanaMinis(kathruMini, listType);
                 }
             }
+            // Otherwise just close. Don't run onPostExecute()
+            FirebaseCrash.log(TAG+"doInBackground(): mListener is null.");
+            cancel(true);
             return null;
         }
 
@@ -223,6 +235,12 @@ public class VachanaListFragment extends Fragment {
 
         AppBarLayout appBarLayout = (AppBarLayout) getActivity().findViewById(R.id.app_bar);
         appBarLayout.setExpanded(true, true);
+    }
+
+    @Override
+    public void onPause() {
+        super.onPause();
+        vachanaListTask.cancel(true);
     }
 
     @Override
