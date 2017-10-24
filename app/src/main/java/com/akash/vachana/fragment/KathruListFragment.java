@@ -38,7 +38,7 @@ import android.view.ViewGroup;
 import android.widget.ProgressBar;
 
 import com.akash.vachana.R;
-import com.akash.vachana.Util.KannadaTransliteration;
+import com.akash.vachana.util.KannadaTransliteration;
 import com.akash.vachana.activity.ListType;
 import com.akash.vachana.activity.MainActivity;
 import com.akash.vachana.dbUtil.KathruMini;

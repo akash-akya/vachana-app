@@ -37,7 +37,7 @@ import android.view.View;
 import android.webkit.WebView;
 
 import com.akash.vachana.R;
-import com.akash.vachana.Util.ThemeChangeUtil;
+import com.akash.vachana.util.ThemeChangeUtil;
 import com.kizitonwose.colorpreferencecompat.ColorPreferenceCompat;
 
 public class MyPreferencesActivity extends AppCompatActivity {

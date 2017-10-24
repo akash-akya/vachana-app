@@ -37,8 +37,7 @@ import android.widget.Button;
 import android.widget.TextView;
 
 import com.akash.vachana.R;
-import com.akash.vachana.Util.HtmlBuilder;
-import com.akash.vachana.activity.ListType;
+import com.akash.vachana.util.HtmlBuilder;
 import com.akash.vachana.activity.MainActivity;
 import com.akash.vachana.dbUtil.KathruDetails;
 import com.google.firebase.crash.FirebaseCrash;

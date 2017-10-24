@@ -39,7 +39,7 @@ import android.view.ViewGroup;
 import android.widget.ProgressBar;
 
 import com.akash.vachana.R;
-import com.akash.vachana.Util.KannadaTransliteration;
+import com.akash.vachana.util.KannadaTransliteration;
 import com.akash.vachana.activity.ListType;
 import com.akash.vachana.dbUtil.KathruMini;
 import com.akash.vachana.dbUtil.VachanaMini;
@@ -159,7 +159,7 @@ public class VachanaListFragment extends Fragment {
     }
 
 
-    private class VachanaListTask extends AsyncTask {
+    private class VachanaListTask extends AsyncTask<Void,Void,ArrayList<VachanaMini>> {
 
         private final KathruMini kathruMini;
         private ProgressBar progressBar;
@@ -168,6 +168,21 @@ public class VachanaListFragment extends Fragment {
 
         public VachanaListTask(KathruMini kathruMini) {
             this.kathruMini = kathruMini;
+        }
+
+        @Override
+        protected ArrayList<VachanaMini> doInBackground(Void... params) {
+            if (mListener != null){
+                if (listType == ListType.SEARCH){
+                    return mListener.getVachanaMinis(query_text, kathruString, isPartial);
+                } else {
+                    return mListener.getVachanaMinis(kathruMini, listType);
+                }
+            }
+            // Otherwise just close. Don't run onPostExecute()
+            FirebaseCrash.log(TAG+"doInBackground(): mListener is null.");
+            cancel(true);
+            return null;
         }
 
         @Override
@@ -189,25 +204,9 @@ public class VachanaListFragment extends Fragment {
         }
 
         @Override
-        protected ArrayList<VachanaMini> doInBackground(Object[] objects) {
-            if (mListener != null){
-                if (listType == ListType.SEARCH){
-                    return mListener.getVachanaMinis(query_text, kathruString, isPartial);
-                } else {
-                    return mListener.getVachanaMinis(kathruMini, listType);
-                }
-            }
-            // Otherwise just close. Don't run onPostExecute()
-            FirebaseCrash.log(TAG+"doInBackground(): mListener is null.");
-            cancel(true);
-            return null;
-        }
-
-        @Override
-        protected void onPostExecute(Object o) {
-            super.onPostExecute(o);
-            if (o != null){
-                ArrayList<VachanaMini> vachanaMinis = (ArrayList<VachanaMini>) o;
+        protected void onPostExecute(ArrayList<VachanaMini> vachanaMinis) {
+            super.onPostExecute(vachanaMinis);
+            if (vachanaMinis != null){
                 progressBar.setVisibility(View.INVISIBLE);
                 if (vachanaMinis.size() > 0 && recyclerView != null && getActivity() != null) {
                     adapter = new MyVachanaListRecyclerViewAdapter(vachanaMinis, mListener, listType);

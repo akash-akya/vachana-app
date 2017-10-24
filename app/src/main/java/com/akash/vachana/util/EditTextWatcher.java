@@ -16,7 +16,7 @@
  *
  */
 
-package com.akash.vachana.Util;
+package com.akash.vachana.util;
 
 import android.text.Editable;
 import android.text.TextWatcher;

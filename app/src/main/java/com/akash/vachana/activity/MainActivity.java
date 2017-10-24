@@ -53,7 +53,7 @@ import android.webkit.WebView;
 import android.widget.TextView;
 
 import com.akash.vachana.R;
-import com.akash.vachana.Util.ThemeChangeUtil;
+import com.akash.vachana.util.ThemeChangeUtil;
 import com.akash.vachana.dbUtil.DatabaseReadAccess;
 import com.akash.vachana.dbUtil.KathruDetails;
 import com.akash.vachana.dbUtil.KathruMini;

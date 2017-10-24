@@ -16,7 +16,7 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-package com.akash.vachana.Util;
+package com.akash.vachana.util;
 
 import com.akash.vachana.dbUtil.KathruDetails;
 

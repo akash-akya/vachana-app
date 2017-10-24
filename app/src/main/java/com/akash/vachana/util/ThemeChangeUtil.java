@@ -16,12 +16,11 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-package com.akash.vachana.Util;
+package com.akash.vachana.util;
 
 import android.app.Activity;
 import android.content.Intent;
 import android.os.Build;
-import android.os.Bundle;
 import android.util.Log;
 import android.webkit.WebView;
 
