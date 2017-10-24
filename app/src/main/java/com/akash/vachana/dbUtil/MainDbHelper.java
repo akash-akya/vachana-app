@@ -25,6 +25,8 @@ import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteOpenHelper;
 import android.util.Log;
 
+import com.google.firebase.crash.FirebaseCrash;
+
 import java.io.BufferedInputStream;
 import java.io.File;
 import java.io.FileNotFoundException;
@@ -56,7 +58,7 @@ public class MainDbHelper extends SQLiteOpenHelper implements Serializable, Data
     ////// Vachana Table
     public static final String TABLE_VACHANA = "Vachana";
     public static final String KEY_VACHANA_ID = "Id";
-    public static final String KEY_TEXT = "Txt";
+    public static final String KEY_VACHANA_TEXT = "Txt";
     public static final String KEY_TITLE = "Title";
     public static final String FOREIGN_KEY_KATHRU_ID = "KathruId";
     public static final String KEY_FAVORITE = "Favorite";
@@ -314,6 +316,8 @@ public class MainDbHelper extends SQLiteOpenHelper implements Serializable, Data
     public String getKathruNameById(int kathruId) { return getKathruMiniById(kathruId).getName(); }
 
     public ArrayList<VachanaMini> searchForVachana(String text, String kathruName, boolean isPartialSearch) {
+        long startTime = System.currentTimeMillis();
+        long t;
         ArrayList<VachanaMini> vachanaMinis = new ArrayList<>();
         String query_text = "SELECT " +
                 MainDbHelper.KEY_VACHANA_ID + ", "+
@@ -325,7 +329,7 @@ public class MainDbHelper extends SQLiteOpenHelper implements Serializable, Data
 
         query_text += " FROM " + MainDbHelper.TABLE_VACHANA;
         query_text += " WHERE " +
-                MainDbHelper.KEY_TITLE + " LIKE ? "; // + "%"+query+"%";
+                MainDbHelper.KEY_VACHANA_TEXT + " LIKE ? "; // + "%"+query+"%";
 
         String query_text_parameter = isPartialSearch? "%"+text+"%" : text;
         if (!kathruName.isEmpty()) {
@@ -355,13 +359,16 @@ public class MainDbHelper extends SQLiteOpenHelper implements Serializable, Data
             } while (cursor.moveToNext());
         }
         cursor.close();
+
+        t = System.currentTimeMillis();
+        FirebaseCrash.log("searchForVachana: String - "+ text + " Time - "+(t-startTime) + " Records - "+cursor.getCount());
         return vachanaMinis;
     }
 
     @Override
     public Vachana getVachana(int id) {
         SQLiteDatabase db = this.getReadableDatabase();
-        Cursor cursor = db.query(TABLE_VACHANA, new String[] { KEY_VACHANA_ID, KEY_TEXT, FOREIGN_KEY_KATHRU_ID,
+        Cursor cursor = db.query(TABLE_VACHANA, new String[] { KEY_VACHANA_ID, KEY_VACHANA_TEXT, FOREIGN_KEY_KATHRU_ID,
                         KEY_FAVORITE},
                 KEY_VACHANA_ID+ "=?",
                 new String[] { String.valueOf(id) }, null, null, null, null);
