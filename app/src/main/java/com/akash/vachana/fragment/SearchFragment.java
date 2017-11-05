@@ -19,7 +19,6 @@
 package com.akash.vachana.fragment;
 
 import android.content.Context;
-import android.os.AsyncTask;
 import android.os.Bundle;
 import android.support.design.widget.AppBarLayout;
 import android.support.v4.app.Fragment;
@@ -39,19 +38,28 @@ import android.widget.EditText;
 import android.widget.RadioButton;
 
 import com.akash.vachana.R;
-import com.akash.vachana.util.EditTextWatcher;
 import com.akash.vachana.activity.MainActivity;
+import com.akash.vachana.dbUtil.DatabaseReadAccess;
+import com.akash.vachana.dbUtil.DbAccessTask;
 import com.akash.vachana.dbUtil.KathruMini;
-import com.google.firebase.crash.FirebaseCrash;
+import com.akash.vachana.util.EditTextWatcher;
 
 import java.io.Serializable;
-import java.util.ArrayList;
+import java.util.List;
+
+import butterknife.BindView;
+import butterknife.ButterKnife;
 
 public class SearchFragment extends Fragment implements Serializable {
 
     private static final String TAG = "SearchFragment";
     private KathruListTask kathruListTask;
     private OnSearchFragmentListener mListener;
+    @BindView(R.id.auto_complete_kathru) AutoCompleteTextView autoTextView;
+    @BindView(R.id.search_bar_text) EditText textSearchView;
+    @BindView(R.id.radio_partial) RadioButton radioPartial;
+    @BindView(R.id.reset_button) Button resetButton;
+    @BindView(R.id.search_button) Button searchButton;
 
     public SearchFragment() {
         // Required empty public constructor
@@ -71,14 +79,10 @@ public class SearchFragment extends Fragment implements Serializable {
         setHasOptionsMenu(true);
 
         View view = inflater.inflate(R.layout.fragment_search, container, false);
-        final EditText textSearchView = (EditText) view.findViewById(R.id.search_bar_text);
-        final AutoCompleteTextView autoCompleteTextView= (AutoCompleteTextView) view.findViewById(R.id.auto_complete_kathru);
-        final RadioButton radioPartial = (RadioButton) view.findViewById(R.id.radio_partial);
-        final Button resetButton = (Button) view.findViewById(R.id.reset_button);
-        final Button searchButton = (Button) view.findViewById(R.id.search_button);
+        ButterKnife.bind(this, view);
 
         textSearchView.addTextChangedListener(new EditTextWatcher(textSearchView));
-        autoCompleteTextView.addTextChangedListener(new EditTextWatcher(autoCompleteTextView));
+        autoTextView.addTextChangedListener(new EditTextWatcher(autoTextView));
 
         searchButton.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -87,7 +91,7 @@ public class SearchFragment extends Fragment implements Serializable {
                 inputMethodManager.hideSoftInputFromWindow(getActivity().getCurrentFocus().getWindowToken(), 0);
 
                 final String query = textSearchView.getText().toString();
-                final String kathruString = autoCompleteTextView.getText().toString();
+                final String kathruString = autoTextView.getText().toString();
                 final Boolean isPartialSearch = radioPartial.isChecked();
 
                 if (query.length() <= 1)
@@ -100,7 +104,7 @@ public class SearchFragment extends Fragment implements Serializable {
             @Override
             public void onClick(View v) {
                 textSearchView.setText("");
-                autoCompleteTextView.setText("");
+                autoTextView.setText("");
                 radioPartial.setChecked(true);
             }
         });
@@ -108,43 +112,33 @@ public class SearchFragment extends Fragment implements Serializable {
         return view;
     }
 
-    private class KathruListTask extends AsyncTask {
+    DbAccessTask.OnCompletion<List<KathruMini>> onCompletion = new DbAccessTask.OnCompletion<List<KathruMini>>() {
         @Override
-        protected void onPreExecute() {
-            super.onPreExecute();
-            if (isCancelled()){
-                return;
-            }
-        }
+        public void updateUI(List<KathruMini> kathruMinis) {
+            ArrayAdapter<KathruMini> adapter = new ArrayAdapter<KathruMini>(getActivity(), android.R.layout.simple_dropdown_item_1line,
+                    kathruMinis);
+            autoTextView.setAdapter(adapter);
+            autoTextView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
 
-        @Override
-        protected ArrayList<KathruMini> doInBackground(Object[] objects) {
-            return ((MainActivity)getActivity()).getAllKathruMinis();
-        }
-
-        @Override
-        protected void onPostExecute(Object o) {
-            super.onPostExecute(o);
-            if (o != null) {
-                ArrayList<KathruMini> kathruMinis = (ArrayList<KathruMini>) o;
-                final AutoCompleteTextView autoTextView = (AutoCompleteTextView) getActivity().findViewById(R.id.auto_complete_kathru);
-                ArrayAdapter<KathruMini> adapter = new ArrayAdapter<KathruMini>(getActivity(), android.R.layout.simple_dropdown_item_1line,
-                        kathruMinis);
-                if (autoTextView != null) {
-                    autoTextView.setAdapter(adapter);
-                    autoTextView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
-
-                        @Override
-                        public void onItemClick(AdapterView<?> arg0, View arg1, int arg2,
-                                                long arg3) {
-                            KathruMini selected = (KathruMini) arg0.getAdapter().getItem(arg2);
-                            autoTextView.setText(selected.getName());
-                        }
-                    });
+                @Override
+                public void onItemClick(AdapterView<?> arg0, View arg1, int arg2,
+                                        long arg3) {
+                    KathruMini selected = (KathruMini) arg0.getAdapter().getItem(arg2);
+                    autoTextView.setText(selected.getName());
                 }
-            } else {
-                FirebaseCrash.log(TAG+"onPostExecute(): Task is cancelled or return value is null");
-            }
+            });
+        }
+    };
+
+    private static class KathruListTask extends DbAccessTask<Void, List<KathruMini>> {
+        KathruListTask(OnCompletion<List<KathruMini>> onCompletion) {
+            super(onCompletion);
+        }
+
+        @Override
+        protected List<KathruMini> doInBackground(Void... voids) {
+            DatabaseReadAccess db = MainActivity.getDatabaseReadAccess();
+            return db.getAllKathruMinis();
         }
     }
 
@@ -160,7 +154,7 @@ public class SearchFragment extends Fragment implements Serializable {
         super.onResume();
 
         if (kathruListTask == null || kathruListTask.isCancelled()) {
-            kathruListTask = new KathruListTask();
+            kathruListTask = new KathruListTask(onCompletion);
             kathruListTask.execute();
         }
 

@@ -19,6 +19,7 @@
 package com.akash.vachana.dbUtil;
 
 import java.util.ArrayList;
+import java.util.List;
 
 public interface DatabaseReadAccess {
     KathruMini getKathruMiniById(int id);
@@ -29,4 +30,5 @@ public interface DatabaseReadAccess {
     ArrayList<VachanaMini> getFavoriteVachanaMinis();
     ArrayList<KathruMini> getFavoriteKathruMinis();
     KathruDetails getKathruDetails (int kathruId);
+    List<VachanaMini> searchForVachana(String queryString, String kathruName, boolean isPartial);
 }

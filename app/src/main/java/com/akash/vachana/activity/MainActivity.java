@@ -40,8 +40,6 @@ import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.app.AppCompatDelegate;
 import android.support.v7.widget.Toolbar;
-import android.text.Html;
-import android.text.Spanned;
 import android.text.method.LinkMovementMethod;
 import android.util.Log;
 import android.view.Menu;
@@ -53,9 +51,7 @@ import android.webkit.WebView;
 import android.widget.TextView;
 
 import com.akash.vachana.R;
-import com.akash.vachana.util.ThemeChangeUtil;
 import com.akash.vachana.dbUtil.DatabaseReadAccess;
-import com.akash.vachana.dbUtil.KathruDetails;
 import com.akash.vachana.dbUtil.KathruMini;
 import com.akash.vachana.dbUtil.MainDbHelper;
 import com.akash.vachana.dbUtil.VachanaMini;
@@ -64,6 +60,7 @@ import com.akash.vachana.fragment.KathruListFragment;
 import com.akash.vachana.fragment.SearchFragment;
 import com.akash.vachana.fragment.VachanaFragment;
 import com.akash.vachana.fragment.VachanaListFragment;
+import com.akash.vachana.util.ThemeChangeUtil;
 
 import org.greenrobot.eventbus.EventBus;
 import org.greenrobot.eventbus.Subscribe;
@@ -77,7 +74,7 @@ import java.util.Random;
 public class MainActivity extends AppCompatActivity implements NavigationView.OnNavigationItemSelectedListener,
         KathruListFragment.OnKathruListFragmentListener,
         VachanaListFragment.OnVachanaFragmentListListener,
-        KathruDetailsFragment.OnKathruDetailsInteractionListener,
+        KathruDetailsFragment.OnKathruDetailsListener,
         SearchFragment.OnSearchFragmentListener {
 
     private static final String TAG = "MainActivity";
@@ -116,13 +113,15 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
             actionBar.setDisplayShowHomeEnabled(true);
         }
 
-        db = new MainDbHelper(this);
+        db = new MainDbHelper(getApplicationContext());
         try {
             db.getDataBase();
-            Log.d(TAG, "onCreate: Database is loaded\n");
-        } catch (IOException ioe) {
-            //throw new Error("Unable to create database");
+        } catch (IOException e) {
+            e.printStackTrace();
+            finish();
         }
+
+        Log.d(TAG, "onCreate: Database is loaded\n");
 
         final DrawerLayout drawer = (DrawerLayout) findViewById(R.id.drawer_layout);
 
@@ -388,17 +387,6 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
         }
     }
 
-    @SuppressWarnings("deprecation")
-    public static Spanned fromHtml(String html){
-        Spanned result;
-        if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.N) {
-            result = Html.fromHtml(html,Html.FROM_HTML_MODE_LEGACY);
-        } else {
-            result = Html.fromHtml(html);
-        }
-        return result;
-    }
-
     @Override
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
         if (requestCode == SETTINGS_ACTIVITY){
@@ -434,22 +422,6 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
     }
 
     @Override
-    public ArrayList<KathruMini> getKathruMinis(ListType listType) {
-        ArrayList<KathruMini> kathruMinis = null;
-        switch (listType){
-            case NORMAL_LIST:
-                kathruMinis = db.getAllKathruMinis();
-                break;
-            case FAVORITE_LIST:
-                kathruMinis = db.getFavoriteKathruMinis();
-                break;
-            default:
-                Log.d(TAG, "getKathruMinis: Wrong listType");
-        }
-        return kathruMinis;
-    }
-
-    @Override
     public void onVachanaListItemClick(ArrayList<VachanaMini> vachanaMinis, int position) {
         FragmentManager fragmentManager = getSupportFragmentManager();
         VachanaFragment fragment = VachanaFragment.newInstance(position, vachanaMinis);
@@ -461,27 +433,6 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
                 .replace(R.id.main_content, fragment, "vachana_list")
                 .addToBackStack("vachana_list")
                 .commit();
-    }
-
-    @Override
-    public ArrayList<VachanaMini> getVachanaMinis(KathruMini kathruMini, ListType listType) {
-        ArrayList<VachanaMini> vachanaMinis = null;
-        switch (listType){
-            case NORMAL_LIST:
-                vachanaMinis = db.getVachanaMinisByKathruId(kathruMini.getId());
-                break;
-            case FAVORITE_LIST:
-                vachanaMinis = db.getFavoriteVachanaMinis();
-                break;
-            default:
-                Log.d(TAG, "getVachanaMinis: Wrong listType");
-        }
-        return vachanaMinis;
-    }
-
-    @Override
-    public KathruDetails getKathruDetails(int kathruId) {
-        return db.getKathruDetails(kathruId);
     }
 
     @Override
@@ -530,10 +481,6 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
                 .commit();
     }
 
-    @Override
-    public ArrayList<VachanaMini> getVachanaMinis(String text, String kathruString, boolean isPartialSearch) {
-        return MainActivity.db.searchForVachana( text, kathruString, isPartialSearch);
-    }
 
     public static void hideKeyboard(Context ctx) {
         InputMethodManager inputManager = (InputMethodManager) ctx

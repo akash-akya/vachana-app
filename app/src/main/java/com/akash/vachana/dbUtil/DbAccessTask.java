@@ -1,6 +1,6 @@
 /*
  * vachana. An application for Android users, it contains kannada vachanas
- * Copyright (c) 2016. akash
+ * Copyright (c) 2017. akash
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -11,34 +11,37 @@
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
  * GNU General Public License for more details.
- *
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
+ *
  */
 
-// Top-level build file where you can add configuration options common to all sub-projects/modules.
+package com.akash.vachana.dbUtil;
 
-buildscript {
-    repositories {
-        jcenter()
+import android.os.AsyncTask;
+
+import java.lang.ref.WeakReference;
+
+/**
+ * Created by akash on 5/11/17.
+ */
+
+public abstract class DbAccessTask<U,T> extends AsyncTask<U,Void,T> {
+    private final WeakReference<OnCompletion<T>> onCompletion;
+
+    public DbAccessTask(OnCompletion<T> onCompletion) {
+        this.onCompletion = new WeakReference<OnCompletion<T>>(onCompletion);
     }
-    dependencies {
-        classpath 'com.android.tools.build:gradle:3.0.0'
-        classpath 'com.google.gms:google-services:3.1.0'
 
-        // NOTE: Do not place your application dependencies here; they belong
-        // in the individual module build.gradle files
+    @Override
+    protected void onPostExecute(T result) {
+        super.onPostExecute(result);
+        if (onCompletion.get() != null) {
+            onCompletion.get().updateUI(result);
+        }
     }
-}
 
-allprojects {
-    repositories {
-        jcenter()
-        mavenCentral()
-        maven { url "https://jitpack.io" }
+    public interface OnCompletion<T> {
+        public void updateUI(T result);
     }
-}
-
-task clean(type: Delete) {
-    delete rootProject.buildDir
 }

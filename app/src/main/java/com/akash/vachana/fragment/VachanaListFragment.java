@@ -19,7 +19,6 @@
 package com.akash.vachana.fragment;
 
 import android.content.Context;
-import android.os.AsyncTask;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.design.widget.AppBarLayout;
@@ -39,10 +38,13 @@ import android.view.ViewGroup;
 import android.widget.ProgressBar;
 
 import com.akash.vachana.R;
-import com.akash.vachana.util.KannadaTransliteration;
 import com.akash.vachana.activity.ListType;
+import com.akash.vachana.activity.MainActivity;
+import com.akash.vachana.dbUtil.DatabaseReadAccess;
+import com.akash.vachana.dbUtil.DbAccessTask;
 import com.akash.vachana.dbUtil.KathruMini;
 import com.akash.vachana.dbUtil.VachanaMini;
+import com.akash.vachana.util.KannadaTransliteration;
 import com.google.firebase.crash.FirebaseCrash;
 
 import org.greenrobot.eventbus.EventBus;
@@ -51,6 +53,10 @@ import org.greenrobot.eventbus.ThreadMode;
 
 import java.io.Serializable;
 import java.util.ArrayList;
+import java.util.List;
+
+import butterknife.BindView;
+import butterknife.ButterKnife;
 
 /**
  * A fragment representing a list of Items.
@@ -81,6 +87,10 @@ public class VachanaListFragment extends Fragment {
     private String mSearchQuery;
     private Menu menu;
     private VachanaListTask vachanaListTask;
+
+    @BindView(R.id.vachana_list_progressBar) ProgressBar progressBar;
+    @BindView(R.id.vachana_list_container) View vachanaListContainer;
+    @BindView(R.id.no_data_vachana) View noDataTv;
 
     public VachanaListFragment() {
     }
@@ -137,6 +147,8 @@ public class VachanaListFragment extends Fragment {
                              Bundle savedInstanceState) {
         setHasOptionsMenu(true);
         View view = inflater.inflate(R.layout.fragment_vachana_list, container, false);
+        ButterKnife.bind(this, view);
+
         recyclerView = (RecyclerView) view.findViewById(R.id.list);
 
         if (adapter == null){
@@ -153,76 +165,77 @@ public class VachanaListFragment extends Fragment {
 
         if (adapter == null) {
             title = getArguments().getString("title");
-            vachanaListTask =  new VachanaListTask(kathruMini);
-            vachanaListTask.execute();
-        }
-    }
-
-
-    private class VachanaListTask extends AsyncTask<Void,Void,ArrayList<VachanaMini>> {
-
-        private final KathruMini kathruMini;
-        private ProgressBar progressBar;
-        private View noDataTv;
-        private View vachanaListContainer;
-
-        public VachanaListTask(KathruMini kathruMini) {
-            this.kathruMini = kathruMini;
-        }
-
-        @Override
-        protected ArrayList<VachanaMini> doInBackground(Void... params) {
-            if (mListener != null){
-                if (listType == ListType.SEARCH){
-                    return mListener.getVachanaMinis(query_text, kathruString, isPartial);
-                } else {
-                    return mListener.getVachanaMinis(kathruMini, listType);
-                }
-            }
-            // Otherwise just close. Don't run onPostExecute()
-            FirebaseCrash.log(TAG+"doInBackground(): mListener is null.");
-            cancel(true);
-            return null;
-        }
-
-        @Override
-        protected void onPreExecute() {
-            super.onPreExecute();
-            progressBar = (ProgressBar) getActivity().findViewById(R.id.vachana_list_progressBar);
-            vachanaListContainer = getActivity().findViewById(R.id.vachana_list_container);
-            noDataTv = getActivity().findViewById(R.id.no_data_vachana);
 
             // If app is closed display elements will be null
             try {
                 progressBar.setVisibility(View.VISIBLE);
                 vachanaListContainer.setVisibility(View.INVISIBLE);
                 noDataTv.setVisibility(View.INVISIBLE);
+                vachanaListTask =  new VachanaListTask(onCompletion, listType,
+                        query_text, kathruString, isPartial);
+                vachanaListTask.execute(kathruMini);
             } catch (NullPointerException e){
                 FirebaseCrash.log(TAG+" VachanaListTask.onPreExecute(): display elements are null.");
-                cancel(true);
             }
+
+        }
+    }
+
+    DbAccessTask.OnCompletion<List<VachanaMini>> onCompletion = new DbAccessTask.OnCompletion<List<VachanaMini>>() {
+        @Override
+        public void updateUI(List<VachanaMini> vachanaMinis) {
+            progressBar.setVisibility(View.INVISIBLE);
+            if (vachanaMinis.size() > 0 && recyclerView != null && getActivity() != null) {
+                adapter = new MyVachanaListRecyclerViewAdapter(vachanaMinis, mListener, listType);
+                recyclerView.setAdapter(adapter);
+                vachanaListContainer.setVisibility(View.VISIBLE);
+            } else {
+                noDataTv.setVisibility(View.VISIBLE);
+            }
+
+            if (getActivity() != null) {
+                if (menu != null && listType == ListType.NORMAL_LIST){
+                    updateActionBarFavorite(menu.findItem(R.id.kathru_favorite), kathruMini.getFavorite()==1);
+                }
+                ((AppCompatActivity) getActivity()).getSupportActionBar().setTitle(title);
+            }
+        }
+    };
+
+
+    private static class VachanaListTask extends DbAccessTask<KathruMini, List<VachanaMini>>{
+        private final ListType listType;
+        String queryString;
+        String KathruName;
+        boolean isPartial;
+
+        VachanaListTask(OnCompletion<List<VachanaMini>> onCompletion,
+                        ListType listType, String queryString, String KathruName, boolean isPartial) {
+            super(onCompletion);
+            this.listType = listType;
+            this.queryString = queryString;
+            this.KathruName = KathruName;
+            this.isPartial = isPartial;
         }
 
         @Override
-        protected void onPostExecute(ArrayList<VachanaMini> vachanaMinis) {
-            super.onPostExecute(vachanaMinis);
-            if (vachanaMinis != null){
-                progressBar.setVisibility(View.INVISIBLE);
-                if (vachanaMinis.size() > 0 && recyclerView != null && getActivity() != null) {
-                    adapter = new MyVachanaListRecyclerViewAdapter(vachanaMinis, mListener, listType);
-                    recyclerView.setAdapter(adapter);
-                    vachanaListContainer.setVisibility(View.VISIBLE);
-                } else {
-                    noDataTv.setVisibility(View.VISIBLE);
-                }
-
-                if (getActivity() != null) {
-                    if (menu != null && listType == ListType.NORMAL_LIST){
-                        updateActionBarFavorite(menu.findItem(R.id.kathru_favorite), kathruMini.getFavorite()==1);
-                    }
-                    ((AppCompatActivity) getActivity()).getSupportActionBar().setTitle(title);
-                }
+        protected List<VachanaMini> doInBackground(KathruMini... kathruMinis) {
+            DatabaseReadAccess db = MainActivity.getDatabaseReadAccess();
+            List<VachanaMini> vachanaMinis = new ArrayList<>();
+            switch (listType){
+                case SEARCH:
+                    vachanaMinis = db.searchForVachana(queryString, KathruName, isPartial);
+                    break;
+                case NORMAL_LIST:
+                    vachanaMinis = db.getVachanaMinisByKathruId(kathruMinis[0].getId());
+                    break;
+                case FAVORITE_LIST:
+                    vachanaMinis = db.getFavoriteVachanaMinis();
+                    break;
+                default:
+                    Log.d(TAG, "getVachanaMinis: Wrong listType");
             }
+            return vachanaMinis;
         }
     }
 
@@ -363,7 +376,5 @@ public class VachanaListFragment extends Fragment {
 
     public interface OnVachanaFragmentListListener extends Serializable {
         void onVachanaListItemClick(ArrayList<VachanaMini> vachanaMinis, int position);
-        ArrayList<VachanaMini> getVachanaMinis(KathruMini kathruMini, ListType listType);
-        ArrayList<VachanaMini> getVachanaMinis(String text, String kathruString, boolean isPartialSearch);
     }
 }

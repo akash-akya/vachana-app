@@ -315,6 +315,7 @@ public class MainDbHelper extends SQLiteOpenHelper implements Serializable, Data
     @Override
     public String getKathruNameById(int kathruId) { return getKathruMiniById(kathruId).getName(); }
 
+    @Override
     public ArrayList<VachanaMini> searchForVachana(String text, String kathruName, boolean isPartialSearch) {
         long startTime = System.currentTimeMillis();
         long t;

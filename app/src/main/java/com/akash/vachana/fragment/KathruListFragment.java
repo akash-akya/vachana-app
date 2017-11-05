@@ -19,7 +19,6 @@
 package com.akash.vachana.fragment;
 
 import android.content.Context;
-import android.os.AsyncTask;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.design.widget.AppBarLayout;
@@ -38,14 +37,19 @@ import android.view.ViewGroup;
 import android.widget.ProgressBar;
 
 import com.akash.vachana.R;
-import com.akash.vachana.util.KannadaTransliteration;
 import com.akash.vachana.activity.ListType;
 import com.akash.vachana.activity.MainActivity;
+import com.akash.vachana.dbUtil.DatabaseReadAccess;
+import com.akash.vachana.dbUtil.DbAccessTask;
 import com.akash.vachana.dbUtil.KathruMini;
-import com.google.firebase.crash.FirebaseCrash;
+import com.akash.vachana.util.KannadaTransliteration;
 
 import java.io.Serializable;
 import java.util.ArrayList;
+import java.util.List;
+
+import butterknife.BindView;
+import butterknife.ButterKnife;
 
 public class KathruListFragment extends Fragment {
     private static final String TAG = KathruListFragment.class.getSimpleName();
@@ -59,6 +63,11 @@ public class KathruListFragment extends Fragment {
     private ListType listType;
     private String mSearchQuery;
     private KathruListTask katruRetreiveTask;
+
+    @BindView(R.id.kathru_list_progressBar) ProgressBar progressBar;
+    @BindView(R.id.no_data_kathru) View noDataTextView;
+    @BindView(R.id.kathru_list_container) View kathruListContainer;
+
 
     public KathruListFragment() { }
 
@@ -92,6 +101,7 @@ public class KathruListFragment extends Fragment {
                              Bundle savedInstanceState) {
         setHasOptionsMenu(true);
         View view =  inflater.inflate(R.layout.fragment_kathru_list, container, false);
+        ButterKnife.bind(this, view);
         mRecyclerView = (RecyclerView) view.findViewById(R.id.kathru_recycler_view);
         if (myAdapter != null){
             mRecyclerView.setAdapter(myAdapter);
@@ -105,8 +115,8 @@ public class KathruListFragment extends Fragment {
 
         if (myAdapter == null){
             title = getArguments().getString("title");
-            katruRetreiveTask = new KathruListTask();
-            katruRetreiveTask.execute();
+            katruRetreiveTask = new KathruListTask(mOnGetDetailsCompletion);
+            katruRetreiveTask.execute(listType);
         }
     }
 
@@ -124,56 +134,44 @@ public class KathruListFragment extends Fragment {
         }
     }
 
-    private class KathruListTask extends AsyncTask {
+    private final DbAccessTask.OnCompletion<List<KathruMini>> mOnGetDetailsCompletion =
+        new DbAccessTask.OnCompletion<List<KathruMini>>(){
+            @Override
+            public void updateUI(List<KathruMini> kathruMinis) {
+                progressBar.setVisibility(View.INVISIBLE);
 
-        private ProgressBar progressBar;
-        private View noDataTv;
-        private View kathruListContainer;
+                if (kathruMinis.size() > 0){
+                    myAdapter = new MyKathruListRecyclerViewAdapter(kathruMinis, mListener, listType);
+                    mRecyclerView.setAdapter(myAdapter);
 
-        @Override
-        protected void onPreExecute() {
-            super.onPreExecute();
-            if (isCancelled()){
-                return;
+                    kathruListContainer.setVisibility(View.VISIBLE);
+                } else {
+                    noDataTextView.findViewById(R.id.no_data_kathru).setVisibility(View.VISIBLE);
+                }
             }
+    };
 
-            progressBar = (ProgressBar) getActivity().findViewById(R.id.kathru_list_progressBar);
-            kathruListContainer = getActivity().findViewById(R.id.kathru_list_container);
-            noDataTv = getActivity().findViewById(R.id.no_data_kathru);
-
-            try {
-                progressBar.setVisibility(View.VISIBLE);
-                kathruListContainer.setVisibility(View.INVISIBLE);
-                noDataTv.setVisibility(View.INVISIBLE);
-            } catch (NullPointerException e) {
-                FirebaseCrash.log(TAG+".onPreExecute(): Display elements is null");
-                cancel(true);
-            }
+    private static class KathruListTask extends DbAccessTask<ListType, List<KathruMini>> {
+        KathruListTask (DbAccessTask.OnCompletion<List<KathruMini>> onCompletion) {
+            super(onCompletion);
         }
 
         @Override
-        protected ArrayList<KathruMini> doInBackground(Object[] objects) {
-            if (null != mListener) {
-                return mListener.getKathruMinis(listType);
-            } else {
-                return new ArrayList<KathruMini>();
+        protected List<KathruMini> doInBackground(ListType... listTypes) {
+            DatabaseReadAccess db = MainActivity.getDatabaseReadAccess();
+
+            ArrayList<KathruMini> kathruMinis = null;
+            switch (listTypes[0]){
+                case NORMAL_LIST:
+                    kathruMinis = db.getAllKathruMinis();
+                    break;
+                case FAVORITE_LIST:
+                    kathruMinis = db.getFavoriteKathruMinis();
+                    break;
+                default:
+                    Log.d(TAG, "getKathruMinis: Wrong listType");
             }
-        }
-
-        @Override
-        protected void onPostExecute(Object o) {
-            super.onPostExecute(o);
-            ArrayList<KathruMini> kathruMinis = (ArrayList<KathruMini>) o;
-            progressBar.setVisibility(View.INVISIBLE);
-
-            if (kathruMinis.size() > 0){
-                myAdapter = new MyKathruListRecyclerViewAdapter(kathruMinis, mListener, listType);
-                mRecyclerView.setAdapter(myAdapter);
-
-                kathruListContainer.setVisibility(View.VISIBLE);
-            } else {
-                noDataTv.findViewById(R.id.no_data_kathru).setVisibility(View.VISIBLE);
-            }
+            return kathruMinis;
         }
     }
 
@@ -250,6 +248,5 @@ public class KathruListFragment extends Fragment {
 
     public interface OnKathruListFragmentListener extends Serializable {
         void onKathruListItemClick(KathruMini item);
-        ArrayList<KathruMini> getKathruMinis(ListType listType);
     }
 }

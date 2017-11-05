@@ -19,7 +19,6 @@
 package com.akash.vachana.fragment;
 
 import android.content.Context;
-import android.os.AsyncTask;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.design.widget.AppBarLayout;
@@ -37,21 +36,27 @@ import android.widget.Button;
 import android.widget.TextView;
 
 import com.akash.vachana.R;
-import com.akash.vachana.util.HtmlBuilder;
 import com.akash.vachana.activity.MainActivity;
+import com.akash.vachana.dbUtil.DatabaseReadAccess;
+import com.akash.vachana.dbUtil.DbAccessTask;
 import com.akash.vachana.dbUtil.KathruDetails;
-import com.google.firebase.crash.FirebaseCrash;
+import com.akash.vachana.util.HtmlBuilder;
 
 import java.io.Serializable;
+
+import butterknife.BindView;
+import butterknife.ButterKnife;
 
 public class KathruDetailsFragment extends Fragment {
     private static final String KATHRU_ID = "kathru_id";
     private static final String TITLE = "title";
     private static final String TAG = "KathruDetailsFragment";
-    private OnKathruDetailsInteractionListener mListener;
+    private OnKathruDetailsListener mListener;
     private String title;
     private int  kathru_id;
     private GetKathruDetailsTask kathruDetailsTask;
+    @BindView(R.id.tv_kathru_details) TextView detailsTextView;
+    @BindView(R.id.btn_vachanas_link) Button allVachanasButton;
 
     public KathruDetailsFragment() {
         // Required empty public constructor
@@ -81,7 +86,9 @@ public class KathruDetailsFragment extends Fragment {
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
-        return inflater.inflate(R.layout.fragment_kathru_details, container, false);
+        View view = inflater.inflate(R.layout.fragment_kathru_details, container, false);
+        ButterKnife.bind(this, view);
+        return view;
     }
 
     @Override
@@ -100,56 +107,40 @@ public class KathruDetailsFragment extends Fragment {
     @Override
     public void onActivityCreated(@Nullable Bundle savedInstanceState) {
         super.onActivityCreated(savedInstanceState);
-        kathruDetailsTask = new GetKathruDetailsTask(kathru_id);
-        kathruDetailsTask.execute();
+        kathruDetailsTask = new GetKathruDetailsTask(mOnGetDetailsCompletion);
+        kathruDetailsTask.execute(kathru_id);
     }
 
-    private class GetKathruDetailsTask extends AsyncTask{
-        private TextView kathruDetailsTextView;
-        private Button vachanaLinkButton;
-        private final int kathruId ;
-
-        private GetKathruDetailsTask(int kathruId) {
-            this.kathruId = kathruId;
-        }
-
-        @Override
-        protected void onPreExecute() {
-            super.onPreExecute();
-            try{
-                if (!isCancelled()){
-                    kathruDetailsTextView = (TextView) getActivity().findViewById(R.id.tv_kathru_details);
-                    vachanaLinkButton = (Button) getActivity().findViewById(R.id.btn_vachanas_link);
-                    vachanaLinkButton.setVisibility(View.INVISIBLE);
-                }
-            } catch (NullPointerException ex){
-                FirebaseCrash.log(TAG+"onPreExecute: Display elements are null.");
-                cancel(true);
+    private final DbAccessTask.OnCompletion<KathruDetails> mOnGetDetailsCompletion =
+        new DbAccessTask.OnCompletion<KathruDetails>()
+        {
+            @Override
+            public void updateUI(final KathruDetails kathruDetails) {
+                detailsTextView.setText(getDetailsInFormat(kathruDetails));
+                allVachanasButton.setText("ವಚನಗಳನ್ನು ತೆರೆಯಿರಿ");
+                allVachanasButton.setOnClickListener(new View.OnClickListener() {
+                    @Override
+                    public void onClick(View v) {
+                        mListener.onVachanaButtonClick(kathruDetails.getId());
+                    }
+                });
+                allVachanasButton.setVisibility(View.VISIBLE);
             }
+        };
+
+    private static class GetKathruDetailsTask extends DbAccessTask<Integer,KathruDetails> {
+        GetKathruDetailsTask(DbAccessTask.OnCompletion<KathruDetails> onCompletion) {
+            super(onCompletion);
         }
 
         @Override
-        protected Object doInBackground(Object[] params) {
-            return mListener.getKathruDetails(kathruId);
-        }
-
-        @Override
-        protected void onPostExecute(Object o) {
-            super.onPostExecute(o);
-            final KathruDetails kathruDetails = (KathruDetails)o;
-            kathruDetailsTextView.setText(getDetailsInFormat(kathruDetails));
-            vachanaLinkButton.setText("ವಚನಗಳನ್ನು ತೆರೆಯಿರಿ");
-            vachanaLinkButton.setOnClickListener(new View.OnClickListener() {
-                @Override
-                public void onClick(View v) {
-                    mListener.onVachanaButtonClick(kathruDetails.getId());
-                }
-            });
-            vachanaLinkButton.setVisibility(View.VISIBLE);
+        protected KathruDetails doInBackground(Integer... kathruIds) {
+            DatabaseReadAccess db = MainActivity.getDatabaseReadAccess();
+            return db.getKathruDetails(kathruIds[0]);
         }
     }
 
-    private Spanned getDetailsInFormat(KathruDetails kathruDetails) {
+    private static Spanned getDetailsInFormat(KathruDetails kathruDetails) {
         return Html.fromHtml(HtmlBuilder.getFormattedString(kathruDetails));
     }
 
@@ -163,8 +154,8 @@ public class KathruDetailsFragment extends Fragment {
     @Override
     public void onAttach(Context context) {
         super.onAttach(context);
-        if (context instanceof OnKathruDetailsInteractionListener) {
-            mListener = (OnKathruDetailsInteractionListener) context;
+        if (context instanceof OnKathruDetailsListener) {
+            mListener = (OnKathruDetailsListener) context;
         } else {
             throw new RuntimeException(context.toString()
                     + " must implement OnFragmentInteractionListener");
@@ -183,8 +174,7 @@ public class KathruDetailsFragment extends Fragment {
         kathruDetailsTask.cancel(true);
     }
 
-    public interface OnKathruDetailsInteractionListener extends Serializable {
-        KathruDetails getKathruDetails(int kathruId);
+    public interface OnKathruDetailsListener extends Serializable {
         void onVachanaButtonClick (int kathruId);
     }
 }

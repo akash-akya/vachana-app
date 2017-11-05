@@ -25,7 +25,6 @@ import android.content.pm.LabeledIntent;
 import android.content.pm.PackageManager;
 import android.content.pm.ResolveInfo;
 import android.net.Uri;
-import android.os.AsyncTask;
 import android.os.Bundle;
 import android.os.Handler;
 import android.preference.PreferenceManager;
@@ -56,6 +55,7 @@ import com.akash.vachana.R;
 import com.akash.vachana.activity.HandleShareActivity;
 import com.akash.vachana.activity.ListType;
 import com.akash.vachana.activity.MainActivity;
+import com.akash.vachana.dbUtil.DbAccessTask;
 import com.akash.vachana.dbUtil.KathruMini;
 import com.akash.vachana.dbUtil.Vachana;
 import com.akash.vachana.dbUtil.VachanaMini;
@@ -66,6 +66,8 @@ import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
+
+import butterknife.ButterKnife;
 
 public class VachanaFragment extends Fragment {
 
@@ -79,8 +81,7 @@ public class VachanaFragment extends Fragment {
     private int position;
     private ArrayList<VachanaMini> vachana_minis;
     private MenuItem starMenuItem;
-    private AsyncTask mDbTask;
-
+    private GetVachanaFromDb mDbTask;
 
     public VachanaFragment() {}
 
@@ -107,7 +108,6 @@ public class VachanaFragment extends Fragment {
     @Override
     public View onCreateView(LayoutInflater inflater, final ViewGroup container, Bundle savedInstanceState) {
         setHasOptionsMenu(true);
-
         View root = inflater.inflate(R.layout.vachana_pager_layout, container, false);
 
         myViewPagerAdapter = new MyViewPagerAdapter(vachana_minis);
@@ -201,7 +201,7 @@ public class VachanaFragment extends Fragment {
     @Override
     public void onPause() {
         super.onPause();
-        mDbTask.cancel(true);
+//        mDbTask.cancel(true);
         Toolbar toolbar = (Toolbar) getActivity().findViewById(R.id.toolbar);
         toolbar.setOnClickListener(null);
     }
@@ -265,20 +265,49 @@ public class VachanaFragment extends Fragment {
      */
     public class MyViewPagerAdapter extends PagerAdapter {
         private final ArrayList<VachanaMini> vachanaMinis;
-        public HashMap<Integer, Vachana> vachanaHashMap = new HashMap<>();
+        HashMap<Integer, Vachana> vachanaHashMap = new HashMap<Integer, Vachana>();
 
-        public MyViewPagerAdapter(ArrayList<VachanaMini> vachanaMinis) {
+        MyViewPagerAdapter(ArrayList<VachanaMini> vachanaMinis) {
             this.vachanaMinis = vachanaMinis;
         }
 
         @Override
-        public Object instantiateItem(final ViewGroup container, int position) {
+        public Object instantiateItem(final ViewGroup container, final int position) {
             LayoutInflater layoutInflater = (LayoutInflater) getActivity().getSystemService(Context.LAYOUT_INFLATER_SERVICE);
             final View view = layoutInflater.inflate(R.layout.vachana_text_view, container, false);
-            mDbTask = new GetVachanaFromDb(view, position);
-            mDbTask.execute();
+            ButterKnife.bind(this, view);
+            ButterKnife.setDebug(true);
+
+            mDbTask = new GetVachanaFromDb(new DbAccessTask.OnCompletion<Vachana>() {
+                @Override
+                public void updateUI(Vachana vachana) {
+                    if (viewPager.getCurrentItem() == position){
+                        updateActionBarTitle(vachana);
+                        updateActionBarFavorite(starMenuItem, vachana.getFavorite());
+                    }
+
+                    TextView vachanaTextView = view.findViewById(R.id.vachana_text);
+                    TextView vachanaNumber = view.findViewById(R.id.vachana_number);
+                    ProgressBar progressBar = view.findViewById(R.id.progressBar);
+
+                    updateView(progressBar, vachanaTextView, vachanaNumber, vachana);
+                }
+            });
+            mDbTask.execute(vachanaMinis.get(position).getId());
             container.addView(view);
             return view;
+        }
+
+        private void updateView(ProgressBar progressBar, TextView vachanaTextView,
+                                TextView vachanaNumber, Vachana vachana){
+            progressBar.setVisibility(View.GONE);
+            vachanaTextView.setTextSize(TypedValue.COMPLEX_UNIT_SP, textSize);
+            vachanaTextView.setText(vachana.getText());
+            vachanaTextView.setVisibility(View.VISIBLE);
+            vachanaTextView.setCustomSelectionActionModeCallback(new StyleCallback(vachanaTextView));
+            vachanaNumber.setText(String.format("%d/%d",position+1,vachanaMinis.size()));
+            vachanaNumber.setVisibility(View.VISIBLE);
+            vachanaHashMap.put(position, vachana);
         }
 
         @Override
@@ -298,121 +327,90 @@ public class VachanaFragment extends Fragment {
             vachanaHashMap.remove(position);
         }
 
-        public void cleanCacheMap(){
+        void cleanCacheMap(){
             notifyDataSetChanged();
             vachanaHashMap.clear();
         }
+    }
 
-        private class GetVachanaFromDb extends AsyncTask {
-            private final TextView vachanaNumber;
-            private ProgressBar progressBar;
-            private TextView vachanaTextView;
-            private int position;
-
-            public GetVachanaFromDb(View view, int position) {
-                vachanaTextView = (TextView) view.findViewById(R.id.vachana_text);
-                vachanaNumber = (TextView) view.findViewById(R.id.vachana_number);
-                progressBar = (ProgressBar) view.findViewById(R.id.progressBar);
-                this.position = position;
-            }
-
-            @Override
-            protected void onPreExecute() {
-                super.onPreExecute();
-            }
-
-            @Override
-            protected Vachana doInBackground(Object[] objects) {
-                return MainActivity.getDatabaseReadAccess().getVachana(vachanaMinis.get(position).getId());
-            }
-
-            @Override
-            protected void onPostExecute(Object o) {
-                super.onPostExecute(o);
-                final Vachana vachana = (Vachana) o;
-                if (viewPager.getCurrentItem() == position){
-                    updateActionBarTitle(vachana);
-                    updateActionBarFavorite(starMenuItem, vachana.getFavorite());
-                }
-                progressBar.setVisibility(View.GONE);
-                vachanaTextView.setTextSize(TypedValue.COMPLEX_UNIT_SP, textSize);
-                vachanaTextView.setText(vachana.getText());
-                vachanaTextView.setVisibility(View.VISIBLE);
-                vachanaTextView.setCustomSelectionActionModeCallback(new StyleCallback(vachanaTextView));
-                vachanaNumber.setText(String.format("%d/%d",position+1,vachanaMinis.size()));
-                vachanaNumber.setVisibility(View.VISIBLE);
-                vachanaHashMap.put(position, vachana);
-
-            }
-
-            class StyleCallback implements ActionMode.Callback, Serializable {
-                private TextView bodyView;
-                private static final String wikiLink = "https://kn.m.wiktionary.org/wiki/";
-                private static final String wikiLinkFilter = "kn.m.wiktionary";
-                private static final String shabhdakoshLink = "http://www.shabdkosh.com/kn/translate/";
-                private static final String shabhdakoshFilter = "shabdkosh.com";
-
-
-                public StyleCallback(TextView bodyView) {
-                    this.bodyView = bodyView;
-                }
-
-                @Override
-                public boolean onCreateActionMode(ActionMode mode, Menu menu) {
-                    MenuInflater inflater = mode.getMenuInflater();
-                    inflater.inflate(R.menu.vachana_select, menu);
-                    menu.removeItem(android.R.id.selectAll);
-                    return true;
-                }
-
-                @Override
-                public boolean onPrepareActionMode(ActionMode mode, Menu menu) {
-                    return false;
-                }
-
-                @Override
-                public boolean onActionItemClicked(ActionMode mode, MenuItem item) {
-                    int startSelection = bodyView.getSelectionStart();
-                    int endSelection = bodyView.getSelectionEnd();
-                    String selectedText = bodyView.getText().toString().substring(startSelection, endSelection);
-
-                    switch (item.getItemId()) {
-                        case R.id.wiki:
-                            SharedPreferences sharedPreferences = PreferenceManager.getDefaultSharedPreferences(getContext());
-                            boolean openable = sharedPreferences.getBoolean("dictionary", true);
-
-                            if (openable){
-
-                                int dictionary = Integer.parseInt(sharedPreferences.getString("dictionary_link", "0"));
-                                String link;
-                                String filter;
-
-                                switch (dictionary){
-                                    case 0: link = shabhdakoshLink+selectedText;
-                                        filter = shabhdakoshFilter;
-                                        break;
-                                    case 1: link = wikiLink+selectedText;
-                                        filter = wikiLinkFilter;
-                                        break;
-                                    default: link = shabhdakoshLink+selectedText;
-                                        filter = shabhdakoshFilter;
-                                        break;
-                                }
-                                showMeaningPopup(getContext(), link, filter);
-                            } else {
-                                Intent browserIntent = new Intent(Intent.ACTION_VIEW, Uri.parse(wikiLink+selectedText));
-                                startActivity(browserIntent);
-                            }
-                            bodyView.clearFocus();
-                            return true;
-                    }
-                    return false;
-                }
-
-                @Override
-                public void onDestroyActionMode(ActionMode mode) { }
-            }
+    private static class GetVachanaFromDb extends DbAccessTask<Integer,Vachana> {
+        GetVachanaFromDb(OnCompletion<Vachana> onCompletion) {
+            super(onCompletion);
         }
+
+        @Override
+        protected Vachana doInBackground(Integer... id) {
+            Log.d(TAG, "doInBackground: "+id[0]);
+            return MainActivity.getDatabaseReadAccess().getVachana(id[0]);
+        }
+    }
+
+    class StyleCallback implements ActionMode.Callback, Serializable {
+        private TextView bodyView;
+        private static final String wikiLink = "https://kn.m.wiktionary.org/wiki/";
+        private static final String wikiLinkFilter = "kn.m.wiktionary";
+        private static final String shabhdakoshLink = "http://www.shabdkosh.com/kn/translate/";
+        private static final String shabhdakoshFilter = "shabdkosh.com";
+
+
+        StyleCallback(TextView bodyView) {
+            this.bodyView = bodyView;
+        }
+
+        @Override
+        public boolean onCreateActionMode(ActionMode mode, Menu menu) {
+            MenuInflater inflater = mode.getMenuInflater();
+            inflater.inflate(R.menu.vachana_select, menu);
+            menu.removeItem(android.R.id.selectAll);
+            return true;
+        }
+
+        @Override
+        public boolean onPrepareActionMode(ActionMode mode, Menu menu) {
+            return false;
+        }
+
+        @Override
+        public boolean onActionItemClicked(ActionMode mode, MenuItem item) {
+            int startSelection = bodyView.getSelectionStart();
+            int endSelection = bodyView.getSelectionEnd();
+            String selectedText = bodyView.getText().toString().substring(startSelection, endSelection);
+
+            switch (item.getItemId()) {
+                case R.id.wiki:
+                    SharedPreferences sharedPreferences = PreferenceManager.getDefaultSharedPreferences(getContext());
+                    boolean openable = sharedPreferences.getBoolean("dictionary", true);
+
+                    if (openable){
+
+                        int dictionary = Integer.parseInt(sharedPreferences.getString("dictionary_link", "0"));
+                        String link;
+                        String filter;
+
+                        switch (dictionary){
+                            case 0: link = shabhdakoshLink+selectedText;
+                                filter = shabhdakoshFilter;
+                                break;
+                            case 1: link = wikiLink+selectedText;
+                                filter = wikiLinkFilter;
+                                break;
+                            default: link = shabhdakoshLink+selectedText;
+                                filter = shabhdakoshFilter;
+                                break;
+                        }
+                        showMeaningPopup(getContext(), link, filter);
+                    } else {
+                        Intent browserIntent = new Intent(Intent.ACTION_VIEW, Uri.parse(wikiLink+selectedText));
+                        startActivity(browserIntent);
+                    }
+                    bodyView.clearFocus();
+                    return true;
+            }
+            return false;
+        }
+
+        @Override
+        public void onDestroyActionMode(ActionMode mode) { }
     }
 
     public void showMeaningPopup(Context context, String url, final String filter){
