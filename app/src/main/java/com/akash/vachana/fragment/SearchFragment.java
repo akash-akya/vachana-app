@@ -150,13 +150,15 @@ public class SearchFragment extends Fragment implements Serializable {
     }
 
     @Override
+    public void onStart() {
+        super.onStart();
+        kathruListTask = new KathruListTask(onCompletion);
+        kathruListTask.execute();
+    }
+
+    @Override
     public void onResume() {
         super.onResume();
-
-        if (kathruListTask == null || kathruListTask.isCancelled()) {
-            kathruListTask = new KathruListTask(onCompletion);
-            kathruListTask.execute();
-        }
 
         AppBarLayout appBarLayout = (AppBarLayout)getActivity().findViewById(R.id.app_bar);
         appBarLayout.setExpanded(true, true);
@@ -168,8 +170,8 @@ public class SearchFragment extends Fragment implements Serializable {
     }
 
     @Override
-    public void onPause() {
-        super.onPause();
+    public void onStop() {
+        super.onStop();
         kathruListTask.cancel(true);
     }
 

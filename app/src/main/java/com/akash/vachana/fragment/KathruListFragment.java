@@ -224,9 +224,8 @@ public class KathruListFragment extends Fragment {
     }
 
     @Override
-    public void onPause() {
-        katruRetreiveTask.cancel(true);
-        super.onPause();
+    public void onStart() {
+        super.onStart();
     }
 
     @Override

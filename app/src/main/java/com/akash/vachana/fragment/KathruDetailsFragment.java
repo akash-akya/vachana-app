@@ -20,7 +20,6 @@ package com.akash.vachana.fragment;
 
 import android.content.Context;
 import android.os.Bundle;
-import android.support.annotation.Nullable;
 import android.support.design.widget.AppBarLayout;
 import android.support.v4.app.Fragment;
 import android.text.Html;
@@ -105,10 +104,16 @@ public class KathruDetailsFragment extends Fragment {
     }
 
     @Override
-    public void onActivityCreated(@Nullable Bundle savedInstanceState) {
-        super.onActivityCreated(savedInstanceState);
+    public void onStart() {
+        super.onStart();
         kathruDetailsTask = new GetKathruDetailsTask(mOnGetDetailsCompletion);
         kathruDetailsTask.execute(kathru_id);
+    }
+
+    @Override
+    public void onStop() {
+        super.onStop();
+        kathruDetailsTask.cancel(true);
     }
 
     private final DbAccessTask.OnCompletion<KathruDetails> mOnGetDetailsCompletion =
@@ -166,12 +171,6 @@ public class KathruDetailsFragment extends Fragment {
     public void onDetach() {
         super.onDetach();
         mListener = null;
-    }
-
-    @Override
-    public void onPause() {
-        super.onPause();
-        kathruDetailsTask.cancel(true);
     }
 
     public interface OnKathruDetailsListener extends Serializable {

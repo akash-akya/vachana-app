@@ -37,6 +37,7 @@ import android.support.v4.view.ViewPager;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.widget.Toolbar;
 import android.util.Log;
+import android.util.SparseArray;
 import android.util.TypedValue;
 import android.view.ActionMode;
 import android.view.LayoutInflater;
@@ -64,10 +65,7 @@ import org.greenrobot.eventbus.EventBus;
 
 import java.io.Serializable;
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.List;
-
-import butterknife.ButterKnife;
 
 public class VachanaFragment extends Fragment {
 
@@ -263,9 +261,9 @@ public class VachanaFragment extends Fragment {
     /**
      * View pager adapter
      */
-    public class MyViewPagerAdapter extends PagerAdapter {
+    class MyViewPagerAdapter extends PagerAdapter {
         private final ArrayList<VachanaMini> vachanaMinis;
-        HashMap<Integer, Vachana> vachanaHashMap = new HashMap<Integer, Vachana>();
+        SparseArray<Vachana> vachanaHashMap = new SparseArray<Vachana>();
 
         MyViewPagerAdapter(ArrayList<VachanaMini> vachanaMinis) {
             this.vachanaMinis = vachanaMinis;
@@ -275,10 +273,12 @@ public class VachanaFragment extends Fragment {
         public Object instantiateItem(final ViewGroup container, final int position) {
             LayoutInflater layoutInflater = (LayoutInflater) getActivity().getSystemService(Context.LAYOUT_INFLATER_SERVICE);
             final View view = layoutInflater.inflate(R.layout.vachana_text_view, container, false);
-            ButterKnife.bind(this, view);
-            ButterKnife.setDebug(true);
 
             mDbTask = new GetVachanaFromDb(new DbAccessTask.OnCompletion<Vachana>() {
+                TextView vachanaTextView = view.findViewById(R.id.vachana_text);
+                TextView vachanaNumber = view.findViewById(R.id.vachana_number);
+                ProgressBar progressBar = view.findViewById(R.id.progressBar);
+
                 @Override
                 public void updateUI(Vachana vachana) {
                     if (viewPager.getCurrentItem() == position){
@@ -286,11 +286,8 @@ public class VachanaFragment extends Fragment {
                         updateActionBarFavorite(starMenuItem, vachana.getFavorite());
                     }
 
-                    TextView vachanaTextView = view.findViewById(R.id.vachana_text);
-                    TextView vachanaNumber = view.findViewById(R.id.vachana_number);
-                    ProgressBar progressBar = view.findViewById(R.id.progressBar);
-
-                    updateView(progressBar, vachanaTextView, vachanaNumber, vachana);
+                    updateView(progressBar, vachanaTextView, vachanaNumber, vachana, position);
+                    vachanaHashMap.put(position, vachana);
                 }
             });
             mDbTask.execute(vachanaMinis.get(position).getId());
@@ -299,7 +296,7 @@ public class VachanaFragment extends Fragment {
         }
 
         private void updateView(ProgressBar progressBar, TextView vachanaTextView,
-                                TextView vachanaNumber, Vachana vachana){
+                                TextView vachanaNumber, Vachana vachana, int position){
             progressBar.setVisibility(View.GONE);
             vachanaTextView.setTextSize(TypedValue.COMPLEX_UNIT_SP, textSize);
             vachanaTextView.setText(vachana.getText());
@@ -307,7 +304,6 @@ public class VachanaFragment extends Fragment {
             vachanaTextView.setCustomSelectionActionModeCallback(new StyleCallback(vachanaTextView));
             vachanaNumber.setText(String.format("%d/%d",position+1,vachanaMinis.size()));
             vachanaNumber.setVisibility(View.VISIBLE);
-            vachanaHashMap.put(position, vachana);
         }
 
         @Override
@@ -347,12 +343,6 @@ public class VachanaFragment extends Fragment {
 
     class StyleCallback implements ActionMode.Callback, Serializable {
         private TextView bodyView;
-        private static final String wikiLink = "https://kn.m.wiktionary.org/wiki/";
-        private static final String wikiLinkFilter = "kn.m.wiktionary";
-        private static final String shabhdakoshLink = "http://www.shabdkosh.com/kn/translate/";
-        private static final String shabhdakoshFilter = "shabdkosh.com";
-
-
         StyleCallback(TextView bodyView) {
             this.bodyView = bodyView;
         }
@@ -378,31 +368,7 @@ public class VachanaFragment extends Fragment {
 
             switch (item.getItemId()) {
                 case R.id.wiki:
-                    SharedPreferences sharedPreferences = PreferenceManager.getDefaultSharedPreferences(getContext());
-                    boolean openable = sharedPreferences.getBoolean("dictionary", true);
-
-                    if (openable){
-
-                        int dictionary = Integer.parseInt(sharedPreferences.getString("dictionary_link", "0"));
-                        String link;
-                        String filter;
-
-                        switch (dictionary){
-                            case 0: link = shabhdakoshLink+selectedText;
-                                filter = shabhdakoshFilter;
-                                break;
-                            case 1: link = wikiLink+selectedText;
-                                filter = wikiLinkFilter;
-                                break;
-                            default: link = shabhdakoshLink+selectedText;
-                                filter = shabhdakoshFilter;
-                                break;
-                        }
-                        showMeaningPopup(getContext(), link, filter);
-                    } else {
-                        Intent browserIntent = new Intent(Intent.ACTION_VIEW, Uri.parse(wikiLink+selectedText));
-                        startActivity(browserIntent);
-                    }
+                    showMeaning(selectedText);
                     bodyView.clearFocus();
                     return true;
             }
@@ -411,6 +377,34 @@ public class VachanaFragment extends Fragment {
 
         @Override
         public void onDestroyActionMode(ActionMode mode) { }
+    }
+
+    private static final String wikiLink = "https://kn.m.wiktionary.org/wiki/";
+    private static final String wikiLinkFilter = "kn.m.wiktionary";
+    private static final String shabhdakoshLink = "http://www.shabdkosh.com/kn/translate/";
+    private static final String shabhdakoshFilter = "shabdkosh.com";
+    private void showMeaning(String selectedText) {
+        SharedPreferences sharedPreferences = PreferenceManager.getDefaultSharedPreferences(getContext());
+        boolean openable = sharedPreferences.getBoolean("dictionary", true);
+
+        if (openable){
+            int dictionary = Integer.parseInt(sharedPreferences.getString("dictionary_link", "0"));
+            String link;
+            String filter;
+
+            switch (dictionary){
+                case 1: link = wikiLink+selectedText;
+                    filter = wikiLinkFilter;
+                    break;
+                default: link = shabhdakoshLink+selectedText;
+                    filter = shabhdakoshFilter;
+                    break;
+            }
+            showMeaningPopup(getContext(), link, filter);
+        } else {
+            Intent browserIntent = new Intent(Intent.ACTION_VIEW, Uri.parse(wikiLink+selectedText));
+            startActivity(browserIntent);
+        }
     }
 
     public void showMeaningPopup(Context context, String url, final String filter){

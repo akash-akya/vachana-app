@@ -20,7 +20,6 @@ package com.akash.vachana.fragment;
 
 import android.content.Context;
 import android.os.Bundle;
-import android.support.annotation.Nullable;
 import android.support.design.widget.AppBarLayout;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
@@ -160,13 +159,11 @@ public class VachanaListFragment extends Fragment {
     }
 
     @Override
-    public void onActivityCreated(@Nullable Bundle savedInstanceState) {
-        super.onActivityCreated(savedInstanceState);
-
+    public void onStart() {
+        super.onStart();
         if (adapter == null) {
             title = getArguments().getString("title");
 
-            // If app is closed display elements will be null
             try {
                 progressBar.setVisibility(View.VISIBLE);
                 vachanaListContainer.setVisibility(View.INVISIBLE);
@@ -250,8 +247,8 @@ public class VachanaListFragment extends Fragment {
     }
 
     @Override
-    public void onPause() {
-        super.onPause();
+    public void onStop() {
+        super.onStop();
         vachanaListTask.cancel(true);
     }
 
