@@ -16,9 +16,9 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-package com.akash.vachana.util;
+package com.akash.vachanas2.util;
 
-import com.akash.vachana.dbUtil.KathruDetails;
+import com.akash.vachanas2.dbUtil.KathruDetails;
 
 public class HtmlBuilder {
 

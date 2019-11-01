@@ -16,16 +16,10 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-package com.akash.vachana.dbUtil;
-
-import android.util.Log;
-
-import org.json.JSONException;
-import org.json.JSONObject;
+package com.akash.vachanas2.dbUtil;
 
 import java.io.Serializable;
 import java.util.EnumMap;
-import java.util.HashMap;
 
 public class KathruDetails implements Serializable{
     private static final String TAG = "KathruDetails";

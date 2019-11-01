@@ -16,7 +16,7 @@
  *
  */
 
-package com.akash.vachana.dbUtil;
+package com.akash.vachanas2.dbUtil;
 
 import android.os.AsyncTask;
 
@@ -42,6 +42,6 @@ public abstract class DbAccessTask<U,T> extends AsyncTask<U,Void,T> {
     }
 
     public interface OnCompletion<T> {
-        public void updateUI(T result);
+        void updateUI(T result);
     }
 }

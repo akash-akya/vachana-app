@@ -32,7 +32,7 @@
 
         <com.simplecityapps.recyclerview_fastscroll.views.FastScrollRecyclerView
             android:id="@+id/kathru_recycler_view"
-            android:name="com.akash.vachana.activity.KathruFragment"
+            android:name="com.akash.vachanas.activity.KathruFragment"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
             app:layoutManager="android.support.v7.widget.LinearLayoutManager"

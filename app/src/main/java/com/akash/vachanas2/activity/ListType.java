@@ -16,19 +16,8 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-package com.akash.vachana.dbUtil;
+package com.akash.vachanas2.activity;
 
-import java.util.ArrayList;
-import java.util.List;
-
-public interface DatabaseReadAccess {
-    KathruMini getKathruMiniById(int id);
-    ArrayList<KathruMini> getAllKathruMinis();
-    ArrayList<VachanaMini> getVachanaMinisByKathruId (int kathruId);
-    String getKathruNameById(int kathruId);
-    Vachana getVachana(int id);
-    ArrayList<VachanaMini> getFavoriteVachanaMinis();
-    ArrayList<KathruMini> getFavoriteKathruMinis();
-    KathruDetails getKathruDetails (int kathruId);
-    List<VachanaMini> searchForVachana(String queryString, String kathruName, boolean isPartial);
+public enum ListType {
+    NORMAL_LIST, SEARCH, FAVORITE_LIST
 }

@@ -17,9 +17,7 @@
 -->
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools"
-    package="com.akash.vachana">
-
-    <uses-permission android:name="android.permission.INTERNET" />
+    package="com.akash.vachanas2">
 
     <application
         tools:replace="android:theme"
@@ -29,7 +27,7 @@
         android:supportsRtl="true"
         android:theme="@style/Theme.theme5">
         <activity
-            android:name=".activity.MainActivity"
+            android:name="com.akash.vachanas2.activity.MainActivity"
             android:configChanges="orientation|screenSize"
             android:label="@string/app_name">
             <intent-filter>
@@ -39,23 +37,16 @@
             </intent-filter>
         </activity>
         <activity
-            android:name=".activity.MyPreferencesActivity"
-            android:parentActivityName=".activity.MainActivity"
+            android:name="com.akash.vachanas2.activity.MyPreferencesActivity"
+            android:parentActivityName="com.akash.vachanas2.activity.MainActivity"
             android:launchMode="singleTop"
             android:label="ಅಳವಡಿಕೆಗಳು">
             <!-- Parent activity meta-data to support 4.0 and lower -->
             <meta-data
                 android:name="android.support.PARENT_ACTIVITY"
-                android:value=".activity.MainActivity" />
+                android:value="com.akash.vachanas2.activity.MainActivity" />
             <intent-filter>
                 <category android:name="android.intent.category.PREFERENCE" />
-            </intent-filter>
-        </activity>
-        <activity android:name=".activity.HandleShareActivity">
-            <intent-filter>
-                <action android:name="com.akash.vachana.WHATSAPP_SHARE_HANDLE" />
-
-                <data android:mimeType="text/plain" />
             </intent-filter>
         </activity>
     </application>

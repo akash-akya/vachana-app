@@ -16,7 +16,7 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-package com.akash.vachana.fragment;
+package com.akash.vachanas2.fragment;
 
 import android.content.Context;
 import android.os.Bundle;
@@ -37,12 +37,12 @@ import android.widget.Button;
 import android.widget.EditText;
 import android.widget.RadioButton;
 
-import com.akash.vachana.R;
-import com.akash.vachana.activity.MainActivity;
-import com.akash.vachana.dbUtil.DatabaseReadAccess;
-import com.akash.vachana.dbUtil.DbAccessTask;
-import com.akash.vachana.dbUtil.KathruMini;
-import com.akash.vachana.util.EditTextWatcher;
+import com.akash.vachanas2.R;
+import com.akash.vachanas2.activity.MainActivity;
+import com.akash.vachanas2.dbUtil.DatabaseReadAccess;
+import com.akash.vachanas2.dbUtil.DbAccessTask;
+import com.akash.vachanas2.dbUtil.KathruMini;
+import com.akash.vachanas2.util.EditTextWatcher;
 
 import java.io.Serializable;
 import java.util.List;
@@ -160,7 +160,7 @@ public class SearchFragment extends Fragment implements Serializable {
     public void onResume() {
         super.onResume();
 
-        AppBarLayout appBarLayout = (AppBarLayout)getActivity().findViewById(R.id.app_bar);
+        AppBarLayout appBarLayout = getActivity().findViewById(R.id.app_bar);
         appBarLayout.setExpanded(true, true);
         try {
             ((MainActivity) getActivity()).getSupportActionBar().setTitle("ಹುಡುಕು");

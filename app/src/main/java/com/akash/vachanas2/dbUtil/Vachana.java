@@ -16,54 +16,47 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-package com.akash.vachana.dbUtil;
+package com.akash.vachanas2.dbUtil;
 
 import java.io.Serializable;
 
-public class KathruMini implements Serializable{
+public class Vachana implements Serializable {
+    private boolean favorite;
     private int id;
-    private String name;
-    private String ankitha;
-    private int count;
-    private int favorite;
+    private String text;
+    private String kathru;
+    private int kathruId;
 
-    public KathruMini(int id, String name, String ankitha, int count, int favorite) {
+    public Vachana(int id, String text, String kathru, boolean favorite, int kathruId)
+    {
         this.id = id;
-        this.name = name;
-        this.ankitha = ankitha;
-        this.count = count;
+        this.text = text;
+        this.kathru= kathru;
         this.favorite = favorite;
+        this.kathruId = kathruId;
     }
 
-    public int getFavorite() {
-        return favorite;
-    }
-
-    public String getAnkitha() {
-        return ankitha;
-    }
-
-    public int getCount() {
-        return count;
+    public String getKathru() {
+        return kathru;
     }
 
     public int getId() {
         return id;
     }
 
-    public String getName() {
-        return name;
+    public boolean getFavorite() {
+        return favorite;
     }
 
-    public void setFavorite(boolean favorite) {
-        if (favorite)
-            this.favorite = 1;
-        else
-            this.favorite = 0;
+    public void setFavorite(boolean v) {
+        favorite = v;
     }
 
-    @Override
-    public String toString() {
-        return name;
+    public String getText() {
+        return text;
+    }
+
+    public int getKathruId() {
+        return kathruId;
     }
 }

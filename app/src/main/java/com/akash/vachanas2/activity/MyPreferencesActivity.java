@@ -16,7 +16,7 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-package com.akash.vachana.activity;
+package com.akash.vachanas2.activity;
 
 import android.content.SharedPreferences;
 import android.graphics.Color;
@@ -36,8 +36,8 @@ import android.support.v7.widget.Toolbar;
 import android.view.View;
 import android.webkit.WebView;
 
-import com.akash.vachana.R;
-import com.akash.vachana.util.ThemeChangeUtil;
+import com.akash.vachanas2.R;
+import com.akash.vachanas2.util.ThemeChangeUtil;
 import com.kizitonwose.colorpreferencecompat.ColorPreferenceCompat;
 
 public class MyPreferencesActivity extends AppCompatActivity {
@@ -55,7 +55,7 @@ public class MyPreferencesActivity extends AppCompatActivity {
 
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_preference);
-        Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
+        Toolbar toolbar = findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
 
         ActionBar actionBar = getSupportActionBar();
@@ -84,7 +84,7 @@ public class MyPreferencesActivity extends AppCompatActivity {
         public void onCreatePreferences(Bundle savedInstanceState, String rootKey) {
             addPreferencesFromResource(R.xml.preferences);
 
-            Toolbar toolbar = (Toolbar) getActivity().findViewById(R.id.search_bar);
+            Toolbar toolbar = getActivity().findViewById(R.id.search_bar);
             ((AppCompatActivity)getActivity()).setSupportActionBar( toolbar);
 
             darkThemeSwitch = (SwitchPreferenceCompat) getPreferenceManager().findPreference("theme");

@@ -16,7 +16,7 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-package com.akash.vachana.activity;
+package com.akash.vachanas2.activity;
 
 import android.app.Activity;
 import android.app.Dialog;
@@ -50,17 +50,17 @@ import android.view.inputmethod.InputMethodManager;
 import android.webkit.WebView;
 import android.widget.TextView;
 
-import com.akash.vachana.R;
-import com.akash.vachana.dbUtil.DatabaseReadAccess;
-import com.akash.vachana.dbUtil.KathruMini;
-import com.akash.vachana.dbUtil.MainDbHelper;
-import com.akash.vachana.dbUtil.VachanaMini;
-import com.akash.vachana.fragment.KathruDetailsFragment;
-import com.akash.vachana.fragment.KathruListFragment;
-import com.akash.vachana.fragment.SearchFragment;
-import com.akash.vachana.fragment.VachanaFragment;
-import com.akash.vachana.fragment.VachanaListFragment;
-import com.akash.vachana.util.ThemeChangeUtil;
+import com.akash.vachanas2.R;
+import com.akash.vachanas2.dbUtil.DatabaseReadAccess;
+import com.akash.vachanas2.dbUtil.KathruMini;
+import com.akash.vachanas2.dbUtil.MainDbHelper;
+import com.akash.vachanas2.dbUtil.VachanaMini;
+import com.akash.vachanas2.fragment.KathruDetailsFragment;
+import com.akash.vachanas2.fragment.KathruListFragment;
+import com.akash.vachanas2.fragment.SearchFragment;
+import com.akash.vachanas2.fragment.VachanaFragment;
+import com.akash.vachanas2.fragment.VachanaListFragment;
+import com.akash.vachanas2.util.ThemeChangeUtil;
 
 import org.greenrobot.eventbus.EventBus;
 import org.greenrobot.eventbus.Subscribe;
@@ -103,7 +103,7 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
 
         setContentView(R.layout.activity_main);
 
-        Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
+        Toolbar toolbar = findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
 
         ActionBar actionBar = getSupportActionBar();
@@ -123,7 +123,7 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
 
         Log.d(TAG, "onCreate: Database is loaded\n");
 
-        final DrawerLayout drawer = (DrawerLayout) findViewById(R.id.drawer_layout);
+        final DrawerLayout drawer = findViewById(R.id.drawer_layout);
 
         ActionBarDrawerToggle toggle = new ActionBarDrawerToggle(
                 this, drawer, toolbar, R.string.navigation_drawer_open, R.string.navigation_drawer_close);
@@ -138,9 +138,7 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
 
             @Override
             public void onDrawerOpened(View drawerView) {
-                InputMethodManager inputMethodManager = (InputMethodManager)
-                        getSystemService(Context.INPUT_METHOD_SERVICE);
-                inputMethodManager.hideSoftInputFromWindow(getCurrentFocus().getWindowToken(), 0);
+                hideKeyboard(drawerView.getContext());
             }
 
             @Override
@@ -150,14 +148,12 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
 
             @Override
             public void onDrawerStateChanged(int newState) {
-                InputMethodManager inputMethodManager = (InputMethodManager)
-                        getSystemService(Context.INPUT_METHOD_SERVICE);
-                inputMethodManager.hideSoftInputFromWindow(getCurrentFocus().getWindowToken(), 0);
+                hideKeyboard(drawer.getContext());
             }
         });
 
 
-        final NavigationView navigationView = (NavigationView) findViewById(R.id.nav_view);
+        final NavigationView navigationView = findViewById(R.id.nav_view);
         navigationView.setNavigationItemSelectedListener(this);
 
         getSupportFragmentManager().addOnBackStackChangedListener(new FragmentManager.OnBackStackChangedListener() {
@@ -223,7 +219,7 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
 
     @Override
     public void onBackPressed() {
-        DrawerLayout drawer = (DrawerLayout) findViewById(R.id.drawer_layout);
+        DrawerLayout drawer = findViewById(R.id.drawer_layout);
         if (drawer.isDrawerOpen(GravityCompat.START)) {
             drawer.closeDrawer(GravityCompat.START);
         } else {
@@ -258,7 +254,7 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
     @SuppressWarnings("StatementWithEmptyBody")
     @Override
     public boolean onNavigationItemSelected(@NonNull final MenuItem item) {
-        DrawerLayout drawer = (DrawerLayout) findViewById(R.id.drawer_layout);
+        DrawerLayout drawer = findViewById(R.id.drawer_layout);
         drawer.closeDrawer(GravityCompat.START);
         new Handler().postDelayed(new Runnable() {
             @Override
@@ -376,7 +372,7 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
                 dialog.setContentView(R.layout.about_app);
                 Window window = dialog.getWindow();
                 window.setLayout(DrawerLayout.LayoutParams.MATCH_PARENT, DrawerLayout.LayoutParams.WRAP_CONTENT);
-                TextView aboutAppText = (TextView) dialog.findViewById(R.id.about_app_tv);
+                TextView aboutAppText = dialog.findViewById(R.id.about_app_tv);
                 aboutAppText.setMovementMethod(LinkMovementMethod.getInstance());
                 dialog.show();
                 return;

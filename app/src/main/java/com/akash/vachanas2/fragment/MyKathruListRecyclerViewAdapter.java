@@ -16,9 +16,8 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-package com.akash.vachana.fragment;
+package com.akash.vachanas2.fragment;
 
-import android.app.Activity;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.support.annotation.NonNull;
@@ -26,21 +25,17 @@ import android.support.v4.app.FragmentActivity;
 import android.support.v4.app.FragmentManager;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.widget.RecyclerView;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ArrayAdapter;
 import android.widget.CheckBox;
 import android.widget.CompoundButton;
-import android.widget.SectionIndexer;
 import android.widget.TextView;
 
-import com.akash.vachana.R;
-import com.akash.vachana.activity.ListType;
-import com.akash.vachana.activity.MainActivity;
-import com.akash.vachana.dbUtil.KathruMini;
-import com.akash.vachana.dbUtil.VachanaMini;
+import com.akash.vachanas2.R;
+import com.akash.vachanas2.activity.ListType;
+import com.akash.vachanas2.dbUtil.KathruMini;
 import com.simplecityapps.recyclerview_fastscroll.views.FastScrollRecyclerView;
 
 import org.greenrobot.eventbus.EventBus;
@@ -49,7 +44,6 @@ import org.greenrobot.eventbus.ThreadMode;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Locale;
 
 class MyKathruListRecyclerViewAdapter extends RecyclerView.Adapter<MyKathruListRecyclerViewAdapter.ViewHolder>
         implements FastScrollRecyclerView.SectionedAdapter {
@@ -224,10 +218,10 @@ class MyKathruListRecyclerViewAdapter extends RecyclerView.Adapter<MyKathruListR
         public ViewHolder(View view) {
             super(view);
             mView = view;
-            mName = (TextView) view.findViewById(R.id.tv_kathru_name);
-            mAnkitha = (TextView) view.findViewById(R.id.tv_kathru_ankitha);
-            mVachanaCount = (TextView) view.findViewById(R.id.tv_kathru_count);
-            mFavorite = (CheckBox) view.findViewById(R.id.kathru_favorite);
+            mName = view.findViewById(R.id.tv_kathru_name);
+            mAnkitha = view.findViewById(R.id.tv_kathru_ankitha);
+            mVachanaCount = view.findViewById(R.id.tv_kathru_count);
+            mFavorite = view.findViewById(R.id.kathru_favorite);
         }
 
         @Override

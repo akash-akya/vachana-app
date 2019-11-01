@@ -16,7 +16,7 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-package com.akash.vachana.util;
+package com.akash.vachanas2.util;
 
 import android.app.Activity;
 import android.content.Intent;
@@ -24,7 +24,7 @@ import android.os.Build;
 import android.util.Log;
 import android.webkit.WebView;
 
-import com.akash.vachana.R;
+import com.akash.vachanas2.R;
 
 public class ThemeChangeUtil {
     private static final String TAG = "ThemeChangeUtil";

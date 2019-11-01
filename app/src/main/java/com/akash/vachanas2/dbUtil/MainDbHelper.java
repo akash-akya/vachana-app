@@ -16,7 +16,7 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-package com.akash.vachana.dbUtil;
+package com.akash.vachanas2.dbUtil;
 
 import android.content.ContentValues;
 import android.content.Context;
@@ -24,8 +24,6 @@ import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteOpenHelper;
 import android.util.Log;
-
-import com.google.firebase.crash.FirebaseCrash;
 
 import java.io.BufferedInputStream;
 import java.io.File;
@@ -362,7 +360,6 @@ public class MainDbHelper extends SQLiteOpenHelper implements Serializable, Data
         cursor.close();
 
         t = System.currentTimeMillis();
-        FirebaseCrash.log("searchForVachana: String - "+ text + " Time - "+(t-startTime) + " Records - "+cursor.getCount());
         return vachanaMinis;
     }
 

@@ -16,7 +16,7 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-package com.akash.vachana.util;
+package com.akash.vachanas2.util;
 
 import java.util.LinkedHashMap;
 import java.util.Map;

@@ -46,24 +46,6 @@
         android:entries="@array/font_size"
         android:entryValues="@array/font_size_values" />
 
-    <android.support.v7.preference.PreferenceCategory
-        android:title="ನಿಘಂಟು"
-        />
-
-    <android.support.v7.preference.SwitchPreferenceCompat
-        android:title="ಪದಕೋಶದ ಕೊಂಡಿ"
-        android:defaultValue="true"
-        android:summary="ಪದದ ಅರ್ಥದ ಕೊಂಡಿಯನ್ನು ತಂತ್ರಾಂಶದಲ್ಲಿಯೆ ತೆರೆಯಿರಿ"
-        android:key="dictionary"/>
-
-    <android.support.v7.preference.ListPreference
-        android:key="dictionary_link"
-        android:title="ನಿಘಂಟು"
-        android:defaultValue="0"
-        android:summary="ಪದದ ಅರ್ಥ ತಿಳಿಯಲು ಯಾವ ನಿಘಂಟನ್ನು ಬಳಸಬೇಕು"
-        android:entries="@array/dictionary_entries"
-        android:entryValues="@array/dictionary_values" />
-
     <android.support.v7.preference.PreferenceCategory android:title="ತಂತ್ರಾಂಶ" />
 
         <android.support.v7.preference.Preference

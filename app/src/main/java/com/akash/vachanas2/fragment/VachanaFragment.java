@@ -16,7 +16,7 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-package com.akash.vachana.fragment;
+package com.akash.vachanas2.fragment;
 
 import android.content.Context;
 import android.content.Intent;
@@ -24,7 +24,6 @@ import android.content.SharedPreferences;
 import android.content.pm.LabeledIntent;
 import android.content.pm.PackageManager;
 import android.content.pm.ResolveInfo;
-import android.net.Uri;
 import android.os.Bundle;
 import android.os.Handler;
 import android.preference.PreferenceManager;
@@ -34,36 +33,29 @@ import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.view.PagerAdapter;
 import android.support.v4.view.ViewPager;
-import android.support.v7.app.AlertDialog;
 import android.support.v7.widget.Toolbar;
 import android.util.Log;
 import android.util.SparseArray;
 import android.util.TypedValue;
-import android.view.ActionMode;
 import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
-import android.webkit.WebView;
-import android.webkit.WebViewClient;
-import android.widget.EditText;
 import android.widget.ProgressBar;
 import android.widget.TextView;
 
-import com.akash.vachana.R;
-import com.akash.vachana.activity.HandleShareActivity;
-import com.akash.vachana.activity.ListType;
-import com.akash.vachana.activity.MainActivity;
-import com.akash.vachana.dbUtil.DbAccessTask;
-import com.akash.vachana.dbUtil.KathruMini;
-import com.akash.vachana.dbUtil.Vachana;
-import com.akash.vachana.dbUtil.VachanaMini;
+import com.akash.vachanas2.R;
+import com.akash.vachanas2.activity.ListType;
+import com.akash.vachanas2.activity.MainActivity;
+import com.akash.vachanas2.dbUtil.DbAccessTask;
+import com.akash.vachanas2.dbUtil.KathruMini;
+import com.akash.vachanas2.dbUtil.Vachana;
+import com.akash.vachanas2.dbUtil.VachanaMini;
 
 import org.greenrobot.eventbus.EventBus;
 
-import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -109,7 +101,7 @@ public class VachanaFragment extends Fragment {
         View root = inflater.inflate(R.layout.vachana_pager_layout, container, false);
 
         myViewPagerAdapter = new MyViewPagerAdapter(vachana_minis);
-        viewPager = (ViewPager) root.findViewById(R.id.vachana_view_pager);
+        viewPager = root.findViewById(R.id.vachana_view_pager);
 
         viewPager.setAdapter(myViewPagerAdapter);
         viewPager.setOffscreenPageLimit(2);
@@ -189,10 +181,10 @@ public class VachanaFragment extends Fragment {
     public void onResume() {
         super.onResume();
 
-        AppBarLayout appBarLayout = (AppBarLayout)getActivity().findViewById(R.id.app_bar);
+        AppBarLayout appBarLayout = getActivity().findViewById(R.id.app_bar);
         appBarLayout.setExpanded(true, true);
 
-        Toolbar toolbar = (Toolbar) getActivity().findViewById(R.id.toolbar);
+        Toolbar toolbar = getActivity().findViewById(R.id.toolbar);
         toolbar.setOnClickListener(onActionBarClickListener);
     }
 
@@ -200,7 +192,7 @@ public class VachanaFragment extends Fragment {
     public void onPause() {
         super.onPause();
 //        mDbTask.cancel(true);
-        Toolbar toolbar = (Toolbar) getActivity().findViewById(R.id.toolbar);
+        Toolbar toolbar = getActivity().findViewById(R.id.toolbar);
         toolbar.setOnClickListener(null);
     }
 
@@ -301,7 +293,6 @@ public class VachanaFragment extends Fragment {
             vachanaTextView.setTextSize(TypedValue.COMPLEX_UNIT_SP, textSize);
             vachanaTextView.setText(vachana.getText());
             vachanaTextView.setVisibility(View.VISIBLE);
-            vachanaTextView.setCustomSelectionActionModeCallback(new StyleCallback(vachanaTextView));
             vachanaNumber.setText(String.format("%d/%d",position+1,vachanaMinis.size()));
             vachanaNumber.setVisibility(View.VISIBLE);
         }
@@ -341,102 +332,6 @@ public class VachanaFragment extends Fragment {
         }
     }
 
-    class StyleCallback implements ActionMode.Callback, Serializable {
-        private TextView bodyView;
-        StyleCallback(TextView bodyView) {
-            this.bodyView = bodyView;
-        }
-
-        @Override
-        public boolean onCreateActionMode(ActionMode mode, Menu menu) {
-            MenuInflater inflater = mode.getMenuInflater();
-            inflater.inflate(R.menu.vachana_select, menu);
-            menu.removeItem(android.R.id.selectAll);
-            return true;
-        }
-
-        @Override
-        public boolean onPrepareActionMode(ActionMode mode, Menu menu) {
-            return false;
-        }
-
-        @Override
-        public boolean onActionItemClicked(ActionMode mode, MenuItem item) {
-            int startSelection = bodyView.getSelectionStart();
-            int endSelection = bodyView.getSelectionEnd();
-            String selectedText = bodyView.getText().toString().substring(startSelection, endSelection);
-
-            switch (item.getItemId()) {
-                case R.id.wiki:
-                    showMeaning(selectedText);
-                    bodyView.clearFocus();
-                    return true;
-            }
-            return false;
-        }
-
-        @Override
-        public void onDestroyActionMode(ActionMode mode) { }
-    }
-
-    private static final String wikiLink = "https://kn.m.wiktionary.org/wiki/";
-    private static final String wikiLinkFilter = "kn.m.wiktionary";
-    private static final String shabhdakoshLink = "http://www.shabdkosh.com/kn/translate/";
-    private static final String shabhdakoshFilter = "shabdkosh.com";
-    private void showMeaning(String selectedText) {
-        SharedPreferences sharedPreferences = PreferenceManager.getDefaultSharedPreferences(getContext());
-        boolean openable = sharedPreferences.getBoolean("dictionary", true);
-
-        if (openable){
-            int dictionary = Integer.parseInt(sharedPreferences.getString("dictionary_link", "0"));
-            String link;
-            String filter;
-
-            switch (dictionary){
-                case 1: link = wikiLink+selectedText;
-                    filter = wikiLinkFilter;
-                    break;
-                default: link = shabhdakoshLink+selectedText;
-                    filter = shabhdakoshFilter;
-                    break;
-            }
-            showMeaningPopup(getContext(), link, filter);
-        } else {
-            Intent browserIntent = new Intent(Intent.ACTION_VIEW, Uri.parse(wikiLink+selectedText));
-            startActivity(browserIntent);
-        }
-    }
-
-    public void showMeaningPopup(Context context, String url, final String filter){
-        AlertDialog.Builder adb = new AlertDialog.Builder(context);
-        LayoutInflater inflater = getActivity().getLayoutInflater();
-        final View modifyView = inflater.inflate(R.layout.word_meaning_wv, null);
-        adb.setView(modifyView);
-
-        WebView wv = (WebView) modifyView.findViewById(R.id.web);
-        EditText edit = (EditText) modifyView.findViewById(R.id.edit);
-        edit.setFocusable(true);
-        edit.requestFocus();
-
-        adb.setTitle("ಪದದ ಅರ್ಥ");
-
-        wv.loadUrl(url);
-        wv.setWebViewClient(new WebViewClient() {
-            @Override
-            public boolean shouldOverrideUrlLoading(WebView view, String url) {
-                if (url.contains(filter)){
-                    view.loadUrl(url);
-                } else {
-                    Intent browserIntent = new Intent(Intent.ACTION_VIEW, Uri.parse(url));
-                    startActivity(browserIntent);
-                }
-                return true;
-            }
-        });
-
-        adb.show();
-    }
-
     public void onShareClick(String subject, String text) {
         List<LabeledIntent> targetedShareIntents = new ArrayList<>();
         Intent shareIntent = new Intent(android.content.Intent.ACTION_SEND);
@@ -454,38 +349,17 @@ public class VachanaFragment extends Fragment {
                 targetedShareIntent.putExtra(android.content.Intent.EXTRA_SUBJECT, subject);
                 targetedShareIntent.putExtra(Intent.EXTRA_TEXT, text);
 
-                if (packageName.contains("com.whatsapp")){
-//                    Log.d(TAG, "PackageName: "+packageName);
-                    targetedShareIntents.add(getMyIntent(subject, text, resolveInfo.loadLabel(pm),
-                            R.drawable.whatsapp_icon_24));
-                } else {
                     targetedShareIntent.setPackage(packageName);
                     targetedShareIntent.setClassName(
                             resolveInfo.activityInfo.packageName,
                             resolveInfo.activityInfo.name);
                     targetedShareIntents.add(new LabeledIntent(targetedShareIntent, packageName, resolveInfo
                             .loadLabel(pm), resolveInfo.icon));
-                }
             }
             LabeledIntent[] extraIntents = targetedShareIntents.toArray(new LabeledIntent[targetedShareIntents.size()]);
             Intent chooserIntent = Intent.createChooser(targetedShareIntents.remove(0), "Select app to share");
             chooserIntent.putExtra(Intent.EXTRA_INITIAL_INTENTS, extraIntents);
             startActivity(chooserIntent);
         }
-    }
-
-    private LabeledIntent getMyIntent(String subject, String text, CharSequence charSequence, int icon) {
-        Intent targetedShareIntent = new Intent("com.akash.vachana.WHATSAPP_SHARE_HANDLE");
-        String packageName = getActivity().getPackageName();
-        targetedShareIntent.setType("text/plain");
-
-        targetedShareIntent.putExtra(android.content.Intent.EXTRA_SUBJECT, subject);
-        targetedShareIntent.putExtra(android.content.Intent.EXTRA_TEXT, text);
-        targetedShareIntent.setPackage(packageName);
-        targetedShareIntent.setClassName(
-                packageName,
-                HandleShareActivity.class.getName());
-
-        return new LabeledIntent(targetedShareIntent, packageName, charSequence, icon);
     }
 }

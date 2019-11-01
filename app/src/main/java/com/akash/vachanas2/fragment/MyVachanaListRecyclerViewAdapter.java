@@ -16,7 +16,7 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-package com.akash.vachana.fragment;
+package com.akash.vachanas2.fragment;
 
 import android.support.annotation.NonNull;
 import android.support.v7.widget.RecyclerView;
@@ -27,9 +27,9 @@ import android.widget.CheckBox;
 import android.widget.CompoundButton;
 import android.widget.TextView;
 
-import com.akash.vachana.R;
-import com.akash.vachana.activity.ListType;
-import com.akash.vachana.dbUtil.VachanaMini;
+import com.akash.vachanas2.R;
+import com.akash.vachanas2.activity.ListType;
+import com.akash.vachanas2.dbUtil.VachanaMini;
 import com.simplecityapps.recyclerview_fastscroll.views.FastScrollRecyclerView;
 
 import org.greenrobot.eventbus.EventBus;
@@ -181,9 +181,9 @@ public class MyVachanaListRecyclerViewAdapter extends RecyclerView.Adapter<MyVac
         public ViewHolder(View view) {
             super(view);
             mView = view;
-            mTitle = (TextView) view.findViewById(R.id.tv_vachana_title);
-            mFavorite = (CheckBox) view.findViewById(R.id.favorite);
-            mKathru = (TextView) view.findViewById(R.id.tv_vachana_kathru);
+            mTitle = view.findViewById(R.id.tv_vachana_title);
+            mFavorite = view.findViewById(R.id.favorite);
+            mKathru = view.findViewById(R.id.tv_vachana_kathru);
         }
 
         @Override

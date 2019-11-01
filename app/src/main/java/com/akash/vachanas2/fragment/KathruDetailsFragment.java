@@ -16,7 +16,7 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-package com.akash.vachana.fragment;
+package com.akash.vachanas2.fragment;
 
 import android.content.Context;
 import android.os.Bundle;
@@ -34,12 +34,12 @@ import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.TextView;
 
-import com.akash.vachana.R;
-import com.akash.vachana.activity.MainActivity;
-import com.akash.vachana.dbUtil.DatabaseReadAccess;
-import com.akash.vachana.dbUtil.DbAccessTask;
-import com.akash.vachana.dbUtil.KathruDetails;
-import com.akash.vachana.util.HtmlBuilder;
+import com.akash.vachanas2.R;
+import com.akash.vachanas2.activity.MainActivity;
+import com.akash.vachanas2.dbUtil.DatabaseReadAccess;
+import com.akash.vachanas2.dbUtil.DbAccessTask;
+import com.akash.vachanas2.dbUtil.KathruDetails;
+import com.akash.vachanas2.util.HtmlBuilder;
 
 import java.io.Serializable;
 
@@ -93,7 +93,7 @@ public class KathruDetailsFragment extends Fragment {
     @Override
     public void onResume() {
         super.onResume();
-        AppBarLayout appBarLayout = (AppBarLayout)getActivity().findViewById(R.id.app_bar);
+        AppBarLayout appBarLayout = getActivity().findViewById(R.id.app_bar);
         appBarLayout.setExpanded(true, true);
 
         try {
