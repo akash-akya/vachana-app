@@ -170,7 +170,7 @@ public abstract class KannadaTransliteration  {
         StringBuilder uStr = new StringBuilder();
 
         if (src.length() > 0){
-            int len = (src.length() > 4) ? 4 : src.length();
+            int len = Math.min(src.length(), 4);
             String ch = mapLang(src.substring(0,len));
             uStr.append(ch);
 

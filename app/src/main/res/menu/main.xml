@@ -29,7 +29,7 @@
         android:id="@+id/menu_search"
         android:title="ಹುಡುಕು"
         android:orderInCategory="200"
-        app:actionViewClass="android.support.v7.widget.SearchView"
+        app:actionViewClass="androidx.appcompat.widget.SearchView"
         app:showAsAction="always"/>
 
 </menu>

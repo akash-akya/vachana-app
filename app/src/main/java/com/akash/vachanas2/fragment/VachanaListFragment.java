@@ -20,13 +20,18 @@ package com.akash.vachanas2.fragment;
 
 import android.content.Context;
 import android.os.Bundle;
-import android.support.design.widget.AppBarLayout;
-import android.support.v4.app.Fragment;
-import android.support.v4.app.FragmentManager;
-import android.support.v4.view.MenuItemCompat;
-import android.support.v7.app.AppCompatActivity;
-import android.support.v7.widget.RecyclerView;
-import android.support.v7.widget.SearchView;
+
+import com.akash.vachanas2.databinding.FragmentVachanaListBinding;
+import com.google.android.material.appbar.AppBarLayout;
+
+import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
+import androidx.fragment.app.Fragment;
+import androidx.fragment.app.FragmentManager;
+import androidx.core.view.MenuItemCompat;
+import androidx.appcompat.app.AppCompatActivity;
+import androidx.recyclerview.widget.RecyclerView;
+import androidx.appcompat.widget.SearchView;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.Menu;
@@ -53,8 +58,6 @@ import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.List;
 
-import butterknife.BindView;
-import butterknife.ButterKnife;
 
 /**
  * A fragment representing a list of Items.
@@ -86,9 +89,10 @@ public class VachanaListFragment extends Fragment {
     private Menu menu;
     private VachanaListTask vachanaListTask;
 
-    @BindView(R.id.vachana_list_progressBar) ProgressBar progressBar;
-    @BindView(R.id.vachana_list_container) View vachanaListContainer;
-    @BindView(R.id.no_data_vachana) View noDataTv;
+    ProgressBar progressBar;
+    View vachanaListContainer;
+    View noDataTv;
+    private FragmentVachanaListBinding binding;
 
     public VachanaListFragment() {
     }
@@ -144,8 +148,8 @@ public class VachanaListFragment extends Fragment {
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         setHasOptionsMenu(true);
-        View view = inflater.inflate(R.layout.fragment_vachana_list, container, false);
-        ButterKnife.bind(this, view);
+        binding = FragmentVachanaListBinding.inflate(inflater, container, false);
+        View view = binding.getRoot();
 
         recyclerView = view.findViewById(R.id.list);
 
@@ -155,6 +159,14 @@ public class VachanaListFragment extends Fragment {
             recyclerView.setAdapter(adapter);
         }
         return view;
+    }
+
+    @Override
+    public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
+        super.onViewCreated(view, savedInstanceState);
+        progressBar = binding.vachanaListProgressBar ;
+        vachanaListContainer = binding.vachanaListContainer;
+        noDataTv = binding.noDataVachana;
     }
 
     @Override

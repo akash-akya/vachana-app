@@ -20,8 +20,14 @@ package com.akash.vachanas2.fragment;
 
 import android.content.Context;
 import android.os.Bundle;
-import android.support.design.widget.AppBarLayout;
-import android.support.v4.app.Fragment;
+
+import com.akash.vachanas2.databinding.FragmentKathruDetailsBinding;
+import com.akash.vachanas2.databinding.FragmentSearchBinding;
+import com.google.android.material.appbar.AppBarLayout;
+
+import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
+import androidx.fragment.app.Fragment;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.Menu;
@@ -47,19 +53,18 @@ import com.akash.vachanas2.util.EditTextWatcher;
 import java.io.Serializable;
 import java.util.List;
 
-import butterknife.BindView;
-import butterknife.ButterKnife;
 
 public class SearchFragment extends Fragment implements Serializable {
 
     private static final String TAG = "SearchFragment";
     private KathruListTask kathruListTask;
     private OnSearchFragmentListener mListener;
-    @BindView(R.id.auto_complete_kathru) AutoCompleteTextView autoTextView;
-    @BindView(R.id.search_bar_text) EditText textSearchView;
-    @BindView(R.id.radio_partial) RadioButton radioPartial;
-    @BindView(R.id.reset_button) Button resetButton;
-    @BindView(R.id.search_button) Button searchButton;
+    AutoCompleteTextView autoTextView;
+    EditText textSearchView;
+    RadioButton radioPartial;
+    Button resetButton;
+    Button searchButton;
+    private FragmentSearchBinding binding;
 
     public SearchFragment() {
         // Required empty public constructor
@@ -77,9 +82,18 @@ public class SearchFragment extends Fragment implements Serializable {
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         setHasOptionsMenu(true);
+        binding = FragmentSearchBinding.inflate(inflater, container, false);
+        return binding.getRoot();
+    }
 
-        View view = inflater.inflate(R.layout.fragment_search, container, false);
-        ButterKnife.bind(this, view);
+    @Override
+    public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
+        super.onViewCreated(view, savedInstanceState);
+        autoTextView = binding.autoCompleteKathru;
+        textSearchView = binding.searchBarText;
+        radioPartial = binding.radioPartial;
+        resetButton = binding.resetButton;
+        searchButton = binding.searchButton;
 
         textSearchView.addTextChangedListener(new EditTextWatcher(textSearchView));
         autoTextView.addTextChangedListener(new EditTextWatcher(autoTextView));
@@ -109,7 +123,6 @@ public class SearchFragment extends Fragment implements Serializable {
             }
         });
 
-        return view;
     }
 
     DbAccessTask.OnCompletion<List<KathruMini>> onCompletion = new DbAccessTask.OnCompletion<List<KathruMini>>() {

@@ -17,28 +17,30 @@
   ~ along with this program.  If not, see <http://www.gnu.org/licenses/>.
   -->
 
-<android.support.v7.preference.PreferenceScreen
+<androidx.preference.PreferenceScreen
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:android="http://schemas.android.com/apk/res/android">
 
-    <android.support.v7.preference.PreferenceCategory
+    <androidx.preference.PreferenceCategory
         android:title="ನೋಟ"
         />
+<!--
 
-    <android.support.v7.preference.SwitchPreferenceCompat
+    <androidx.preference.SwitchPreferenceCompat
         android:title="ಗಾಢ ಸ್ಕಿನ್"
         android:defaultValue="false"
         android:summary="ಈ ಆಯ್ಕೆಯನ್ನು ಬಳಸುವ ಮೂಲಕ ಗಾಢ ಸ್ಕಿನ್ ನಿರ್ಧರಿಸಬಹುದು"
         android:key="theme"/>
 
-    <com.kizitonwose.colorpreferencecompat.ColorPreferenceCompat
+     <com.kizitonwose.colorpreferencecompat.ColorPreferenceCompat
         android:title="ಸ್ಕಿನ್ ಬಣ್ಣ"
         android:defaultValue="@color/color_set_5_primary"
         app:colorChoices="@array/color_choices"
         android:summary="ತಂತ್ರಾಂಶ ಸ್ಕಿನ್ ಬಣ್ಣವನ್ನು ಬದಲಿಸಿ"
         android:key="themeColor" />
+-->
 
-    <android.support.v7.preference.ListPreference
+    <androidx.preference.ListPreference
         android:key="font_size"
         android:title="ಅಕ್ಷರದ ಗಾತ್ರ"
         android:defaultValue="16"
@@ -46,11 +48,11 @@
         android:entries="@array/font_size"
         android:entryValues="@array/font_size_values" />
 
-    <android.support.v7.preference.PreferenceCategory android:title="ತಂತ್ರಾಂಶ" />
+    <androidx.preference.PreferenceCategory android:title="ತಂತ್ರಾಂಶ" />
 
-        <android.support.v7.preference.Preference
+        <androidx.preference.Preference
             android:title="ಸ್ವೀಕೃತಿ"
             android:summary="ಈ ತಂತ್ರಾಂಶದಲ್ಲಿ ಬಳಸಲಾದ ಲೈಬ್ರರಿಗಳು ಮತ್ತು ಅವುಗಳ ಲೈಸನ್ಸ್"
             android:key="license"/>
 
-</android.support.v7.preference.PreferenceScreen>
+</androidx.preference.PreferenceScreen>

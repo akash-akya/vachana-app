@@ -19,24 +19,16 @@
 
 <resources>
     <string-array name="font_size">
-        <item>13</item>
-        <item>14</item>
-        <item>15</item>
-        <item>16</item>
-        <item>17</item>
-        <item>18</item>
-        <item>19</item>
-        <item>20</item>
+        <item>Small</item>
+        <item>Medium</item>
+        <item>Large</item>
+        <item>Extra Large</item>
     </string-array>
 
     <string-array name="font_size_values">
-        <item>13</item>
         <item>14</item>
-        <item>15</item>
         <item>16</item>
-        <item>17</item>
         <item>18</item>
-        <item>19</item>
         <item>20</item>
     </string-array>
 

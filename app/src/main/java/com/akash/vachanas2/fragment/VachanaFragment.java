@@ -27,13 +27,15 @@ import android.content.pm.ResolveInfo;
 import android.os.Bundle;
 import android.os.Handler;
 import android.preference.PreferenceManager;
-import android.support.annotation.Nullable;
-import android.support.design.widget.AppBarLayout;
-import android.support.v4.app.Fragment;
-import android.support.v4.app.FragmentManager;
-import android.support.v4.view.PagerAdapter;
-import android.support.v4.view.ViewPager;
-import android.support.v7.widget.Toolbar;
+import androidx.annotation.Nullable;
+
+import com.akash.vachanas2.databinding.VachanaPagerLayoutBinding;
+import com.google.android.material.appbar.AppBarLayout;
+import androidx.fragment.app.Fragment;
+import androidx.fragment.app.FragmentManager;
+import androidx.viewpager.widget.PagerAdapter;
+import androidx.viewpager.widget.ViewPager;
+import androidx.appcompat.widget.Toolbar;
 import android.util.Log;
 import android.util.SparseArray;
 import android.util.TypedValue;
@@ -72,6 +74,7 @@ public class VachanaFragment extends Fragment {
     private ArrayList<VachanaMini> vachana_minis;
     private MenuItem starMenuItem;
     private GetVachanaFromDb mDbTask;
+    private VachanaPagerLayoutBinding binding;
 
     public VachanaFragment() {}
 
@@ -98,10 +101,11 @@ public class VachanaFragment extends Fragment {
     @Override
     public View onCreateView(LayoutInflater inflater, final ViewGroup container, Bundle savedInstanceState) {
         setHasOptionsMenu(true);
-        View root = inflater.inflate(R.layout.vachana_pager_layout, container, false);
+        binding = VachanaPagerLayoutBinding.inflate(inflater, container, false);
+        View view = binding.getRoot();
 
         myViewPagerAdapter = new MyViewPagerAdapter(vachana_minis);
-        viewPager = root.findViewById(R.id.vachana_view_pager);
+        viewPager = binding.vachanaViewPager;
 
         viewPager.setAdapter(myViewPagerAdapter);
         viewPager.setOffscreenPageLimit(2);
@@ -124,7 +128,7 @@ public class VachanaFragment extends Fragment {
             public void onPageScrollStateChanged(int state) {         }
         });
 
-        return root;
+        return view;
     }
 
     private void updateActionBarFavorite(MenuItem starMenuItem, boolean favorite) {

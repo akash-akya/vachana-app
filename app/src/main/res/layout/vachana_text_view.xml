@@ -30,7 +30,7 @@
         android:layout_centerHorizontal="true"
         android:indeterminate="true" />
 
-    <android.support.v4.widget.NestedScrollView
+    <androidx.core.widget.NestedScrollView
         android:layout_width="match_parent"
         android:layout_height="match_parent">
 
@@ -64,6 +64,6 @@
                 android:id="@+id/vachana_number"/>
         </LinearLayout>
 
-    </android.support.v4.widget.NestedScrollView>
+    </androidx.core.widget.NestedScrollView>
 
 </RelativeLayout>

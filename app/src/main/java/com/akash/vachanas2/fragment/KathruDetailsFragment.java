@@ -20,8 +20,14 @@ package com.akash.vachanas2.fragment;
 
 import android.content.Context;
 import android.os.Bundle;
-import android.support.design.widget.AppBarLayout;
-import android.support.v4.app.Fragment;
+
+import com.akash.vachanas2.databinding.FragmentKathruDetailsBinding;
+import com.akash.vachanas2.databinding.FragmentKathruListBinding;
+import com.google.android.material.appbar.AppBarLayout;
+
+import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
+import androidx.fragment.app.Fragment;
 import android.text.Html;
 import android.text.Spanned;
 import android.util.Log;
@@ -43,8 +49,6 @@ import com.akash.vachanas2.util.HtmlBuilder;
 
 import java.io.Serializable;
 
-import butterknife.BindView;
-import butterknife.ButterKnife;
 
 public class KathruDetailsFragment extends Fragment {
     private static final String KATHRU_ID = "kathru_id";
@@ -54,8 +58,9 @@ public class KathruDetailsFragment extends Fragment {
     private String title;
     private int  kathru_id;
     private GetKathruDetailsTask kathruDetailsTask;
-    @BindView(R.id.tv_kathru_details) TextView detailsTextView;
-    @BindView(R.id.btn_vachanas_link) Button allVachanasButton;
+    TextView detailsTextView;
+    Button allVachanasButton;
+    private FragmentKathruDetailsBinding binding;
 
     public KathruDetailsFragment() {
         // Required empty public constructor
@@ -85,9 +90,16 @@ public class KathruDetailsFragment extends Fragment {
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
-        View view = inflater.inflate(R.layout.fragment_kathru_details, container, false);
-        ButterKnife.bind(this, view);
+        binding = FragmentKathruDetailsBinding.inflate(inflater, container, false);
+        View view = binding.getRoot();
         return view;
+    }
+
+    @Override
+    public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
+        super.onViewCreated(view, savedInstanceState);
+        detailsTextView = binding.tvKathruDetails;
+        allVachanasButton = binding.btnVachanasLink;
     }
 
     @Override

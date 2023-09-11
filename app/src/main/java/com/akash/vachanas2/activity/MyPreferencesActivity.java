@@ -24,24 +24,27 @@ import android.graphics.drawable.ColorDrawable;
 import android.graphics.drawable.Drawable;
 import android.os.Bundle;
 import android.preference.PreferenceManager;
-import android.support.v4.content.ContextCompat;
-import android.support.v7.app.ActionBar;
-import android.support.v7.app.AlertDialog;
-import android.support.v7.app.AppCompatActivity;
-import android.support.v7.app.AppCompatDelegate;
-import android.support.v7.preference.Preference;
-import android.support.v7.preference.PreferenceFragmentCompat;
-import android.support.v7.preference.SwitchPreferenceCompat;
-import android.support.v7.widget.Toolbar;
+import androidx.core.content.ContextCompat;
+import androidx.appcompat.app.ActionBar;
+import androidx.appcompat.app.AlertDialog;
+import androidx.appcompat.app.AppCompatActivity;
+import androidx.appcompat.app.AppCompatDelegate;
+import androidx.preference.Preference;
+import androidx.preference.PreferenceFragmentCompat;
+import androidx.preference.SwitchPreferenceCompat;
+import androidx.appcompat.widget.Toolbar;
 import android.view.View;
 import android.webkit.WebView;
 
 import com.akash.vachanas2.R;
+import com.akash.vachanas2.databinding.ActivityMainBinding;
+import com.akash.vachanas2.databinding.ActivityPreferenceBinding;
 import com.akash.vachanas2.util.ThemeChangeUtil;
 import com.kizitonwose.colorpreferencecompat.ColorPreferenceCompat;
 
 public class MyPreferencesActivity extends AppCompatActivity {
     private static final String TAG = "MyPreferencesActivity";
+    private ActivityPreferenceBinding binding;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -54,8 +57,10 @@ public class MyPreferencesActivity extends AppCompatActivity {
                 ContextCompat.getColor(this, R.color.color_set_5_primary)));
 
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_preference);
-        Toolbar toolbar = findViewById(R.id.toolbar);
+        binding = ActivityPreferenceBinding.inflate(getLayoutInflater());
+        View view = binding.getRoot();
+        setContentView(view);
+        Toolbar toolbar = binding.toolbar;
         setSupportActionBar(toolbar);
 
         ActionBar actionBar = getSupportActionBar();
@@ -86,8 +91,9 @@ public class MyPreferencesActivity extends AppCompatActivity {
 
             Toolbar toolbar = getActivity().findViewById(R.id.search_bar);
             ((AppCompatActivity)getActivity()).setSupportActionBar( toolbar);
+/*
 
-            darkThemeSwitch = (SwitchPreferenceCompat) getPreferenceManager().findPreference("theme");
+            darkThemeSwitch = getPreferenceManager().findPreference("theme");
             darkThemeSwitch.setOnPreferenceChangeListener(new Preference.OnPreferenceChangeListener() {
                 @Override
                 public boolean onPreferenceChange(Preference preference, Object newValue) {
@@ -96,7 +102,7 @@ public class MyPreferencesActivity extends AppCompatActivity {
                 }
             });
 
-            themeChooser = (ColorPreferenceCompat) getPreferenceManager().findPreference("themeColor");
+            themeChooser = getPreferenceManager().findPreference("themeColor");
 
             themeChooser.setOnPreferenceChangeListener(new Preference.OnPreferenceChangeListener() {
                 @Override
@@ -105,6 +111,7 @@ public class MyPreferencesActivity extends AppCompatActivity {
                     return true;
                 }
             });
+*/
 
             license = getPreferenceManager().findPreference("license");
             license.setOnPreferenceClickListener(new Preference.OnPreferenceClickListener() {

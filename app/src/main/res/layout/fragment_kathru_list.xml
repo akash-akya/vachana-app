@@ -35,7 +35,7 @@
             android:name="com.akash.vachanas.activity.KathruFragment"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
-            app:layoutManager="android.support.v7.widget.LinearLayoutManager"
+            app:layoutManager="androidx.recyclerview.widget.LinearLayoutManager"
             app:fastScrollPopupBgColor="?colorAccent"
             app:fastScrollPopupTextColor="@android:color/primary_text_dark"
             app:fastScrollThumbColor="?colorAccent" />

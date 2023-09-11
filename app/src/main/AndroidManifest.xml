@@ -16,8 +16,7 @@
   ~ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 -->
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:tools="http://schemas.android.com/tools"
-    package="com.akash.vachanas2">
+    xmlns:tools="http://schemas.android.com/tools">
 
     <application
         tools:replace="android:theme"
@@ -29,7 +28,8 @@
         <activity
             android:name="com.akash.vachanas2.activity.MainActivity"
             android:configChanges="orientation|screenSize"
-            android:label="@string/app_name">
+            android:label="@string/app_name"
+            android:exported="true">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
 
@@ -40,7 +40,8 @@
             android:name="com.akash.vachanas2.activity.MyPreferencesActivity"
             android:parentActivityName="com.akash.vachanas2.activity.MainActivity"
             android:launchMode="singleTop"
-            android:label="ಅಳವಡಿಕೆಗಳು">
+            android:label="ಅಳವಡಿಕೆಗಳು"
+            android:exported="false">
             <!-- Parent activity meta-data to support 4.0 and lower -->
             <meta-data
                 android:name="android.support.PARENT_ACTIVITY"
