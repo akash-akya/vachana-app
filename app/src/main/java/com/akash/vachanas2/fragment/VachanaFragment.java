@@ -337,33 +337,13 @@ public class VachanaFragment extends Fragment {
     }
 
     public void onShareClick(String subject, String text) {
-        List<LabeledIntent> targetedShareIntents = new ArrayList<>();
-        Intent shareIntent = new Intent(android.content.Intent.ACTION_SEND);
-        shareIntent.setType("text/plain");
-        PackageManager pm = getActivity().getPackageManager();
+        Intent sendIntent = new Intent();
+        sendIntent.setAction(Intent.ACTION_SEND);
+        sendIntent.putExtra(android.content.Intent.EXTRA_SUBJECT, subject);
+        sendIntent.putExtra(Intent.EXTRA_TEXT, text);
+        sendIntent.setType("text/plain");
 
-        List<ResolveInfo> resInfo = getActivity().getPackageManager().queryIntentActivities(shareIntent, 0);
-
-
-        if (!resInfo.isEmpty()) {
-            for (ResolveInfo resolveInfo : resInfo) {
-                String packageName = resolveInfo.activityInfo.packageName;
-                Intent targetedShareIntent = new Intent(android.content.Intent.ACTION_SEND);
-                targetedShareIntent.setType("text/plain");
-                targetedShareIntent.putExtra(android.content.Intent.EXTRA_SUBJECT, subject);
-                targetedShareIntent.putExtra(Intent.EXTRA_TEXT, text);
-
-                    targetedShareIntent.setPackage(packageName);
-                    targetedShareIntent.setClassName(
-                            resolveInfo.activityInfo.packageName,
-                            resolveInfo.activityInfo.name);
-                    targetedShareIntents.add(new LabeledIntent(targetedShareIntent, packageName, resolveInfo
-                            .loadLabel(pm), resolveInfo.icon));
-            }
-            LabeledIntent[] extraIntents = targetedShareIntents.toArray(new LabeledIntent[targetedShareIntents.size()]);
-            Intent chooserIntent = Intent.createChooser(targetedShareIntents.remove(0), "Select app to share");
-            chooserIntent.putExtra(Intent.EXTRA_INITIAL_INTENTS, extraIntents);
-            startActivity(chooserIntent);
-        }
+        Intent shareIntent = Intent.createChooser(sendIntent, null);
+        startActivity(shareIntent);
     }
 }
